@@ -1,3 +1,5 @@
+using Domain.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +22,66 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapGet("/title", () => new Title
+{
+    Id = Guid.NewGuid(),
+    Name = "Test Title",
+    Description = "Lorem ipsum dolor ame amenus po septum go dolor",
+    Slug = "test-title-season-1",
+    Image = new Image
+    {
+        Id = Guid.NewGuid(), 
+        Uri = "https://images.com/image/fawfawfafgawgp"
+    },
+    Screenshots = new List<Image>()
+    {
+        new Image
+        {
+            Id = Guid.NewGuid(), 
+            Uri = "https://images.com/image/hsegjhdrh"
+        },
+        new Image
+        {
+            Id = Guid.NewGuid(), 
+            Uri = "https://images.com/image/fwagawgsghe"
+        },
+    },
+    Series = Enumerable.Range(1, 12).Select(x => new Series
+    {
+        Id = Guid.NewGuid(),
+        Name = x.ToString(),
+        Uri = $"https://images.com/image/hsegjhdrh{x}",
+    }).ToList(),
+    LocalizedNames = new List<LocalizedText>()
+    {
+        new LocalizedText()
+        {
+            Id = Guid.NewGuid(), 
+            Language = "ua",
+            Value = "Тестовий тайтл"
+        },
+        new LocalizedText()
+        {
+            Id = Guid.NewGuid(), 
+            Language = "pl",
+            Value = "Testowij kurwa taytl"
+        },
+    },
+    LocalizedDescriptions = new List<LocalizedText>()
+    {
+        new LocalizedText()
+        {
+            Id = Guid.NewGuid(), 
+            Language = "ua",
+            Value = "Тестовий тайтл"
+        },
+        new LocalizedText()
+        {
+            Id = Guid.NewGuid(), 
+            Language = "pl",
+            Value = "Testowij kurwa taytl"
+        },
+    }
+});
 
 app.Run();

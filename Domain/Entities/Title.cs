@@ -2,15 +2,21 @@
 
 public class Title
 {
-    public int Id { get; set; }
+    public required Guid Id { get; set; }
 
-    public Image Image { get; set; } = null!;
+    public required string Name { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public required string Description { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    public required string Slug { get; set; }
 
-    public string Slug { get; set; } = string.Empty;
+    public required Image Image { get; set; }
 
-    public ICollection<Image> Screenshots { get; set; } = null!;
+    public required ICollection<Image> Screenshots { get; set; }
+
+    public required ICollection<Series> Series { get; set; }
+
+    public required ICollection<LocalizedText> LocalizedNames { get; set; }
+
+    public required ICollection<LocalizedText> LocalizedDescriptions { get; set; }
 }

@@ -2,7 +2,7 @@
 
 public class Image
 {
-    public int Id { get; set; }
+    public required Guid Id { get; set; }
 
-    public string Uri { get; set; } = string.Empty;
+    public required string Uri { get; set; }
 }
