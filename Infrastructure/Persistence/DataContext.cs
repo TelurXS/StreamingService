@@ -5,12 +5,16 @@ namespace Infrastructure.Persistence;
 
 public sealed class DataContext : DbContext
 {
-    public required DbSet<Account> Accounts { get; set; }
-    public required DbSet<LocalizedText> LocalizedTexts { get; set; }
-    public required DbSet<Image> Images { get; set; }
-    public required DbSet<Series> Series { get; set; }
-    public required DbSet<Title> Titles { get; set; }
-
+    public DataContext(DbContextOptions options) : base(options)
+    {
+    }
+    
+    public DbSet<Account> Accounts { get; } = null!;
+    public DbSet<LocalizedText> LocalizedTexts { get; } = null!;
+    public DbSet<Image> Images { get; } = null!;
+    public DbSet<Series> Series { get; } = null!;
+    public DbSet<Title> Titles { get; } = null!;
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assembly = AssemblyReference.Assembly;

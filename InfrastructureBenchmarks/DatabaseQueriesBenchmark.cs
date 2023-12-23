@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,23 +12,31 @@ public class DatabaseQueriesBenchmark
     private static DataContext _dataContext;
     
     [GlobalSetup]
-    public static void GlobalSetup()
+    public void GlobalSetup()
     {
-        var services = new ServiceCollection();
+        var builder = new DbContextOptionsBuilder()
+            .UseSqlServer("");
+        
+        _dataContext = new DataContext(builder.Options);
 
-        services.AddDbContext<DataContext>(x =>
-        {
-            x.UseSqlServer("");
-        });
-
-        var provider = services.BuildServiceProvider();
-
-        _dataContext = provider.GetRequiredService<DataContext>();
+        _dataContext.Database.EnsureCreated();
     }
     
     [Benchmark]
-    public static void DefaultQuery()
+    public Account? DefaultQuery()
     {
-        
+        return _dataContext
+            .Accounts
+            .FirstOrDefault(x => x.Id == Guid.NewGuid());
+    }
+
+    private static readonly Func<DataContext, Guid, Account?> GetByIdQuery =
+        EF.CompileQuery((DataContext context, Guid guid) =>
+            context.Accounts.FirstOrDefault(x => x.Id == guid));
+
+    [Benchmark]
+    public Account? CompiledQuery()
+    {
+        return GetByIdQuery(_dataContext, Guid.NewGuid());
     }
 }
