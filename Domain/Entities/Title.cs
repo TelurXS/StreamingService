@@ -9,14 +9,20 @@ public class Title
     public required string Description { get; set; }
 
     public required string Slug { get; set; }
+    
+    public required DateTime ReleaseDate { get; set; }
 
     public required Image Image { get; set; }
 
     public required ICollection<Image> Screenshots { get; set; }
 
+    public required ICollection<Genre> Genres { get; set; }
+    
     public required ICollection<Series> Series { get; set; }
+    
+    public required ICollection<Rate> Rates { get; set; }
 
-    public required ICollection<LocalizedText> LocalizedNames { get; set; }
+    public required ICollection<LocalizedName> LocalizedNames { get; set; }
 
-    public required ICollection<LocalizedText> LocalizedDescriptions { get; set; }
+    public required ICollection<LocalizedDescription> LocalizedDescriptions { get; set; }
 }

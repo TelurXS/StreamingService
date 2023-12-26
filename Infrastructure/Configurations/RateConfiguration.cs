@@ -4,21 +4,22 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configurations;
 
-public class LocalizedTextConfiguration : IEntityTypeConfiguration<LocalizedText>
+public class RateConfiguration : IEntityTypeConfiguration<Rate>
 {
-    public void Configure(EntityTypeBuilder<LocalizedText> builder)
+    public void Configure(EntityTypeBuilder<Rate> builder)
     {
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(x => x.Language)
-            .HasMaxLength(16)
+        builder.Property(x => x.Value)
             .IsRequired();
 
-        builder.Property(x => x.Value)
-            .HasMaxLength(1024)
-            .IsRequired();
+        builder.HasOne(x => x.Author)
+            .WithMany(x => x.Rates);
+
+        builder.HasOne(x => x.Title)
+            .WithMany(x => x.Rates);
     }
 }

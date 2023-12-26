@@ -29,4 +29,6 @@ public class Account
     /// Hashed account password
     /// </summary>
     public required string Password { get; set; }
+    
+    public required ICollection<Rate> Rates { get; set; }
 }

@@ -1,12 +1,12 @@
 ﻿namespace Domain.Entities;
 
-public class Series
+public class Rate
 {
     public required Guid Id { get; set; }
-
-    public required string Name { get; set; }
-
-    public required string Uri { get; set; }
+    
+    public required float Value { get; set; }
+    
+    public required Account Author { get; set; }
     
     public required Title Title { get; set; }
 }

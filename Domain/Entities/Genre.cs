@@ -1,12 +1,10 @@
 ﻿namespace Domain.Entities;
 
-public class Series
+public class Genre
 {
     public required Guid Id { get; set; }
-
-    public required string Name { get; set; }
-
-    public required string Uri { get; set; }
     
-    public required Title Title { get; set; }
+    public required string Name { get; set; }
+    
+    public required ICollection<Title> Titles { get; set; }
 }

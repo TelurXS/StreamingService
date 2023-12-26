@@ -1,17 +1,19 @@
 using Domain.Entities;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,58 +32,69 @@ app.MapGet("/title", () => new Title
     Slug = "test-title-season-1",
     Image = new Image
     {
-        Id = Guid.NewGuid(), 
+        Id = Guid.NewGuid(),
         Uri = "https://images.com/image/fawfawfafgawgp"
     },
     Screenshots = new List<Image>()
     {
         new Image
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
             Uri = "https://images.com/image/hsegjhdrh"
         },
         new Image
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
             Uri = "https://images.com/image/fwagawgsghe"
         },
     },
-    Series = Enumerable.Range(1, 12).Select(x => new Series
-    {
-        Id = Guid.NewGuid(),
-        Name = x.ToString(),
-        Uri = $"https://images.com/image/hsegjhdrh{x}",
-    }).ToList(),
-    LocalizedNames = new List<LocalizedText>()
-    {
-        new LocalizedText()
+    Series = Enumerable.Range(1,
+            12)
+        .Select(x => new Series
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
+            Name = x.ToString(),
+            Uri = $"https://images.com/image/hsegjhdrh{x}",
+            Title = null,
+        })
+        .ToList(),
+    LocalizedNames = new List<LocalizedName>()
+    {
+        new LocalizedName()
+        {
+            Id = Guid.NewGuid(),
             Language = "ua",
-            Value = "Тестовий тайтл"
+            Value = "Тестовий тайтл",
+            Title = null,
         },
-        new LocalizedText()
+        new LocalizedName()
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
             Language = "pl",
-            Value = "Testowij kurwa taytl"
+            Value = "Testowij kurwa taytl",
+            Title = null,
         },
     },
-    LocalizedDescriptions = new List<LocalizedText>()
+    LocalizedDescriptions = new List<LocalizedDescription>()
     {
-        new LocalizedText()
+        new LocalizedDescription()
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
             Language = "ua",
-            Value = "Тестовий тайтл"
+            Value = "Тестовий тайтл",
+            Title = null,
         },
-        new LocalizedText()
+        new LocalizedDescription()
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid(),
             Language = "pl",
-            Value = "Testowij kurwa taytl"
+            Value = "Testowij kurwa taytl",
+            Title = null,
         },
-    }
+    },
+    ReleaseDate = DateTime.Now,
+    Genres = null,
+    Rates = null
 });
 
 app.Run();

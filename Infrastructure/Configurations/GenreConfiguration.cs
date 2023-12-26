@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configurations;
 
-public class SeriesConfiguration : IEntityTypeConfiguration<Series>
+public class GenreConfiguration : IEntityTypeConfiguration<Genre>
 {
-    public void Configure(EntityTypeBuilder<Series> builder)
+    public void Configure(EntityTypeBuilder<Genre> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -14,14 +14,10 @@ public class SeriesConfiguration : IEntityTypeConfiguration<Series>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(128)
-            .IsRequired();
-        
-        builder.Property(x => x.Uri)
-            .HasMaxLength(256)
+            .HasMaxLength(64)
             .IsRequired();
 
-        builder.HasOne(x => x.Title)
-            .WithMany(x => x.Series);
+        builder.HasMany(x => x.Titles)
+            .WithMany(x => x.Genres);
     }
 }

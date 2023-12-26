@@ -34,5 +34,8 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.Property(x => x.Password)
             .HasMaxLength(256)
             .IsRequired();
+
+        builder.HasMany(x => x.Rates)
+            .WithOne(x => x.Author);
     }
 }

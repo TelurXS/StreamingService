@@ -32,10 +32,19 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
 
         builder.HasMany(x => x.Screenshots);
 
-        builder.HasMany(x => x.Series);
+        builder.HasMany(x => x.Genres)
+            .WithMany(x => x.Titles);
+
+        builder.HasMany(x => x.Series)
+            .WithOne(x => x.Title);
         
-        builder.HasMany(x => x.LocalizedNames);
+        builder.HasMany(x => x.Rates)
+            .WithOne(x => x.Title);
         
-        builder.HasMany(x => x.LocalizedDescriptions);
+        builder.HasMany(x => x.LocalizedNames)
+            .WithOne(x => x.Title);
+        
+        builder.HasMany(x => x.LocalizedDescriptions)
+            .WithOne(x => x.Title);
     }
 }

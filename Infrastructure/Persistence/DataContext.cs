@@ -10,7 +10,7 @@ public sealed class DataContext : DbContext
     }
     
     public DbSet<Account> Accounts { get; } = null!;
-    public DbSet<LocalizedText> LocalizedTexts { get; } = null!;
+    public DbSet<LocalizedName> LocalizedTexts { get; } = null!;
     public DbSet<Image> Images { get; } = null!;
     public DbSet<Series> Series { get; } = null!;
     public DbSet<Title> Titles { get; } = null!;

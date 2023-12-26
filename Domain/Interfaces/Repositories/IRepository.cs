@@ -6,10 +6,6 @@ public interface IRepository<T>
 
     List<T> FindAll();
 
-    T? FindByIdWithInclude(Guid id);
-
-    List<T> FindAllWithInclude();
-
     T Insert(T value);
 
     T? Update(Guid id, T value);
