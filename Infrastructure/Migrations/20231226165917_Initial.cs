@@ -92,7 +92,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LocalizedDescription",
+                name: "LocalizedDescriptions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -102,9 +102,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocalizedDescription", x => x.Id);
+                    table.PrimaryKey("PK_LocalizedDescriptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocalizedDescription_Titles_TitleId",
+                        name: "FK_LocalizedDescriptions_Titles_TitleId",
                         column: x => x.TitleId,
                         principalTable: "Titles",
                         principalColumn: "Id",
@@ -112,7 +112,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LocalizedTexts",
+                name: "LocalizedNames",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -122,9 +122,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocalizedTexts", x => x.Id);
+                    table.PrimaryKey("PK_LocalizedNames", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocalizedTexts_Titles_TitleId",
+                        name: "FK_LocalizedNames_Titles_TitleId",
                         column: x => x.TitleId,
                         principalTable: "Titles",
                         principalColumn: "Id",
@@ -200,13 +200,13 @@ namespace Infrastructure.Migrations
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalizedDescription_TitleId",
-                table: "LocalizedDescription",
+                name: "IX_LocalizedDescriptions_TitleId",
+                table: "LocalizedDescriptions",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalizedTexts_TitleId",
-                table: "LocalizedTexts",
+                name: "IX_LocalizedNames_TitleId",
+                table: "LocalizedNames",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
@@ -262,10 +262,10 @@ namespace Infrastructure.Migrations
                 name: "GenreTitle");
 
             migrationBuilder.DropTable(
-                name: "LocalizedDescription");
+                name: "LocalizedDescriptions");
 
             migrationBuilder.DropTable(
-                name: "LocalizedTexts");
+                name: "LocalizedNames");
 
             migrationBuilder.DropTable(
                 name: "Rate");

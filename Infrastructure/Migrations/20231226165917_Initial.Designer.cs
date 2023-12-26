@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231226165141_Initial")]
+    [Migration("20231226165917_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -122,7 +122,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("LocalizedDescription");
+                    b.ToTable("LocalizedDescriptions");
                 });
 
             modelBuilder.Entity("Domain.Entities.LocalizedName", b =>
@@ -148,7 +148,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("LocalizedTexts");
+                    b.ToTable("LocalizedNames");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>

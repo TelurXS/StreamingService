@@ -9,11 +9,12 @@ public sealed class DataContext : DbContext
     {
     }
     
-    public DbSet<Account> Accounts { get; } = null!;
-    public DbSet<LocalizedName> LocalizedTexts { get; } = null!;
-    public DbSet<Image> Images { get; } = null!;
-    public DbSet<Series> Series { get; } = null!;
-    public DbSet<Title> Titles { get; } = null!;
+    public DbSet<Account> Accounts { get; set; }
+    public DbSet<LocalizedName> LocalizedNames { get; set; }
+    public DbSet<LocalizedDescription> LocalizedDescriptions { get; set; }
+    public DbSet<Image> Images { get; set; }
+    public DbSet<Series> Series { get; set; }
+    public DbSet<Title> Titles { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

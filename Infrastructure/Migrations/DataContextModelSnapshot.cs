@@ -119,7 +119,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("LocalizedDescription");
+                    b.ToTable("LocalizedDescriptions");
                 });
 
             modelBuilder.Entity("Domain.Entities.LocalizedName", b =>
@@ -145,7 +145,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("LocalizedTexts");
+                    b.ToTable("LocalizedNames");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>
