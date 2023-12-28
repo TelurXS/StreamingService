@@ -27,7 +27,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genre",
+                name: "Genres",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -35,7 +35,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genre", x => x.Id);
+                    table.PrimaryKey("PK_Genres", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,9 +49,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_GenreTitle", x => new { x.GenresId, x.TitlesId });
                     table.ForeignKey(
-                        name: "FK_GenreTitle_Genre_GenresId",
+                        name: "FK_GenreTitle_Genres_GenresId",
                         column: x => x.GenresId,
-                        principalTable: "Genre",
+                        principalTable: "Genres",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -132,7 +132,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rate",
+                name: "Rates",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -142,15 +142,15 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rate", x => x.Id);
+                    table.PrimaryKey("PK_Rates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rate_Accounts_AuthorId",
+                        name: "FK_Rates_Accounts_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Rate_Titles_TitleId",
+                        name: "FK_Rates_Titles_TitleId",
                         column: x => x.TitleId,
                         principalTable: "Titles",
                         principalColumn: "Id",
@@ -210,13 +210,13 @@ namespace Infrastructure.Migrations
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rate_AuthorId",
-                table: "Rate",
+                name: "IX_Rates_AuthorId",
+                table: "Rates",
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rate_TitleId",
-                table: "Rate",
+                name: "IX_Rates_TitleId",
+                table: "Rates",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
@@ -268,13 +268,13 @@ namespace Infrastructure.Migrations
                 name: "LocalizedNames");
 
             migrationBuilder.DropTable(
-                name: "Rate");
+                name: "Rates");
 
             migrationBuilder.DropTable(
                 name: "Series");
 
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Genres");
 
             migrationBuilder.DropTable(
                 name: "Accounts");

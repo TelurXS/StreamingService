@@ -6,6 +6,9 @@ namespace Infrastructure.Configurations;
 
 public class LocalizedDescriptionConfiguration : IEntityTypeConfiguration<LocalizedDescription>
 {
+    public const int LANGUAGE_MAX_LENGTH = 16;
+    public const int VALUE_MAX_LENGTH = 1024;
+    
     public void Configure(EntityTypeBuilder<LocalizedDescription> builder)
     {
         builder.HasKey(x => x.Id);
@@ -14,11 +17,11 @@ public class LocalizedDescriptionConfiguration : IEntityTypeConfiguration<Locali
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Language)
-            .HasMaxLength(16)
+            .HasMaxLength(LANGUAGE_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Value)
-            .HasMaxLength(1024)
+            .HasMaxLength(VALUE_MAX_LENGTH)
             .IsRequired();
     }
 }

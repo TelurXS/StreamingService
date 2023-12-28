@@ -4,10 +4,10 @@ namespace Domain.Models.Results.Unions;
 
 /// <summary>
 /// Represents the result of getting data.
-/// Сan be one of <see cref="List&lt;T&gt;"/>, <see cref="NotFound"/> or <see cref="Failed"/>
+/// Сan be one of <see cref="List{T}"/>, <see cref="NotFound"/> or <see cref="Failed"/>
 /// </summary>
 [GenerateOneOf]
-public partial class GetManyResult<T> : OneOfBase<List<T>, NotFound, Failed>
+public partial class GetAllResult<T> : OneOfBase<List<T>, NotFound, Failed>
 {
     public bool IsFound => IsT0;
     public bool IsNotFound => IsT1;

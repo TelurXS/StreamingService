@@ -72,7 +72,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genre");
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("Domain.Entities.Image", b =>
@@ -169,7 +169,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("Rate");
+                    b.ToTable("Rates");
                 });
 
             modelBuilder.Entity("Domain.Entities.Series", b =>

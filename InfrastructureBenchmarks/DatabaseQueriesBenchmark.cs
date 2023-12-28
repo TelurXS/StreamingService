@@ -15,7 +15,7 @@ public class DatabaseQueriesBenchmark
     public void GlobalSetup()
     {
         var builder = new DbContextOptionsBuilder()
-            .UseSqlServer("Server=DESKTOP-43HN7TU;Database=StreamingServiceDb;Trusted_Connection=True;");
+            .UseSqlServer("Server=DESKTOP-43HN7TU;Database=StreamingServiceDb;Trusted_Connection=True;Integrated Security=True;TrustServerCertificate=True;");
         
         _dataContext = new DataContext(builder.Options);
 

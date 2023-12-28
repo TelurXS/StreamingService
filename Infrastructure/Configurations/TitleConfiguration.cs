@@ -6,6 +6,10 @@ namespace Infrastructure.Configurations;
 
 public class TitleConfiguration: IEntityTypeConfiguration<Title>
 {
+    public const int NAME_MAX_LENGTH = 128;
+    public const int SLUG_MAX_LENGTH = 128;
+    public const int DESCRIPTION_MAX_LENGTH = 1024;
+    
     public void Configure(EntityTypeBuilder<Title> builder)
     {
         builder.HasKey(x => x.Id);
@@ -17,15 +21,15 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(128)
+            .HasMaxLength(NAME_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Slug)
-            .HasMaxLength(128)
+            .HasMaxLength(SLUG_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Description)
-            .HasMaxLength(1024)
+            .HasMaxLength(DESCRIPTION_MAX_LENGTH)
             .IsRequired();
 
         builder.HasOne(x => x.Image);

@@ -8,9 +8,7 @@ public interface IRepository<T>
 
     T Insert(T value);
 
-    T? Update(Guid id, T value);
+    bool Update(Guid id, T value);
 
     bool Delete(T value);
-
-    bool Delete(Guid id);
 }

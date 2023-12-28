@@ -6,6 +6,8 @@ namespace Infrastructure.Configurations;
 
 public class ImageConfiguration : IEntityTypeConfiguration<Image>
 {
+    public const int URI_MAX_LENGTH = 256;
+    
     public void Configure(EntityTypeBuilder<Image> builder)
     {
         builder.HasKey(x => x.Id);
@@ -14,7 +16,7 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Uri)
-            .HasMaxLength(256)
+            .HasMaxLength(URI_MAX_LENGTH)
             .IsRequired();
     }
 }

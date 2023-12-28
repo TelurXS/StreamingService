@@ -6,6 +6,11 @@ namespace Infrastructure.Configurations;
 
 public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
+    public const int NAME_MAX_LENGTH = 64;
+    public const int LOGIN_MAX_LENGTH = 32;
+    public const int EMAIL_MAX_LENGTH = 64;
+    public const int PASSWORD_MAX_LENGTH = 256;
+    
     public void Configure(EntityTypeBuilder<Account> builder)
     {
         builder.HasKey(x => x.Id);
@@ -20,19 +25,19 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(64)
+            .HasMaxLength(NAME_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Login)
-            .HasMaxLength(32)
+            .HasMaxLength(LOGIN_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Email)
-            .HasMaxLength(64)
+            .HasMaxLength(EMAIL_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Password)
-            .HasMaxLength(256)
+            .HasMaxLength(PASSWORD_MAX_LENGTH)
             .IsRequired();
 
         builder.HasMany(x => x.Rates)

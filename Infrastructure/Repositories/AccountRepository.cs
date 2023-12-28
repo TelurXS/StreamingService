@@ -5,64 +5,67 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class AccountRepository : EntityRepository<Account>, IAccountRepository 
+public sealed class AccountRepository : EntityRepository<Account>, IAccountRepository
 {
     public AccountRepository(DataContext dataContext) : base(dataContext)
     {
     }
 
-    private static readonly Func<DataContext, Guid, Account?> FindByIdQuery =
-        EF.CompileQuery(
-            (DataContext dataContext, Guid id) =>
-                dataContext.Accounts.FirstOrDefault(x => x.Id == id));
-
     public Account? FindById(Guid id)
     {
-        return Entities.FirstOrDefault(x => x.Id == id);
+        return Entities
+            .AsNoTracking()
+            .Include(x => x.Rates)
+            .FirstOrDefault(x => x.Id == id);
     }
 
     public List<Account> FindAll()
     {
-        return Entities.ToList();
+        return Entities
+            .AsNoTracking()
+            .Include(x => x.Rates)
+            .ToList();
     }
-
-    public Account? FindByIdWithInclude(Guid id)
-    {
-        return Entities.FirstOrDefault(x => x.Id == id);
-    }
-
-    public List<Account> FindAllWithInclude()
-    {
-        return Entities.ToList();
-    }
-
+    
     public Account Insert(Account value)
     {
         return Entities.Add(value).Entity;
     }
 
-    public Account? Update(Guid id, Account value)
+    public bool Update(Guid id, Account value)
     {
-        throw new NotImplementedException();
+        var result = Entities
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(setters => setters
+                .SetProperty(x => x.Name, x => value.Name)
+                .SetProperty(x => x.Login, x => value.Login)
+                .SetProperty(x => x.Email, x => value.Email));
+
+        return result > 0;
     }
 
     public bool Delete(Account value)
     {
-        throw new NotImplementedException();
-    }
+        var result = Entities
+            .Where(x => x.Id == value.Id)
+            .ExecuteDelete();
 
-    public bool Delete(Guid id)
-    {
-        throw new NotImplementedException();
+        return result > 0;
     }
-
+    
     public Account? FindByLogin(string login)
     {
-        throw new NotImplementedException();
+        return Entities
+            .AsNoTracking()
+            .Include(x => x.Rates)
+            .FirstOrDefault(x => x.Login == login);
     }
 
     public Account? FindByEmail(string email)
     {
-        throw new NotImplementedException();
+        return Entities
+            .AsNoTracking()
+            .Include(x => x.Rates)
+            .FirstOrDefault(x => x.Email == email);
     }
 }

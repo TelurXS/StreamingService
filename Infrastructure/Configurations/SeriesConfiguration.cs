@@ -6,6 +6,9 @@ namespace Infrastructure.Configurations;
 
 public class SeriesConfiguration : IEntityTypeConfiguration<Series>
 {
+    public const int NAME_MAX_LENGTH = 128;
+    public const int URI_MAX_LENGTH = 256;
+    
     public void Configure(EntityTypeBuilder<Series> builder)
     {
         builder.HasKey(x => x.Id);
@@ -14,11 +17,11 @@ public class SeriesConfiguration : IEntityTypeConfiguration<Series>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(128)
+            .HasMaxLength(NAME_MAX_LENGTH)
             .IsRequired();
         
         builder.Property(x => x.Uri)
-            .HasMaxLength(256)
+            .HasMaxLength(URI_MAX_LENGTH)
             .IsRequired();
 
         builder.HasOne(x => x.Title)

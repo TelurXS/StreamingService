@@ -6,6 +6,8 @@ namespace Infrastructure.Configurations;
 
 public class GenreConfiguration : IEntityTypeConfiguration<Genre>
 {
+    public const int NAME_MAX_LENGTH = 64;
+    
     public void Configure(EntityTypeBuilder<Genre> builder)
     {
         builder.HasKey(x => x.Id);
@@ -14,7 +16,7 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(64)
+            .HasMaxLength(NAME_MAX_LENGTH)
             .IsRequired();
 
         builder.HasMany(x => x.Titles)

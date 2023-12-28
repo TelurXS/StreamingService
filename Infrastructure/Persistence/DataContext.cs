@@ -10,6 +10,8 @@ public sealed class DataContext : DbContext
     }
     
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<Rate> Rates { get; set; }
+    public DbSet<Genre> Genres { get; set; }
     public DbSet<LocalizedName> LocalizedNames { get; set; }
     public DbSet<LocalizedDescription> LocalizedDescriptions { get; set; }
     public DbSet<Image> Images { get; set; }
