@@ -37,9 +37,10 @@ public sealed class AccountService : IAccountService
 
     public UpdateResult<Account> Update(Guid id, Account value)
     {
-        var result = Repository.Update(id, value);
-
-        if (result is false)
+        if (Repository.FindById(id) is null)
+            return new NotFound();
+        
+        if (Repository.Update(id, value) is false)
             return new Failed();
 
         var entity = Repository.FindById(id);
@@ -62,7 +63,12 @@ public sealed class AccountService : IAccountService
 
     public DeleteResult DeleteById(Guid id)
     {
-        throw new NotImplementedException();
+        var account = Repository.FindById(id);
+
+        if (account is null)
+            return new NotFound();
+
+        return Delete(account);
     }
 
     public GetResult<Account> FindByLogin(string login)

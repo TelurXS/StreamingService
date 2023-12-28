@@ -6,5 +6,5 @@ public interface IRateRepository : IRepository<Rate>
 {
     List<Rate> FindAllByAuthor(Account account);
     
-    List<Rate> FindAllByTitle(Title account);
+    List<Rate> FindAllByTitle(Title title);
 }

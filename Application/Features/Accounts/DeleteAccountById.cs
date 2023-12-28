@@ -1,4 +1,5 @@
 ﻿using Application.Models;
+using Domain.Interfaces.Services;
 using Domain.Models.Results.Unions;
 using MediatR;
 
@@ -13,9 +14,16 @@ public static class DeleteAccountById
     
     public class Handler : SyncRequestHandler<Request, DeleteResult>
     {
+        public Handler(IAccountService accountService)
+        {
+            AccountService = accountService;
+        }
+        
+        private IAccountService AccountService { get; }
+        
         protected override DeleteResult Handle(Request request)
         {
-            throw new NotImplementedException();
+            return AccountService.DeleteById(request.Id);
         }
     }
 }
