@@ -2,11 +2,11 @@
 
 public class Series
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     public required string Name { get; set; }
 
     public required string Uri { get; set; }
     
-    public required Title Title { get; set; }
+    public Title Title { get; set; } = default!;
 }

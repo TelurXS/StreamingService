@@ -8,7 +8,7 @@ public class Account
     /// <summary>
     /// Account identifier
     /// </summary>
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Account name
@@ -30,5 +30,5 @@ public class Account
     /// </summary>
     public required string Password { get; set; }
     
-    public required ICollection<Rate> Rates { get; set; }
+    public ICollection<Rate> Rates { get; set; } = default!;
 }

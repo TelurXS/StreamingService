@@ -52,7 +52,7 @@ public sealed class AccountRepository : EntityRepository<Account>, IAccountRepos
 
         return result > 0;
     }
-    
+
     public Account? FindByLogin(string login)
     {
         return Entities

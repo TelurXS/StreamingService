@@ -2,11 +2,11 @@
 
 public class Rate
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
     
     public required float Value { get; set; }
     
-    public required Account Author { get; set; }
+    public Account Author { get; set; } = default!;
     
-    public required Title Title { get; set; }
+    public Title Title { get; set; } = default!;
 }

@@ -15,7 +15,6 @@ public sealed class AccountService : IAccountService
     
     private IAccountRepository Repository { get; }
 
-
     public GetResult<Account> FindById(Guid id)
     {
         var result = Repository.FindById(id);
@@ -59,6 +58,11 @@ public sealed class AccountService : IAccountService
             return new Failed();
 
         return new Success();
+    }
+
+    public DeleteResult DeleteById(Guid id)
+    {
+        throw new NotImplementedException();
     }
 
     public GetResult<Account> FindByLogin(string login)

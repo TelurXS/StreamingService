@@ -1,5 +1,7 @@
-﻿using Application.Models;
+﻿using Application.Interfaces;
+using Application.Models;
 using Domain.Entities;
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
@@ -46,15 +48,20 @@ public static class CreateAccount
     
     public class Handler : SyncRequestHandler<Request, CreateResult<Account>>
     {
-        public Handler(IValidator<Request> validator, IAccountService accountService)
+        public Handler(
+            IValidator<Request> validator, 
+            IAccountMapper mapper,
+            IAccountService accountService)
         {
             Validator = validator;
             AccountService = accountService;
+            Mapper = mapper;
         }
         
         private IValidator<Request> Validator { get; }
+        private IAccountMapper Mapper { get; }
         private IAccountService AccountService { get; }
-        
+
         protected override CreateResult<Account> Handle(Request request)
         {
             var validationResult = Validator.Validate(request);
@@ -62,15 +69,7 @@ public static class CreateAccount
             if (validationResult.IsValid is false)
                 return new ValidationFailed(validationResult.Errors);
 
-            var account = new Account()
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Email = request.Email,
-                Login = request.Login,
-                Password = request.Password,
-                Rates = null
-            };
+            var account = Mapper.FromRequest(request);
             
             return AccountService.Create(account);
         }

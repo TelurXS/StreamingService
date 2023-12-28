@@ -2,7 +2,7 @@
 
 public class Title
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     public required string Name { get; set; }
 
@@ -12,17 +12,17 @@ public class Title
     
     public required DateTime ReleaseDate { get; set; }
 
-    public required Image Image { get; set; }
+    public Image Image { get; set; } = default!;
 
-    public required ICollection<Image> Screenshots { get; set; }
+    public ICollection<Image> Screenshots { get; set; } = default!;
 
-    public required ICollection<Genre> Genres { get; set; }
+    public ICollection<Genre> Genres { get; set; } = default!;
     
-    public required ICollection<Series> Series { get; set; }
+    public ICollection<Series> Series { get; set; } = default!;
     
-    public required ICollection<Rate> Rates { get; set; }
+    public ICollection<Rate> Rates { get; set; } = default!;
 
-    public required ICollection<LocalizedName> LocalizedNames { get; set; }
+    public ICollection<LocalizedName> LocalizedNames { get; set; } = default!;
 
-    public required ICollection<LocalizedDescription> LocalizedDescriptions { get; set; }
+    public ICollection<LocalizedDescription> LocalizedDescriptions { get; set; } = default!;
 }

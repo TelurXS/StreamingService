@@ -13,4 +13,6 @@ public interface IEntityService<T>
     UpdateResult<T> Update(Guid id, T value);
 
     DeleteResult Delete(T value);
+    
+    DeleteResult DeleteById(Guid id);
 }
