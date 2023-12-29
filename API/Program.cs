@@ -1,12 +1,6 @@
 using Application.Extensions;
-using Application.Features.Accounts;
-using Domain.Entities;
-using Domain.Models.Results;
+using Carter;
 using Infrastructure.Extensions;
-using Infrastructure.Persistence;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +18,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
+builder.Services.AddCarter();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -33,34 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
-app.MapPost("/account", async (
-    [FromBody] CreateAccount.Request request,
-    [FromServices] IMediator mediator, 
-    CancellationToken token) =>
-{
-    var result = await mediator.Send(request, token);
-    
-    return result.Match(
-        account => Results.Ok(account),
-        validationFailed => Results.BadRequest(validationFailed),
-        failed => Results.BadRequest(failed));
-});
-
-app.MapPut("/account", async (
-    [FromBody] UpdateAccount.Request request,
-    [FromServices] IMediator mediator, 
-    CancellationToken token) =>
-{
-    var result = await mediator.Send(request, token);
-    
-    return result.Match(
-        account => Results.Ok(account),
-        notFound => Results.NotFound(), 
-        validationFailed => Results.BadRequest(validationFailed),
-        failed => Results.BadRequest(failed));
-});
+app.MapCarter();
 
 app.Run();

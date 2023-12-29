@@ -14,7 +14,7 @@ public static class UpdateAccount
 {
     public class Request : IRequest<UpdateResult<Account>>
     {
-        public Guid Id { get; }
+        public Guid Id { get; set; }
         
         public required string Name { get; set; }
 

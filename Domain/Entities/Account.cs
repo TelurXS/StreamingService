@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Domain.Entities;
 
 /// <summary>
 /// Representation of the account entity in the database
