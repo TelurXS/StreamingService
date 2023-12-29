@@ -24,5 +24,7 @@ public sealed class DataContext : IdentityDbContext<User>
         var assembly = AssemblyReference.Assembly;
         
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
+        
+        base.OnModelCreating(modelBuilder);
     }
 }
