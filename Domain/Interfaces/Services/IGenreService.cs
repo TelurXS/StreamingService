@@ -5,5 +5,5 @@ namespace Domain.Interfaces.Services;
 
 public interface IGenreService : IEntityService<Genre>
 {
-    GetResult<Genre> GetByName(string name);
+    GetResult<Genre> FindByName(string name);
 }
