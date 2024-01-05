@@ -13,11 +13,19 @@ public sealed class AccountEndpoints : ICarterModule
     {
         var group = app.MapGroup("/accounts");
 
-        group.MapGet("/{id:guid}", GetAccountByIdAsync);
-        group.MapPost("/", CreateAccountAsync);
-        group.MapPut("/{id:guid}", UpdateAccountAsync);
-        group.MapDelete("/{id:guid}", DeleteAccountAsync);
+        group.MapGet("/{id}", GetAccountByIdAsync)
+            .RequireAuthorization();
+        
+        group.MapPost("/", CreateAccountAsync)
+            .RequireAuthorization();
+        
+        group.MapPut("/{id}", UpdateAccountAsync)
+            .RequireAuthorization();
+        
+        group.MapDelete("/{id}", DeleteAccountAsync)
+            .RequireAuthorization();
     }
+    
     
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -1,9 +1,8 @@
+using API.Middlewares;
 using Application.Extensions;
 using Carter;
-using Domain.Entities;
 using Infrastructure.Extensions;
-using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,17 +17,12 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-
-builder.Services.AddAuthorizationBuilder();
-
-builder.Services.AddAuthentication()
-    .AddBearerToken(IdentityConstants.BearerScheme);
-
-builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<DataContext>()
-    .AddApiEndpoints();
+builder.Services.AddIdentity(builder.Configuration);
+builder.Services.ConfigureIdentity();
 
 builder.Services.AddCarter();
+
+builder.Services.AddSingleton<ExceptionHandler>();
 
 var app = builder.Build();
 
@@ -39,9 +33,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseMiddleware<ExceptionHandler>();
 
-app.MapIdentityApi<User>();
+app.MapIdentity();
 app.MapCarter();
 
 app.Run();
