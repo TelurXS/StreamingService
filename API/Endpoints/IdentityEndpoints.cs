@@ -12,6 +12,6 @@ public class IdentityEndpoints : ICarterModule
 
     private async Task<IResult> GetIdentityName(ClaimsPrincipal claims)
     {
-        return Results.Ok(claims.Claims);
+        return Results.Ok(claims.Identity!.Name);
     }
 }

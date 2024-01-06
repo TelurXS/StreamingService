@@ -1,3 +1,4 @@
+using API;
 using API.Middlewares;
 using Application.Extensions;
 using Carter;
@@ -17,6 +18,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+builder.Services.AddPolicies(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 builder.Services.ConfigureIdentity();
 
@@ -33,6 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseMiddleware<ExceptionHandler>();
 
 app.MapIdentity();

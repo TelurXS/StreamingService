@@ -4,6 +4,13 @@ namespace API.Middlewares;
 
 public sealed class ExceptionHandler : IMiddleware
 {
+    public ExceptionHandler(ILogger<ExceptionHandler> logger)
+    {
+        Logger = logger;
+    }
+    
+    private ILogger<ExceptionHandler> Logger { get; }
+    
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -12,6 +19,8 @@ public sealed class ExceptionHandler : IMiddleware
         }
         catch (Exception e)
         {
+            Logger.LogError(e.Message);
+            
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
             var response = new
