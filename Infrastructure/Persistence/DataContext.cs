@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-public sealed class DataContext : IdentityDbContext<User>
+public sealed class DataContext : IdentityDbContext<User, Role, Guid>
 {
     public DataContext(DbContextOptions options) : base(options)
     {

@@ -13,17 +13,16 @@ public sealed class AccountEndpoints : ICarterModule
     {
         var group = app.MapGroup("/accounts");
 
-        group.MapGet("/{id}", GetAccountByIdAsync)
-            .RequireAuthorization();
-        
-        group.MapPost("/", CreateAccountAsync)
-            .RequireAuthorization();
-        
-        group.MapPut("/{id}", UpdateAccountAsync)
-            .RequireAuthorization();
-        
-        group.MapDelete("/{id}", DeleteAccountAsync)
-            .RequireAuthorization();
+        group.MapGet("/{id}", GetAccountByIdAsync);
+
+
+        group.MapPost("/", CreateAccountAsync);
+
+
+        group.MapPut("/{id}", UpdateAccountAsync);
+
+
+        group.MapDelete("/{id}", DeleteAccountAsync);
     }
     
     

@@ -9,5 +9,6 @@ namespace Application.Mappings;
 public partial class AccountMapper : IAccountMapper
 {
     public partial Account FromRequest(CreateAccount.Request request);
+
     public partial Account FromRequest(UpdateAccount.Request request);
 }

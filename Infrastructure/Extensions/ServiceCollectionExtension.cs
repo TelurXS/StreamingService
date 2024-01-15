@@ -14,7 +14,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Alternative")));
+            options.UseSqlServer(configuration.GetConnectionString("Default")));
 
         services.AddTransient<IAccountRepository, AccountRepository>();
 
