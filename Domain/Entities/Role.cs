@@ -2,7 +2,7 @@
 
 namespace Domain.Entities;
 
-public class Role : IdentityRole<Guid>
+public sealed class Role : IdentityRole<Guid>
 {
 	public static string User => nameof(User);
 	public static string Moderator => nameof(Moderator);

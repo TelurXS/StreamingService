@@ -15,13 +15,14 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
     {
         return Entities
             .AsNoTracking()
+            .Include(x => x.Names)
+            .Include(x => x.Descriptions)
             .Include(x => x.Image)
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
             .Include(x => x.Rates)
-            .Include(x => x.LocalizedNames)
-            .Include(x => x.LocalizedDescriptions)
+            .Include(x => x.Comments)
             .FirstOrDefault(x => x.Id == id);
     }
 
@@ -29,13 +30,14 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
     {
         return Entities
             .AsNoTracking()
+            .Include(x => x.Names)
+            .Include(x => x.Descriptions)
             .Include(x => x.Image)
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
             .Include(x => x.Rates)
-            .Include(x => x.LocalizedNames)
-            .Include(x => x.LocalizedDescriptions)
+            .Include (x => x.Comments)
             .ToList();
     }
 
@@ -52,7 +54,11 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
                 .SetProperty(x => x.Name, x => value.Name)
                 .SetProperty(x => x.Description, x => value.Description)
                 .SetProperty(x => x.Slug, x => value.Slug)
-                .SetProperty(x => x.ReleaseDate, x => value.ReleaseDate));
+                .SetProperty(x => x.ReleaseDate, x => value.ReleaseDate)
+                .SetProperty(x => x.Country, x => value.Country)
+                .SetProperty(x => x.AgeRestriction, x => value.AgeRestriction)
+                .SetProperty(x => x.Director, x => value.Director)
+                .SetProperty(x => x.Cast, x => value.Cast));
 
         return result > 0;
     }

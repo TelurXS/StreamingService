@@ -5,7 +5,7 @@ namespace Domain.Entities;
 /// <summary>
 /// Representation of the account entity in the database
 /// </summary>
-public class Account
+public sealed class Account
 {
     /// <summary>
     /// Account identifier

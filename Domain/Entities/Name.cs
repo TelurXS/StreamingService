@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class LocalizedDescription
+public sealed class Name
 {
     public Guid Id { get; set; }
 

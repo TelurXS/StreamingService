@@ -6,9 +6,9 @@ using Riok.Mapperly.Abstractions;
 namespace Application.Mappings;
 
 [Mapper]
-public partial class LocalizedNameMapper : ILocalizedNameMapper
+public partial class LocalizedNameMapper : INameMapper
 {
-    public partial LocalizedName FromRequest(CreateName.Request request);
+    public partial Name FromRequest(CreateName.Request request);
 
-    public partial LocalizedName FromRequest(UpdateName.Request request);
+    public partial Name FromRequest(UpdateName.Request request);
 }

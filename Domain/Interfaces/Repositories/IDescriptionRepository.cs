@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Repositories;
 
-public interface ILocalizedNameRepository : IRepository<LocalizedName>
+public interface IDescriptionRepository : IRepository<Description>
 {
     
 }

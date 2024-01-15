@@ -1,10 +1,10 @@
 ﻿namespace Domain.Entities;
 
-public sealed class Genre
+public sealed class Subscription
 {
     public Guid Id { get; set; }
-    
+
     public required string Name { get; set; }
 
-    public ICollection<Title> Titles { get; set; } = default!;
+    public required float Price { get; set; }
 }

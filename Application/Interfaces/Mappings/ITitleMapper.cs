@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.Interfaces.Mappings;
 
-public interface ITitlesMapper
+public interface ITitleMapper
 {
     Title FromRequest(CreateTitle.Request request);
 

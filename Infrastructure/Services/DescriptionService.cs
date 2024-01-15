@@ -6,15 +6,16 @@ using Domain.Models.Results.Unions;
 
 namespace Infrastructure.Services;
 
-public class LocalizedNameService : ILocalizedNameService
+public class DescriptionService : IDescriptionService
 {
-    public LocalizedNameService(ILocalizedNameRepository repository)
+    public DescriptionService(IDescriptionRepository repository)
     {
         Repository = repository;
     }
     
-    private ILocalizedNameRepository Repository { get; }
-    public GetResult<LocalizedName> FindById(Guid id)
+    private IDescriptionRepository Repository { get; }
+    
+    public GetResult<Description> FindById(Guid id)
     {
         var result = Repository.FindById(id);
 
@@ -24,17 +25,17 @@ public class LocalizedNameService : ILocalizedNameService
         return result;
     }
 
-    public GetAllResult<LocalizedName> FindAll()
+    public GetAllResult<Description> FindAll()
     {
         return Repository.FindAll();
     }
 
-    public CreateResult<LocalizedName> Create(LocalizedName value)
+    public CreateResult<Description> Create(Description value)
     {
         return Repository.Insert(value);
     }
 
-    public UpdateResult<LocalizedName> Update(Guid id, LocalizedName value)
+    public UpdateResult<Description> Update(Guid id, Description value)
     {
         if (Repository.FindById(id) is null)
             return new NotFound();
@@ -50,7 +51,7 @@ public class LocalizedNameService : ILocalizedNameService
         return entity;
     }
 
-    public DeleteResult Delete(LocalizedName value)
+    public DeleteResult Delete(Description value)
     {
         var result = Repository.Delete(value);
 

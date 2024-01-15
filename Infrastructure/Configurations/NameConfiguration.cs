@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configurations;
 
-public class LocalizedNameConfiguration : IEntityTypeConfiguration<LocalizedName>
+public class NameConfiguration : IEntityTypeConfiguration<Name>
 {
     public const int LANGUAGE_MAX_LENGTH = 16;
     public const int VALUE_MAX_LENGTH = 1024;
     
-    public void Configure(EntityTypeBuilder<LocalizedName> builder)
+    public void Configure(EntityTypeBuilder<Name> builder)
     {
         builder.HasKey(x => x.Id);
 

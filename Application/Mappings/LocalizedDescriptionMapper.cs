@@ -7,9 +7,9 @@ using Riok.Mapperly.Abstractions;
 namespace Application.Mappings;
 
 [Mapper]
-public partial class LocalizedDescriptionMapper : ILocalizedDescriptionsMapper
+public partial class LocalizedDescriptionMapper : IDescriptionsMapper
 {
-    public partial LocalizedDescription FromRequest(CreateDescription.Request request);
+    public partial Description FromRequest(CreateDescription.Request request);
 
-    public partial LocalizedDescription FromRequest(UpdateDescription.Request request);
+    public partial Description FromRequest(UpdateDescription.Request request);
 }

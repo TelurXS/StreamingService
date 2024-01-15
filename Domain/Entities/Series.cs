@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class Series
+public sealed class Series
 {
     public Guid Id { get; set; }
 

@@ -9,6 +9,8 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
     public const int NAME_MAX_LENGTH = 128;
     public const int SLUG_MAX_LENGTH = 128;
     public const int DESCRIPTION_MAX_LENGTH = 1024;
+    public const int DIRECTOR_MAX_LENGTH = 64;
+    public const int CAST_MAX_LENGTH = 512;
     
     public void Configure(EntityTypeBuilder<Title> builder)
     {
@@ -32,6 +34,23 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
             .HasMaxLength(DESCRIPTION_MAX_LENGTH)
             .IsRequired();
 
+        builder.Property(x => x.Country)
+            .IsRequired();
+
+        builder.Property(x => x.AgeRestriction)
+            .IsRequired();
+
+        builder.Property(x => x.AvarageRate)
+            .IsRequired();
+
+        builder.Property(x => x.Director)
+            .HasMaxLength(DIRECTOR_MAX_LENGTH)
+            .IsRequired();
+
+        builder.Property(x => x.Cast)
+            .HasMaxLength(CAST_MAX_LENGTH)
+            .IsRequired();
+
         builder.HasOne(x => x.Image);
 
         builder.HasMany(x => x.Screenshots);
@@ -45,10 +64,13 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
         builder.HasMany(x => x.Rates)
             .WithOne(x => x.Title);
         
-        builder.HasMany(x => x.LocalizedNames)
+        builder.HasMany(x => x.Names)
             .WithOne(x => x.Title);
         
-        builder.HasMany(x => x.LocalizedDescriptions)
+        builder.HasMany(x => x.Descriptions)
+            .WithOne(x => x.Title);
+
+        builder.HasMany(x => x.Comments)
             .WithOne(x => x.Title);
     }
 }

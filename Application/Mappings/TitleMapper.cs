@@ -6,7 +6,7 @@ using Riok.Mapperly.Abstractions;
 namespace Application.Mappings;
 
 [Mapper]
-public partial class TitleMapper : ITitlesMapper
+public partial class TitleMapper : ITitleMapper
 {
     public partial Title FromRequest(CreateTitle.Request request);
 

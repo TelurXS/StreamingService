@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Models;
 
-public class Title
+namespace Domain.Entities;
+
+public sealed class Title
 {
     public Guid Id { get; set; }
 
@@ -9,8 +11,22 @@ public class Title
     public required string Description { get; set; }
 
     public required string Slug { get; set; }
+
+    public required float AvarageRate { get; set; }
     
     public required DateTime ReleaseDate { get; set; }
+
+    public required Country Country { get; set; }
+
+    public required AgeRestriction AgeRestriction { get; set; }
+
+    public required string Director { get; set; }
+
+    public required string Cast { get; set; }
+
+    public ICollection<Name> Names { get; set; } = default!;
+
+    public ICollection<Description> Descriptions { get; set; } = default!;
 
     public Image Image { get; set; } = default!;
 
@@ -22,7 +38,5 @@ public class Title
     
     public ICollection<Rate> Rates { get; set; } = default!;
 
-    public ICollection<LocalizedName> LocalizedNames { get; set; } = default!;
-
-    public ICollection<LocalizedDescription> LocalizedDescriptions { get; set; } = default!;
+    public ICollection<Comment> Comments { get; set; } = default!;
 }

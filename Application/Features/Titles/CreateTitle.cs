@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Models;
 using Domain.Models.Results.Unions;
 using MediatR;
 
@@ -14,6 +15,16 @@ public static class CreateTitle
 
         public required string Slug { get; set; }
 
+        public required float AvarageRate { get; set; }
+
         public required DateTime ReleaseDate { get; set; }
+
+        public required Country Country { get; set; }
+
+        public required AgeRestriction AgeRestriction { get; set; }
+
+        public required string Director { get; set; }
+
+        public required string Cast { get; set; }
     }
 }

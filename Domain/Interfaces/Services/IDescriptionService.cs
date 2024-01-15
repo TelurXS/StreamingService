@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Services;
 
-public interface ILocalizedNameService : IEntityService<LocalizedName>
+public interface IDescriptionService : IEntityService<Description>
 {
     
 }

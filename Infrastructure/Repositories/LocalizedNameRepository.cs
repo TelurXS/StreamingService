@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class LocalizedNameRepository : EntityRepository<LocalizedName>, ILocalizedNameRepository
+public sealed class LocalizedNameRepository : EntityRepository<Name>, INameRepository
 {
     public LocalizedNameRepository(DataContext dataContext) : base(dataContext)
     {
     }
 
-    public LocalizedName? FindById(Guid id)
+    public Name? FindById(Guid id)
     {
         return Entities
             .AsNoTracking()
@@ -19,7 +19,7 @@ public sealed class LocalizedNameRepository : EntityRepository<LocalizedName>, I
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<LocalizedName> FindAll()
+    public List<Name> FindAll()
     {
         return Entities
             .AsNoTracking()
@@ -27,12 +27,12 @@ public sealed class LocalizedNameRepository : EntityRepository<LocalizedName>, I
             .ToList();
     }
 
-    public LocalizedName Insert(LocalizedName value)
+    public Name Insert(Name value)
     {
         return Entities.Add(value).Entity;
     }
 
-    public bool Update(Guid id, LocalizedName value)
+    public bool Update(Guid id, Name value)
     {
         var result = Entities
             .Where(x => x.Id == id)
@@ -43,7 +43,7 @@ public sealed class LocalizedNameRepository : EntityRepository<LocalizedName>, I
         return result > 0;
     }
 
-    public bool Delete(LocalizedName value)
+    public bool Delete(Name value)
     {
         var result = Entities
             .Where(x => x.Id == value.Id)

@@ -6,7 +6,7 @@ namespace Application.Features.LocalizedNames;
 
 public static class UpdateName
 {
-    public class Request : IRequest<UpdateResult<LocalizedName>>
+    public class Request : IRequest<UpdateResult<Name>>
     {
         public Guid Id { get; set; }
 

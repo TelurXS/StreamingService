@@ -2,11 +2,11 @@
 using Domain.Models.Results.Unions;
 using MediatR;
 
-namespace Application.Features.LocalizedDescriptions;
+namespace Application.Features.LocalizedNames;
 
-public static class CreateDescription
+public static class CreateName
 {
-    public class Request : IRequest<CreateResult<LocalizedDescription>>
+    public class Request : IRequest<CreateResult<Name>>
     {
         public required string Language { get; set; }
 

@@ -6,7 +6,7 @@ namespace Application.Features.LocalizedDescriptions;
 
 public static class UpdateDescription
 {
-    public class Request : IRequest<UpdateResult<LocalizedDescription>>
+    public class Request : IRequest<UpdateResult<Description>>
     {
         public Guid Id { get; set; }
 

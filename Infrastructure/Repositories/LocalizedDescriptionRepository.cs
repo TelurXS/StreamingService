@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class LocalizedDescriptionRepository : EntityRepository<LocalizedDescription>, ILocalizedDescriptionRepository
+public sealed class LocalizedDescriptionRepository : EntityRepository<Description>, IDescriptionRepository
 {
     public LocalizedDescriptionRepository(DataContext dataContext) : base(dataContext)
     {
     }
 
-    public LocalizedDescription? FindById(Guid id)
+    public Description? FindById(Guid id)
     {
         return Entities
             .AsNoTracking()
@@ -19,7 +19,7 @@ public sealed class LocalizedDescriptionRepository : EntityRepository<LocalizedD
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<LocalizedDescription> FindAll()
+    public List<Description> FindAll()
     {
         return Entities
             .AsNoTracking()
@@ -27,12 +27,12 @@ public sealed class LocalizedDescriptionRepository : EntityRepository<LocalizedD
             .ToList();
     }
 
-    public LocalizedDescription Insert(LocalizedDescription value)
+    public Description Insert(Description value)
     {
         return Entities.Add(value).Entity;
     }
 
-    public bool Update(Guid id, LocalizedDescription value)
+    public bool Update(Guid id, Description value)
     {
         var result = Entities
             .Where(x => x.Id == id)
@@ -43,7 +43,7 @@ public sealed class LocalizedDescriptionRepository : EntityRepository<LocalizedD
         return result > 0;
     }
 
-    public bool Delete(LocalizedDescription value)
+    public bool Delete(Description value)
     {
         var result = Entities
             .Where(x => x.Id == value.Id)
