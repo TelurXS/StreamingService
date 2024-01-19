@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class LocalizedDescriptionRepository : EntityRepository<Description>, IDescriptionRepository
+public sealed class DescriptionRepository : EntityRepository<Description>, IDescriptionRepository
 {
-    public LocalizedDescriptionRepository(DataContext dataContext) : base(dataContext)
+    public DescriptionRepository(DataContext dataContext) : base(dataContext)
     {
     }
 

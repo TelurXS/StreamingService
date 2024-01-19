@@ -1,0 +1,108 @@
+﻿@page "/login"
+@layout MinimalisticLayout
+
+@inject CookieAuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h1 class="text-white mb-2">Login</h1>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
+				<DataAnnotationsValidator />
+
+				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Email or Username" />
+
+				<ValidationMessage For="() => Input.Email" class="text-danger mt-2" />
+
+				<InputText @bind-Value="Input.Password" autocomplete="password" type="password" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Password" />
+
+				<ValidationMessage For="() => Input.Password" class="text-danger mt-2" />
+
+				<div class="mt-3">
+					<InputCheckbox @bind-Value="Input.RememberMe" class="rounded-checkbox" id="remember-me" />
+					<label class="form-check-label font-gray font-md" for="remember-me">
+						Remember Me?
+					</label>
+				</div>
+
+				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-3 shadow-primary">Sign In</button>
+			</EditForm>
+
+			<div class="mt-3">
+				<a href="/forgot-password" class="font-gray link-no-underline">Forgot Password ?</a>
+			</div>
+
+			<div class="mt-5">
+				<a class="btn btn-outline-primary rounded-corners w-100 font-gray"><i class="bi bi-google"></i> Sign In via Google</a>
+			</div>
+
+			<div class="mt-3 d-flex flex-column">
+				<label class="font-gray font-md">Dont have an account?</label>
+				<a href="/register" class="link-primary font-gray link-no-underline font-md">Register</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	private async Task OnSubmit()
+	{
+		var request = new LoginRequest()
+			{
+				Email = Input.Email,
+				Password = Input.Password,
+				RememberMe = Input.RememberMe
+			};
+
+		var result = await AuthenticationStateProvider.LoginAsync(request);
+
+		if (result)
+		{
+			Message = "Success";
+
+			if (ReturnUrl is not null)
+				NavigationManager.NavigateTo(ReturnUrl);
+
+			else NavigationManager.NavigateToCurrentPage();
+
+		}
+		else Message = "Failed";
+	}
+
+	private class InputModel
+	{
+		[Required]
+		[MaxLength(64)]
+		[EmailAddress]
+		public string Email { get; set; } = string.Empty;
+
+		[Required]
+		[MaxLength(256)]
+		[DataType(DataType.Password)]
+		public string Password { get; set; } = string.Empty;
+
+		[Display(Name = "Remember me?")]
+		public bool RememberMe { get; set; } = false;
+	}
+}

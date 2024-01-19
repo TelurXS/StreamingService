@@ -1,0 +1,52 @@
+﻿@page "/confirm-email"
+@layout MinimalisticLayout
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h1 class="text-white mb-2">Email Confirmation</h1>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? UserId { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? Code { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (UserId is null || Code is null)
+		{
+			Message = "Oops! Something went wrong";
+			return;
+		}
+
+		var result = await IdentityService.ConfirmEmailAsync(UserId, Code);
+
+		if (result is false)
+		{
+			Message = "Oops! Something went wrong while processing your request";
+			return;
+		}
+
+		Message = "Success";
+	}
+}

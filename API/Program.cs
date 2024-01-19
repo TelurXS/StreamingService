@@ -5,11 +5,9 @@ using Carter;
 using Infrastructure.Extensions;
 using API.Extensions;
 using Domain.Entities;
-using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(x => x.FullName!
-	.Split('.')
-	.Last()
+        .Split('.')
+        .Last()
         .Replace("+", ""));
 });
 
@@ -30,34 +28,36 @@ builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddCarter();
 
 builder.Services.AddSingleton<ExceptionHandler>();
+builder.Services.AddSingleton<ClientRoutesService>();
+builder.Services.AddSingleton<IEmailSender<User>, EmailSender>();
 
 builder.Services
-	.AddAuthentication(options =>
-	{
-		options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-		options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-		options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
-	})
-	.AddCookie(IdentityConstants.ApplicationScheme, options =>
-	{
-		options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+    })
+    .AddCookie(IdentityConstants.ApplicationScheme, options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
         options.Cookie.IsEssential = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.None;
     })
-	.AddBearerToken(IdentityConstants.BearerScheme, options => 
-	{
-		
-	});
+    .AddBearerToken(IdentityConstants.BearerScheme, options =>
+    {
 
-var multiSchemePolicy = new AuthorizationPolicyBuilder(
-	IdentityConstants.ApplicationScheme,
-	IdentityConstants.BearerScheme)
-  .RequireAuthenticatedUser()
-  .Build();
+    });
 
-builder.Services.AddAuthorization(o => o.DefaultPolicy = multiSchemePolicy);
+builder.Services.AddAuthorization(o => o.DefaultPolicy =
+    new AuthorizationPolicyBuilder(
+        IdentityConstants.ApplicationScheme,
+        IdentityConstants.BearerScheme)
+    .RequireAuthenticatedUser()
+    .Build()
+);
 
 var app = builder.Build();
 
@@ -72,8 +72,13 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandler>();
 
+app.UseBlazorFrameworkFiles();
+
 app.MapCarter();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

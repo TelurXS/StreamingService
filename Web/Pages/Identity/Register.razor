@@ -1,0 +1,107 @@
+﻿@page "/register"
+@layout MinimalisticLayout
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h1 class="text-white mb-2">Register</h1>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="register">
+				<DataAnnotationsValidator />
+
+				<InputText @bind-Value="Input.Username" autocomplete="name" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Username" />
+
+				<ValidationMessage For="() => Input.Username" class="text-danger mt-2" />
+
+				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Email" />
+
+				<ValidationMessage For="() => Input.Email" class="text-danger mt-2" />
+
+				<InputText @bind-Value="Input.Password" autocomplete="password" type="password" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Password" />
+
+				<ValidationMessage For="() => Input.Password" class="text-danger mt-2" />
+
+				<InputText @bind-Value="Input.ConfigrmPassword" autocomplete="password" type="password" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Configrm Password" />
+
+				<ValidationMessage For="() => Input.ConfigrmPassword" class="text-danger mt-2" />
+
+				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-3 shadow-primary">Continue</button>
+			</EditForm>
+
+			<div class="mt-5 d-flex flex-column">
+				<label class="font-gray font-md">Have an account?</label>
+				<a href="/login" class="link-primary font-gray link-no-underline font-md">Login</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	private async Task OnSubmit()
+	{
+		var request = new RegisterRequest
+			{
+				Username = Input.Username,
+				Email = Input.Email,
+				Password = Input.Password,
+			};
+
+		var result = await IdentityService.RegisterAsync(request);
+
+		//Message = $"{request.Username} {request.Email} {request.Password}";
+
+		Message = result;
+
+		//if (ReturnUrl is not null)
+		//	NavigationManager.NavigateTo(ReturnUrl);
+		//
+		//else NavigationManager.NavigateToCurrentPage();
+	}
+
+	private class InputModel
+	{
+		[Required]
+		[MaxLength(64)]
+		public string Username { get; set; } = string.Empty;
+
+		[Required]
+		[MaxLength(64)]
+		[EmailAddress]
+		public string Email { get; set; } = string.Empty;
+
+		[Required]
+		[StringLength(32, MinimumLength = 5)]
+		[DataType(DataType.Password)]
+		public string Password { get; set; } = string.Empty;
+
+		[Required]
+		[StringLength(32, MinimumLength = 5)]
+		[DataType(DataType.Password)]
+		[Compare(nameof(Password))]
+		public string ConfigrmPassword { get; set; } = string.Empty;
+	}
+}

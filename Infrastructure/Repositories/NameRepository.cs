@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class LocalizedNameRepository : EntityRepository<Name>, INameRepository
+public sealed class NameRepository : EntityRepository<Name>, INameRepository
 {
-    public LocalizedNameRepository(DataContext dataContext) : base(dataContext)
+    public NameRepository(DataContext dataContext) : base(dataContext)
     {
     }
 

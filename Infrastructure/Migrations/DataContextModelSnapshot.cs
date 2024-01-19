@@ -59,6 +59,66 @@ namespace Infrastructure.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Description", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<Guid>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("Descriptions");
+                });
+
             modelBuilder.Entity("Domain.Entities.Genre", b =>
                 {
                     b.Property<Guid>("Id")
@@ -96,7 +156,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("Domain.Entities.LocalizedDescription", b =>
+            modelBuilder.Entity("Domain.Entities.Name", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,39 +179,16 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TitleId");
 
-                    b.ToTable("LocalizedDescriptions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.LocalizedName", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
-
-                    b.Property<Guid>("TitleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TitleId");
-
-                    b.ToTable("LocalizedNames");
+                    b.ToTable("Names");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AuthorId")
@@ -164,6 +201,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("AuthorId");
 
@@ -226,16 +265,54 @@ namespace Infrastructure.Migrations
                     b.ToTable("Series");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subscriptions");
+                });
+
             modelBuilder.Entity("Domain.Entities.Title", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AgeRestriction")
+                        .HasColumnType("int");
+
+                    b.Property<float>("AvarageRate")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Cast")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<int>("Country")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Director")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<Guid>("ImageId")
                         .HasColumnType("uniqueidentifier");
@@ -309,6 +386,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("SubscriptionExpiresIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -325,6 +408,8 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -447,17 +532,35 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Image", b =>
+            modelBuilder.Entity("Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("Domain.Entities.Title", null)
-                        .WithMany("Screenshots")
-                        .HasForeignKey("TitleId");
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Comment", "Parent")
+                        .WithMany("Childs")
+                        .HasForeignKey("ParentId");
+
+                    b.HasOne("Domain.Entities.Title", "Title")
+                        .WithMany("Comments")
+                        .HasForeignKey("TitleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Title");
                 });
 
-            modelBuilder.Entity("Domain.Entities.LocalizedDescription", b =>
+            modelBuilder.Entity("Domain.Entities.Description", b =>
                 {
                     b.HasOne("Domain.Entities.Title", "Title")
-                        .WithMany("LocalizedDescriptions")
+                        .WithMany("Descriptions")
                         .HasForeignKey("TitleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -465,10 +568,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Title");
                 });
 
-            modelBuilder.Entity("Domain.Entities.LocalizedName", b =>
+            modelBuilder.Entity("Domain.Entities.Image", b =>
+                {
+                    b.HasOne("Domain.Entities.Title", null)
+                        .WithMany("Screenshots")
+                        .HasForeignKey("TitleId");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Name", b =>
                 {
                     b.HasOne("Domain.Entities.Title", "Title")
-                        .WithMany("LocalizedNames")
+                        .WithMany("Names")
                         .HasForeignKey("TitleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -478,7 +588,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>
                 {
-                    b.HasOne("Domain.Entities.Account", "Author")
+                    b.HasOne("Domain.Entities.Account", null)
+                        .WithMany("Rates")
+                        .HasForeignKey("AccountId");
+
+                    b.HasOne("Domain.Entities.User", "Author")
                         .WithMany("Rates")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,6 +629,15 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
+                    b.HasOne("Domain.Entities.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -588,17 +711,31 @@ namespace Infrastructure.Migrations
                     b.Navigation("Rates");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Comment", b =>
+                {
+                    b.Navigation("Childs");
+                });
+
             modelBuilder.Entity("Domain.Entities.Title", b =>
                 {
-                    b.Navigation("LocalizedDescriptions");
+                    b.Navigation("Comments");
 
-                    b.Navigation("LocalizedNames");
+                    b.Navigation("Descriptions");
+
+                    b.Navigation("Names");
 
                     b.Navigation("Rates");
 
                     b.Navigation("Screenshots");
 
                     b.Navigation("Series");
+                });
+
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Rates");
                 });
 #pragma warning restore 612, 618
         }

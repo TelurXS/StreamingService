@@ -2,7 +2,6 @@
 using Carter;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
@@ -16,11 +15,13 @@ public class IdentityEndpoints : ICarterModule
         app.MapGet("/for-admin", ForAdminOnly)
             .RequireAuthorization(x => x.RequireRole(Role.Admin));
 
-        app.MapGet("/user", GetUserClaimsAsync)
-            .RequireAuthorization();
-
         app.MapIdentityApi<User>();
-	}
+
+        app.MapPost("/logout", Logout);
+
+        app.MapGet("/user", GetUserClaims)
+            .RequireAuthorization();
+    }
 
     private IResult GetIdentityName(ClaimsPrincipal claims)
     {
@@ -32,9 +33,14 @@ public class IdentityEndpoints : ICarterModule
 		return Results.Ok(claims.Identity!.Name);
 	}
 
-    private IResult GetUserClaimsAsync(HttpContext context)
+    private IResult GetUserClaims(HttpContext context)
     {
         return Results.Ok(context.User.Claims
             .Select(x => KeyValuePair.Create(x.Type, x.Value)));
+    }
+
+    private IResult Logout(HttpContext context)
+    {
+        return Results.SignOut(authenticationSchemes: [IdentityConstants.ApplicationScheme]);
     }
 }

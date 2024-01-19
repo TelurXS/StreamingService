@@ -25,6 +25,8 @@ public sealed class ExceptionHandler : IMiddleware
 
             var response = new
             {
+                Type = e.GetType().Name,
+                Stacktrace = e.StackTrace,
                 Message = e.Message 
             };
 

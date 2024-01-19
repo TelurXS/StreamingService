@@ -1,0 +1,16 @@
+﻿
+.dark-bg-on-mobile {
+    background: none;
+}
+
+.dropdown-menu-lg-center {
+    right: -70px;
+    left: auto;
+}
+
+@media (max-width: 991px) {
+    .dark-bg-on-mobile {
+        background: var(--dark);
+    }
+}
+

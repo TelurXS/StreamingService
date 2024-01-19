@@ -1,0 +1,26 @@
+﻿@page "/logout"
+
+@inject CookieAuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Logout</h3>
+
+@if (Message is not null)
+{
+	<div>@Message</div>
+}
+
+@code {
+	private string? Message { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await AuthenticationStateProvider.LogoutAsync();
+
+		if (result)
+		{
+			Message = "Success";
+		}
+		else Message = "Failed";
+	}
+
+}

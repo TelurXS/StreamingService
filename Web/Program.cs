@@ -1,55 +1,22 @@
-using Domain.Entities;
-using Infrastructure.Extensions;
-using Infrastructure.Persistence;
+using Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Web.Components;
-using Web.Handlers;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Web;
+using Web.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddAuthorizationCore();
 
-builder.Services.AddCascadingAuthenticationState();
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddTransient<IncludeCredentialsMessageHandler>();
-
-builder.Services.AddHttpClient("api", client =>
-    client.BaseAddress = new Uri("https://localhost:7106"))
-    .AddHttpMessageHandler<IncludeCredentialsMessageHandler>();
-
-builder.Services.AddScoped<ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<CookieAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(x => 
-    x.GetRequiredService<ApiAuthenticationStateProvider>());
+	x.GetRequiredService<CookieAuthenticationStateProvider>());
 
-var app = builder.Build();
+builder.Services.AddTransient<IIdentityService, IdentityService>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    app.UseHsts();
-}
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
-app.Run();
+await builder.Build().RunAsync();
