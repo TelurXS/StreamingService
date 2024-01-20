@@ -1,0 +1,90 @@
+﻿@page "/manage/genres"
+@using Domain.Entities
+@layout MinimalisticLayout
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h1 class="text-white mb-2">Manage Genres</h1>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<div class="genre-select-panel mt-3">
+				@foreach (var name in Genres)
+				{
+					if (Selected.Contains(name))
+					{
+						<div @onclick="() => Toggle(name)" class="genre active rounded-corners mt-1 mx-1 font-white font-sm">
+							@name
+						</div>
+					}
+					else
+					{
+						<div @onclick="() => Toggle(name)" class="genre rounded-corners mt-1 mx-1 font-white font-sm">
+							@name
+						</div>
+					}
+				}
+			</div>
+
+			<a @onclick="OnSubmit" class="btn btn-outline-primary rounded-corners w-100 font-gray mt-3">Continue</a>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	private List<string> Genres { get; set; } =
+	[
+		"Biography", "Genre 1",	  "Long Genre",
+		"Battle",	 "Genre 2",	  "Very long Genre",
+		"Military",	 "Genre 3",	  "Extremely Long Genre",
+		"Horror",	 "Genre 4",	  
+		"Action",	 "Genre 5",	  
+		"Western",	 "Genre 6",	  
+		"Anime",	 "Genre 7",	  
+		"Family",	 "Genre 8",	  
+		"Comedy",	 "Genre 9",	  
+		"Drama",	 "Genre 10",  
+		"Sport",	 "Genre 11",  
+		"Triler",	 "Genre 12",  
+		"Fantasy",	 "Genre 13",  
+		"History",	 "Genre 14",  
+		"Film",		 "Genre 15",  
+	];
+
+	private List<string> Selected { get; set; } = [];
+
+	private async Task OnSubmit()
+	{
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo("/manage/subscribtion");
+	}
+
+	private void Toggle(string genre)
+	{
+		if (Selected.Contains(genre))
+		{
+			Selected.Remove(genre);
+			return;
+		}
+
+		Selected.Add(genre);
+	}
+}

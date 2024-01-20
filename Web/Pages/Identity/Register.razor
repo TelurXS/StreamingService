@@ -72,14 +72,12 @@
 
 		var result = await IdentityService.RegisterAsync(request);
 
-		//Message = $"{request.Username} {request.Email} {request.Password}";
-
 		Message = result;
 
-		//if (ReturnUrl is not null)
-		//	NavigationManager.NavigateTo(ReturnUrl);
-		//
-		//else NavigationManager.NavigateToCurrentPage();
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo("/registration-success");
 	}
 
 	private class InputModel

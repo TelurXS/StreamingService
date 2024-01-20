@@ -1,0 +1,82 @@
+﻿@page "/manage/profile"
+@layout MinimalisticLayout
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h1 class="text-white mb-2">Manage Profile</h1>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
+				<DataAnnotationsValidator />
+
+				<div class="row mt-5">
+					<div class="col-6">
+						<InputText @bind-Value="Input.Name" autocomplete="name" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="Name" />
+					</div>
+					<div class="col-6">
+						<InputText @bind-Value="Input.Surname" autocomplete="surname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="Surname" />
+					</div>
+				</div>
+
+				<ValidationMessage For="() => Input.Name" class="text-danger mt-2" />
+				<ValidationMessage For="() => Input.Surname" class="text-danger mt-2" />
+
+				<InputDate @bind-Value="Input.BirthDate" autocomplete="birthDate" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Password" />
+
+				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-4 shadow-primary">Continue</button>
+			</EditForm>
+
+			<div class="mt-5 d-flex flex-column">
+				<label class="font-gray font-md">Have an account?</label>
+				<a href="/login" class="link-primary font-gray link-no-underline font-md">Login</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	private async Task OnSubmit()
+	{
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo("/manage/genres");
+	}
+
+	private class InputModel
+	{
+		[Required]
+		[MaxLength(64)]
+		public string Name { get; set; } = string.Empty;
+
+		[Required]
+		[MaxLength(64)]
+		public string Surname { get; set; } = string.Empty;
+
+		[Required]
+		public DateTime BirthDate { get; set; } = DateTime.Now;
+	}
+}
