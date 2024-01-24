@@ -75,10 +75,9 @@ app.UseCors();
 app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandler>();
 
-app.UseBlazorFrameworkFiles();
-
 app.MapCarter();
 
+app.UseBlazorFrameworkFiles();
 app.MapFallbackToFile("index.html");
 
 app.Run();

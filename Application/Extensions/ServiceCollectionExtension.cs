@@ -19,6 +19,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IRateMapper, RateMapper>();
         services.AddTransient<ISeriesMapper, SeriesMapper>();
         services.AddTransient<ITitleMapper, TitleMapper>();
+        services.AddTransient<IUserMapper, UserMapper>();
         
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
         

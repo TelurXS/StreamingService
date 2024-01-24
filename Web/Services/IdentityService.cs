@@ -1,6 +1,12 @@
-﻿using Domain.Interfaces.Services;
+﻿using Application.Features.Users;
+using Domain.Entities;
+using Domain.Models;
 using Domain.Models.Requests;
+using Domain.Models.Responses;
+using Domain.Models.Results;
+using Domain.Models.Results.Unions;
 using System.Net.Http.Json;
+using Web.Interfaces;
 
 namespace Web.Services;
 
@@ -13,21 +19,115 @@ public sealed class IdentityService : IIdentityService
 
 	private HttpClient Client { get; }
 
-	public async Task<string> RegisterAsync(RegisterRequest request)
+	public async Task<CreateResult<Success>> RegisterAsync(RegisterRequest request)
 	{
-		var response = await Client.PostAsJsonAsync("/register", request);
+		try
+		{
+			var response = await Client.PostAsJsonAsync(ApiRoutes.Register, request);
 
-		if (response.IsSuccessStatusCode)
-			return "Success";
+			if (response.IsSuccessStatusCode)
+				return new Success();
 
-		return await response.Content.ReadAsStringAsync();
+			var validationFailed = await response.Content
+				.ReadFromJsonAsync<ValidationProblemDetails>();
+
+			return new ValidationFailed(validationFailed!.Errors);
+		}
+		catch (Exception ex) 
+		{
+			return new Failed(ex.Message);
+		}
 	}
 
-	public async Task<bool> ConfirmEmailAsync(string userId, string code)
+	public async Task<UpdateResult<Success>> ConfirmEmailAsync(string userId, string code)
 	{
-		var response = await Client
-			.GetAsync($"/confirmEmail?userId={userId}&code={code}");
+		try
+		{
+			var response = await Client
+				.GetAsync($"{ApiRoutes.ConfirmEmail}?userId={userId}&code={code}");
 
-		return response.IsSuccessStatusCode;
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new ValidationFailed();
+		}
+		catch (Exception ex) 
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<GetAllResult<Genre>> GetFavouriteGenresAsync()
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Manage.Genres);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<Genre>>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> SetFavouriteGenresAsync(SetFavouriteGenresToUser.Request request)
+	{
+		try
+		{
+			var response = await Client
+				.PostAsJsonAsync(ApiRoutes.Manage.Genres, request);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<GetResult<UserResponse>> GetProfileAsync()
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Manage.Profile);
+
+			if (response.IsSuccessStatusCode)
+				return (await response.Content.ReadFromJsonAsync<UserResponse>())!;
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> UpdateProfileAsync(UpdateUserProfile.Request request)
+	{
+		try
+		{
+			var response = await Client.PostAsJsonAsync(ApiRoutes.Manage.Profile, request);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			var validationFailed = await response.Content
+				.ReadFromJsonAsync<ValidationFailed>();
+
+			return validationFailed;
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
 	}
 }

@@ -31,6 +31,4 @@ public sealed class Account
     /// Hashed account password
     /// </summary>
     public required string Password { get; set; }
-    
-    public ICollection<Rate> Rates { get; set; } = default!;
 }

@@ -1,5 +1,7 @@
-﻿@page "/manage/profile"
+﻿@attribute [Route(WebRoutes.Manage.Profile)]
 @layout MinimalisticLayout
+
+@using Application.Features.Users
 
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
@@ -12,9 +14,14 @@
 
 			<h1 class="text-white mb-2">Manage Profile</h1>
 
-			@if (Message is not null)
+			@if (Messages.Any())
 			{
-				<div>@Message</div>
+				<ul>
+					@foreach (var message in Messages)
+					{
+						<li class="text-danger">@message</li>
+					}
+				</ul>
 			}
 
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
@@ -50,7 +57,7 @@
 
 @code {
 
-	private string? Message { get; set; }
+	private List<string> Messages { get; set; } = new();
 
 	[SupplyParameterFromQuery]
 	private string? ReturnUrl { get; set; }
@@ -58,12 +65,49 @@
 	[SupplyParameterFromForm]
 	private InputModel Input { get; set; } = new();
 
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.GetProfileAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		var profile = result.AsFound;
+
+		Input.Name = profile.Name ?? string.Empty;
+		Input.Surname = profile.Surname ?? string.Empty;
+		Input.BirthDate = profile.BirthDate;
+	}
+
 	private async Task OnSubmit()
 	{
+		var request = new UpdateUserProfile.Request
+		{
+			Name = Input.Name,
+			Surname = Input.Surname,
+			BirthDate = Input.BirthDate,
+		};
+
+		var result = await IdentityService.UpdateProfileAsync(request);
+
+		if (result.IsValidationFailed)
+		{
+			var failures = result.AsValidationFailed.Errors;
+			Messages = failures.Select(x => x.ErrorMessage).ToList();
+			return;
+		}
+
+		if (result.IsFailed)
+		{
+			var failures = result.AsFailed.Errors;
+			Messages = failures.ToList();
+			return;
+		}
+
 		if (ReturnUrl is not null)
 			NavigationManager.NavigateTo(ReturnUrl);
 
-		else NavigationManager.NavigateTo("/manage/genres");
+		else NavigationManager.NavigateTo(WebRoutes.Manage.Genres);
 	}
 
 	private class InputModel

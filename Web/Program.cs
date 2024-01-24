@@ -1,8 +1,8 @@
-using Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Web;
+using Web.Interfaces;
 using Web.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

@@ -80,4 +80,14 @@ public sealed class GenreService : IGenreService
 
         return result;
     }
+
+	public GetResult<Genre> FindByNameWithTracking(string name)
+	{
+		var result = Repository.FindByNameWithTracking(name);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
 }

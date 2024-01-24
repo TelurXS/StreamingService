@@ -9,7 +9,14 @@ namespace Domain.Models.Results;
 /// </summary>
 public sealed class ValidationFailed : IResult
 {
-    public ValidationFailed(IEnumerable<ValidationFailure> errors)
+	public ValidationFailed(IDictionary<string, string[]> errors)
+	{
+		Errors = errors
+            .Select(x => 
+            new ValidationFailure(x.Key, x.Value.FirstOrDefault()));
+	}
+
+	public ValidationFailed(IEnumerable<ValidationFailure> errors)
     {
         Errors = errors;
     }

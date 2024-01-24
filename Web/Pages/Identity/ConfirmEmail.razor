@@ -1,4 +1,4 @@
-﻿@page "/confirm-email"
+﻿@attribute [Route(WebRoutes.ConfirmEmail)]
 @layout MinimalisticLayout
 
 @inject NavigationManager NavigationManager
@@ -23,7 +23,7 @@
 
 				<p>To continue, log in to your account using the link below</p>
 
-				<a href="/login?returnUrl=/manage/profile?returnUrl=/manage/genres" class="btn btn-outline-primary rounded-corners w-100 font-gray">Login</a>
+				<a href="@WebRoutes.Login?returnUrl=@WebRoutes.Manage.Profile" class="btn btn-outline-primary rounded-corners w-100 font-gray">Login</a>
 			}
 
 		</div>
@@ -52,7 +52,7 @@
 
 		var result = await IdentityService.ConfirmEmailAsync(UserId, Code);
 
-		if (result is false)
+		if (result.IsFailed)
 		{
 			Message = "Oops! Something went wrong while processing your request";
 			return;

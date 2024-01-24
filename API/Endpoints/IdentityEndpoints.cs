@@ -1,46 +1,142 @@
-﻿using System.Security.Claims;
+﻿using System.Net.Mime;
+using System.Security.Claims;
+using API.Extensions;
+using Application.Features.Users;
 using Carter;
 using Domain.Entities;
+using Domain.Models;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
-public class IdentityEndpoints : ICarterModule
+public class IdentityEndpoints : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public IdentityEndpoints()
     {
-        app.MapGet("/identity", GetIdentityName)
-            .RequireAuthorization();
-
-        app.MapGet("/for-admin", ForAdminOnly)
-            .RequireAuthorization(x => x.RequireRole(Role.Admin));
-
-        app.MapIdentityApi<User>();
-
-        app.MapPost("/logout", Logout);
-
-        app.MapGet("/user", GetUserClaims)
-            .RequireAuthorization();
     }
 
-    private IResult GetIdentityName(ClaimsPrincipal claims)
+    public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        return Results.Ok(claims.Identity!.Name);
-    }
+		app.MapGroup(ApiRoutes.Base).MapIdentityApi<User>();
 
-	private IResult ForAdminOnly(ClaimsPrincipal claims)
-	{
-		return Results.Ok(claims.Identity!.Name);
+		app.MapPost(ApiRoutes.Logout, Logout)
+            .RequireAuthorization();
+
+		app.MapGet(ApiRoutes.User, GetUserClaims)
+            .RequireAuthorization();
+
+		app.MapGet(ApiRoutes.Manage.Profile, GetUserProfileAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.Manage.Profile, UpdateUserProfileAsync)
+			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.Manage.Genres, GetGenresFromUserAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.Manage.Genres, SetGenresToUserAsync)
+            .RequireAuthorization();
 	}
 
-    private IResult GetUserClaims(HttpContext context)
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	private static IResult GetUserClaims(HttpContext context)
     {
         return Results.Ok(context.User.Claims
             .Select(x => KeyValuePair.Create(x.Type, x.Value)));
     }
 
-    private IResult Logout(HttpContext context)
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	private static IResult Logout(HttpContext context)
     {
         return Results.SignOut(authenticationSchemes: [IdentityConstants.ApplicationScheme]);
     }
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetUserProfileAsync(
+	[FromServices] IMediator mediator,
+	ClaimsPrincipal claims)
+	{
+		var request = new GetUserById.Request
+		{
+			Id = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			user => Results.Ok(user),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest());
+	}
+
+	[Consumes(MediaTypeNames.Application.Json)]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> UpdateUserProfileAsync(
+		[FromBody] UpdateUserProfile.Request request,
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		request.Id = claims.GetIdentifier();
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest());
+	}
+
+	[Consumes(MediaTypeNames.Application.Json)]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> SetGenresToUserAsync(
+        [FromBody] SetFavouriteGenresToUser.Request request,
+        [FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+    {
+        request.UserId = claims.GetIdentifier();
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            success => Results.Ok(),
+            notFound => Results.NotFound(),
+            invalid => Results.BadRequest(),
+            failed => Results.BadRequest());
+    }
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetGenresFromUserAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		var request = new GetFavouriteGenresFromUser.Request
+		{
+			UserId = claims.GetIdentifier(),
+		};
+		
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			genres => Results.Ok(genres),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest());
+	}
+
 }

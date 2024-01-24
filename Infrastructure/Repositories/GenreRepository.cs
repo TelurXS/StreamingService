@@ -50,11 +50,18 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
         return result > 0;
     }
 
-    public Genre? FindByName(string Name)
+    public Genre? FindByName(string name)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Titles)
-            .FirstOrDefault(x => x.Name == Name);
+            .FirstOrDefault(x => x.Name == name);
     }
+
+	public Genre? FindByNameWithTracking(string name)
+	{
+		return Entities
+			.Include(x => x.Titles)
+			.FirstOrDefault(x => x.Name == name);
+	}
 }

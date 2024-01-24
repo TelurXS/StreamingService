@@ -16,23 +16,27 @@ public static class ServiceCollectionExtension
         services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("Default")));
 
-        services.AddTransient<IAccountRepository, AccountRepository>();
-        services.AddTransient<IDescriptionRepository, DescriptionRepository>();
-        services.AddTransient<IGenreRepository, GenreRepository>();
-        services.AddTransient<IImageRepository, ImageRepository>();
-        services.AddTransient<INameRepository, NameRepository>();
-        services.AddTransient<IRateRepository, RateRepository>();
-        services.AddTransient<ISeriesRepository, SeriesRepository>();
-        services.AddTransient<ITitleRepository, TitleRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IDescriptionRepository, DescriptionRepository>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IImageRepository, ImageRepository>();
+        services.AddScoped<INameRepository, NameRepository>();
+        services.AddScoped<IRateRepository, RateRepository>();
+        services.AddScoped<ISeriesRepository, SeriesRepository>();
+        services.AddScoped<ITitleRepository, TitleRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddTransient<IAccountService, AccountService>();
-        services.AddTransient<IDescriptionService, DescriptionService>();
-        services.AddTransient<IGenreService, GenreService>();
-        services.AddTransient<IImageService, ImageService>();
-        services.AddTransient<INameService, NameService>();
-        services.AddTransient<IRateService, RateService>();
-        services.AddTransient<ISeriesService, SeriesService>();
-        services.AddTransient<ITitleService, TitleService>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IDescriptionService, DescriptionService>();
+        services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<INameService, NameService>();
+        services.AddScoped<IRateService, RateService>();
+        services.AddScoped<ISeriesService, SeriesService>();
+        services.AddScoped<ITitleService, TitleService>();
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

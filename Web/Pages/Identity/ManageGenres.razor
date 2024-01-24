@@ -1,6 +1,8 @@
-﻿@page "/manage/genres"
-@using Domain.Entities
+﻿@attribute [Route(WebRoutes.Manage.Genres)]
 @layout MinimalisticLayout
+
+@using Application.Features.Users
+@using Domain.Entities
 
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
@@ -69,12 +71,37 @@
 
 	private List<string> Selected { get; set; } = [];
 
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.GetFavouriteGenresAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		Selected = result.AsFound.Select(x => x.Name).ToList();
+
+		StateHasChanged();
+	}
+
 	private async Task OnSubmit()
 	{
+		var request = new SetFavouriteGenresToUser.Request
+			{
+				Genres = Selected,
+			};
+
+		var result = await IdentityService.SetFavouriteGenresAsync(request);
+
+		if (result.IsFailed)
+		{
+			Message = "Something went wrong while processing your request";
+			return;
+		}
+
 		if (ReturnUrl is not null)
 			NavigationManager.NavigateTo(ReturnUrl);
 
-		else NavigationManager.NavigateTo("/manage/subscribtion");
+		else NavigationManager.NavigateTo(WebRoutes.Manage.Subscription);
 	}
 
 	private void Toggle(string genre)
