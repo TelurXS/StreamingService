@@ -1,0 +1,62 @@
+﻿@attribute [Route(WebRoutes.Manage.Subscription)]
+@layout MinimalisticLayout
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<RequireAuthorization />
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h2 class="mb-2">Manage Subscription</h2>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<div class="subscription-select-panel">
+				<div class="subscription-card">
+					<h4>Trial</h4>
+					<span class="font-body">7 days free </span>
+				</div>
+
+				<div class="subscription-card">
+					<h4>Base Plan</h4>
+					<span class="font-body">6.99$ / month</span>
+				</div>
+
+				<div class="subscription-card">
+					<h4>Premium Plan</h4>
+					<span class="font-body">14.99$ / month</span>
+					<ul class="font-sm mt-1">
+						<li>Необмежений доступ до обраного контенту. Ексклюзивні акції та знижки для абонентів.</li>
+						<li>Спільний перегляд в реальному часі з однією особою, використовуючи відео та аудіо дзвінки.</li>
+						<li>Ексклюзивні акції та знижки для абонентів.</li>
+					</ul>
+				</div>
+			</div>
+
+			<button @onclick="OnSubmit" class="button font-btn mt-3">Continue</button>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	private async Task OnSubmit()
+	{
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo(WebRoutes.RegistrationSuccess);
+	}
+}

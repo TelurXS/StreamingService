@@ -1,0 +1,54 @@
+﻿
+.player {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: var(--dark);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.video {
+    width: 100%;
+
+}
+
+.player-controls {
+    position: relative;
+    bottom: 80px;
+    height: 80px;
+    width: 100%;
+    background-color: var(--glass-secondary);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls-progress {
+    height: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playback-time {
+    margin: 0px 10px;
+}
+
+.player-progress {
+    width: 100%;
+}
+
+.player-progress::-webkit-progress-bar {
+    height: 5px;
+    background-color: var(--primary)
+}
+
+.player-progress::-webkit-progress-value {
+    /* style rules */
+}

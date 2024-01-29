@@ -8,6 +8,8 @@ public static class WebRoutes
 
 	public const string Register = "/register";
 
+	public const string ConfirmationSent = "/confirmation-sent";
+
 	public const string RegistrationSuccess = "/registration-success";
 
 	public const string Login = "/login";
@@ -25,5 +27,12 @@ public static class WebRoutes
 		public const string Genres = GroupName + "/genres";
 
 		public const string Subscription = GroupName + "/subscription";
+	}
+
+	public static class Titles
+	{
+		public const string Base = "/titles";
+
+		public const string Title = "/titles/{id}";
 	}
 }

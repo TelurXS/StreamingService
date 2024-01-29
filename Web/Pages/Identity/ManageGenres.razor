@@ -7,13 +7,14 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
+<RequireAuthorization />
 <Background />
 
 <div class="row g-3 align-items-center justify-content-center">
 	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
 		<div class="card-body">
 
-			<h1 class="text-white mb-2">Manage Genres</h1>
+			<h2 class="mb-2">Manage Genres</h2>
 
 			@if (Message is not null)
 			{
@@ -38,7 +39,7 @@
 				}
 			</div>
 
-			<a @onclick="OnSubmit" class="btn btn-outline-primary rounded-corners w-100 font-gray mt-3">Continue</a>
+			<button @onclick="OnSubmit" class="button font-btn mt-3">Continue</button>
 		</div>
 	</div>
 </div>

@@ -10,7 +10,7 @@
 	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
 		<div class="card-body">
 
-			<h2 class="text-white mb-2">Email Confirmation</h2>
+			<h2 class="mb-2">Email Confirmation</h2>
 
 			@if (Message is not null)
 			{
@@ -23,7 +23,7 @@
 
 				<p>To continue, log in to your account using the link below</p>
 
-				<a href="@WebRoutes.Login?returnUrl=@WebRoutes.Manage.Profile" class="btn btn-outline-primary rounded-corners w-100 font-gray">Login</a>
+				<a href="@WebRoutes.Login?returnUrl=@WebRoutes.Manage.Profile" class="button font-btn mt-3">Login</a>
 			}
 
 		</div>

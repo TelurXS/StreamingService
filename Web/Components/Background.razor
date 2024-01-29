@@ -1,2 +1,10 @@
 ﻿
-<div class="background"></div>
+<div class="background" style="background-image: url(@Url); filter: blur(@(Blur)px);"></div>
+
+@code {
+	[Parameter]
+	public string Url { get; set; } = "/img/background.png";
+
+	[Parameter]
+	public int Blur { get; set; } = 3;
+}

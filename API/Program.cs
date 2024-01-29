@@ -8,6 +8,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using API.Services;
+using Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

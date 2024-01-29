@@ -1,8 +1,6 @@
 ﻿
 .background {
     opacity: 0.4;
-    background: url("/img/background.png");
-    filter: blur(2.5px);
     position: absolute;
     top: 0;
     left: 0;
@@ -11,6 +9,7 @@
     margin: 0;
     padding: 0;
     z-index: -1;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }

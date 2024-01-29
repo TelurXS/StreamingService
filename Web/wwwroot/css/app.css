@@ -4,26 +4,17 @@ html, body {
 
 }
 
-:root {
-    --primary: #0042E2;
-    --primary-light: #5B8BFF;
-    --dark: #080808;
-    --light: #D4D4D4;
-    --gray: #D4D4D4;
-    --white: #FFFFFF;
-    --bs-dark: #080808;
-}
-
-@font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-VariableFont_slnt,wght.ttf")
-}
-
 * {
-    font-family: "Inter";
-    font-weight: 500;
-    color: var(--white);
     z-index: 3;
+}
+
+:root {
+    --swiper-pagination-bullet-width: 20px;
+    --swiper-pagination-bullet-height: 5px;
+    --swiper-pagination-bullet-border-radius: 3px;
+    --swiper-pagination-color: var(--primary);
+    --swiper-pagination-bullet-inactive-color: #4B4B4B;
+    --bs-primary: var(--primary)
 }
 
 input:-webkit-autofill,
@@ -125,6 +116,7 @@ input {
 
 ::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -138,8 +130,7 @@ input {
 
 ::-webkit-scrollbar-track {
     background: var(--primary);
-    border-left: 3px solid transparent;
-    border-right: 3px solid transparent;
+    border: 3px solid transparent;
     background-clip: padding-box;
 }
 
@@ -194,22 +185,6 @@ input::placeholder {
 
 .bg-none {
     background-color: transparent !important;
-}
-
-.font-gray {
-    color: var(--gray) !important;
-}
-
-.font-white {
-    color: var(--white) !important;
-}
-
-.font-sm {
-    font-size: 14px;
-}
-
-.font-md {
-    font-size: 16px;
 }
 
 .btn-primary {

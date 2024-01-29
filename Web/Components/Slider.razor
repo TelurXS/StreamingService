@@ -1,0 +1,46 @@
+﻿@using Domain.Entities
+
+@inject IJSRuntime JS
+
+<div class="swiper-@Id swiper">
+	<div class="swiper-pagination-@Id swiper-pagination swiper-pagination-top"></div>
+	
+	<a href="@Href" class="text-decoration-none">
+		<h4 class="slider-header">
+			@Header
+		</h4>
+	</a>
+
+	<div class="swiper-wrapper swiper-card">
+		@foreach (var title in Titles)
+		{
+			<div class="swiper-slide">
+				<TitleCard Title="title" />
+			</div>
+		}
+	</div>
+
+	<div class="swiper-button-prev-@Id swiper-button-prev button-prev"></div>
+	<div class="swiper-button-next-@Id swiper-button-next button-next"></div>
+</div>
+
+
+@code {
+
+	private string Id = Guid.NewGuid().ToString();
+
+	[Parameter]
+	public string Header { get; set; } = string.Empty;
+
+	[Parameter]
+	public string Href { get; set; } = WebRoutes.Home;
+
+	[Parameter]
+	public List<Title> Titles { get; set; } = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+			await JS.InvokeVoidAsync("initializeSwiper", Id);
+	}
+}

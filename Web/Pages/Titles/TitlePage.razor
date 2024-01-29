@@ -1,0 +1,248 @@
+﻿@attribute [Route(WebRoutes.Titles.Title)]
+
+@using Domain.Entities
+@using Domain.Extensions
+@using System.Collections
+
+<Background Blur="15" Url="@Title.Image.Uri" />
+
+
+<div class="d-flex align-items-center">
+	<a href="@WebRoutes.Home" class="font-sm font-gray page-link">Home</a>
+	<span class="mx-2 font-gray"> > </span>
+	@Title.Name
+</div>
+
+<div class="row mt-3 mb-5">
+	<div class="col-md-4">
+		<img class="img-fluid rounded-corners" src="@Title.Image.Uri" />
+		<a href="@Title.Image.Uri" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+	</div>
+
+	<div class="col-md-8">
+		<span class="font-sm font-gray">Series</span>
+		<h1>@Title.Name</h1>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Raiting:</div>
+			<div class="col-sm-9 font-gray">@Title.AvarageRate</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Release Date:</div>
+			<div class="col-sm-9 font-gray">@Title.ReleaseDate.ToShortDateString()</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Country:</div>
+			<div class="col-sm-9 font-gray">@Title.Country.GetDescription()</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Genres:</div>
+			<div class="col-sm-9 font-gray">@string.Join(", ", Title.Genres.Select(x => x.Name))</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Director:</div>
+			<div class="col-sm-9 font-gray">@Title.Director</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Cast:</div>
+			<div class="col-sm-9 font-gray">@Title.Cast</div>
+		</div>
+
+		<div class="row mt-2">
+			<div class="col-sm-3">Age:</div>
+			<div class="col-sm-9 font-gray">@Title.AgeRestriction.GetDescription()</div>
+		</div>
+
+		<div class="d-flex mt-2 screenshot-panel">
+			@foreach (var screenshot in Title.Screenshots)
+			{
+				<img src="@screenshot.Uri" class="screenshot" />
+			}
+		</div>
+	</div>
+</div>
+
+<div>
+	<h3>What is the "@Title.Name" about:</h3>
+	<p class="font-gray mt-3">@Title.Description</p>
+</div>
+
+<div class="mt-5">
+	<h4>Watch:</h4>
+</div>
+
+<div class="mt-3 row align-items-center">
+	<span class="font-lg col-md-2">Rate Title:</span>
+	<div class="col-md-10">
+		@foreach (var i in Enumerable.Range(1, 10))
+		{
+			if (i > Rate.Value)
+			{
+				<i @onclick="() => SetRate(i)" class=" star bi bi-star"></i>
+			}
+			else
+			{
+				<i @onclick="() => SetRate(i)" class="star bi bi-star-fill"></i>
+			}
+		}
+		<span class="font-lg mx-3">@Rate.Value / 10</span>
+	</div>
+</div>
+
+<div class="mt-3">
+	<Slider Header="Recomendations" Titles="Recomendations" />
+</div>
+
+<div class="mt-3">
+	<h3>Comments:</h3>
+
+	<div class="mt-2">
+
+		@if (Input.Parent is not null)
+		{
+			<div class="mt-3 mx-2">
+				<a href="/titles/@Id#comment-@Input.Parent.Id" class="font-gray">
+					<i class="bi bi-reply-fill"></i>
+					Replying to @Input.Parent.Author.UserName
+				</a>
+				<a @onclick="() => Input.Parent = null">
+					<i class="bi bi-x-lg"></i>
+				</a>
+			</div>
+		}
+
+		<EditForm Model="Input" OnValidSubmit="SendCommentAsync">
+			<div class="row">
+				<div class="col-md-10 col-sm-8">
+					<InputTextArea @bind-Value="Input.Content" class="form-control rounded-corners back-dark border-primary font-sm font-gray" />
+				</div>
+				<div class="col-md-2 col-sm-4 mt-2">
+					<button class="button">Send</button>
+				</div>
+			</div>
+		</EditForm>
+	</div>
+
+	<div class="d-flex flex-column">
+		@foreach (var comment in Title.Comments.OrderByDescending(x => x.CreationDate))
+		{
+			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
+				<img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+
+				<div class="w-100">
+					<div class="d-flex justify-content-between">
+						<span class="font-sm font-white">@comment.Author.UserName</span>
+						<span class="font-sm font-gray">created: @comment.CreationDate.ToShortDateString()</span>
+					</div>
+
+					@comment.Content
+
+					<div class="d-flex justify-content-between">
+						<a class="font-sm font-gray" @onclick="() => Input.Parent = comment">
+							Reply <i class="bi bi-reply-fill"></i>
+						</a>
+						<span class="font-sm font-gray">7 <i class="bi bi-heart"></i></span>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+<div class="mt-5"></div>
+
+@code {
+	[Parameter]
+	public string Id { get; set; } = default!;
+
+	private InputModel Input { get; set; } = new();
+
+	public Title Title { get; set; } = new()
+		{
+			Name = "Гра в кальмара",
+			Description = "47-річний Сон Гі-Хун, залежний від азартних ігор, живе на доходи своєї хворої матері. Через його пристрасть до азартних ігор і невимушене ставлення до грошей він опинився у фінансовій ямі, і не може отримати опіку над своєю донькою Га-Єн. Коли кредитори погрожують Сону фізичною розправою, якщо чоловік не поверне гроші до кінця місяця, загадковий незнайомець пропонує йому взяти участь у секретній грі на виживання. 456 учасникам доведеться вести боротьбу за солідний грошовий приз, граючи в дитячі ігри...",
+			Slug = "squid-game",
+			ReleaseDate = DateTime.Now,
+			Director = "Хван Дон-хьок",
+			Country = Country.KR,
+			Cast = "Ли Джон-джэ, Пак Хэ-су, О Ён-су, Чон Хо-ён, Хо Сон-тхэ, Анупам Трипати, Ким Джу Рён, Ви Ха-джун, Ю Сон-джу, Ли Ю-мия та інші",
+			AvarageRate = 9.9f,
+			AgeRestriction = AgeRestriction.AdultsOnly,
+			Genres = [new Genre { Name = "Thriller" }, new Genre { Name = "Drama" }, new Genre { Name = "Detective" },],
+			Image = new Image { Uri = "https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg" },
+			Screenshots = [
+					new Image { Uri = "https://images.adsttc.com/media/images/615b/95a6/1248/3401/6477/b911/newsletter/https-hypebeasom-image-2021-10-squid-game-director-decade-to-pitch-bizarre-series-interview-korea-times-1.jpg?1633392045" },
+				new Image { Uri = "https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg" },
+				new Image { Uri = "https://themidult.com/wp-content/uploads/2021/11/Squid-Game-_-Date-Announcement-_-Netflix-0-19-screenshot-1155x770-1.png" },
+				new Image { Uri = "https://hips.hearstapps.com/hmg-prod/images/squid-game-1632309278.jpg?crop=1.00xw:0.755xh;0,0&resize=1200:*" },
+				new Image { Uri = "https://www.nme.com/wp-content/uploads/2021/09/squid-game-netflix-stills-2021.jpeg" },
+				new Image { Uri = "https://im.indiatimes.in/content/2021/Oct/Screenshot_20210925-130133-1_615d8895654c9.jpg?w=725&h=360" },
+			],
+			Comments = [
+					new Comment
+					{
+						Id = Guid.NewGuid(),
+						Author = new()
+						{
+							Id = Guid.NewGuid(),
+							UserName = "Kriko",
+						},
+						Content = "Wow! That was pretty cool!",
+						CreationDate = DateTime.Now
+					},
+				new Comment
+				{
+					Id = Guid.NewGuid(),
+					Author = new()
+					{
+						Id = Guid.NewGuid(),
+						UserName = "Kawasaki",
+					},
+					Content = "Wow! That was pretty cool!",
+					CreationDate = DateTime.Now
+				},
+			],
+		};
+
+	public List<Title> Recomendations { get; set; } = new();
+
+	public Rate Rate = new Rate { Value = 8 };
+
+	protected override async Task OnInitializedAsync()
+	{
+		Recomendations = [Title, Title, Title, Title];
+	}
+
+	private void SetRate(int value)
+	{
+		Rate.Value = value;
+	}
+
+	private async Task SendCommentAsync()
+	{
+		var comment = new Comment
+			{
+				Content = Input.Content,
+				CreationDate = DateTime.Now,
+				Author = new()
+				{
+					Id = Guid.NewGuid(),
+					UserName = "Kawasaki",
+				},
+			};
+
+		Title.Comments.Add(comment);
+	}
+
+	private class InputModel
+	{
+		public Comment? Parent { get; set; } = default;
+
+		public string Content { get; set; } = string.Empty;
+	}
+}

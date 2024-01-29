@@ -1,0 +1,253 @@
+﻿
+:root {
+    --primary: #0044E9;
+    --primary-light: #5B8BFF;
+    --dark: #080808;
+    --light: #D4D4D4;
+    --gray: #D4D4D4;
+    --white: #FFFFFF;
+    --stroke: #4545451A;
+    --glass: #1F1F1F1A;
+    --gray-glass: #A4A4A41A;
+    --secondary-glass: rgba(0, 0, 0, 0.40);
+    --button-hover: rgba(0, 68, 233, 0.80);
+
+    --border-radius: 20px;
+}
+
+@font-face {
+    font-family: Inter;
+    src: url("/fonts/Inter-VariableFont_slnt,wght.ttf")
+}
+
+* {
+    font-family: Inter;
+    font-weight: 500;
+    color: var(--white);
+}
+
+.font-gray {
+    color: var(--gray) !important;
+}
+
+.font-white {
+    color: var(--white) !important;
+}
+
+.font-sm {
+    font-size: 14px;
+}
+
+.font-md {
+    font-size: 16px;
+}
+
+.font-lg {
+    font-size: 18px;
+}
+
+h1, h2, h3, h4 {
+    line-height: 130%;
+    font-style: normal;
+}
+
+h1, h2, h3, h4, .font-menu, .font-btn, .font-body, .font-input {
+    color: var(--white);
+    margin: 0;
+}
+
+h1 {
+    font-size: 60px;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 40px;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+h4 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.font-menu {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.font-btn {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.font-body {
+    font-size: 16px;
+}
+
+.font-input {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.button, .button-glass {
+    min-height: 40px;
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+}
+
+.button {  
+    border: none;
+    background: var(--primary);
+}
+    .button:hover {
+        background: var(--button-hover);
+        backdrop-filter: blur(5px);
+    }
+
+.button-glass {
+    border: 1px solid var(--stroke);
+    background: var(--stroke);
+}
+
+    .button-glass:hover {
+        background: var(--dark);
+        backdrop-filter: blur(10px);
+    }
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media (max-width: 1440px) {
+    h1 {
+        font-size: 50px;
+        font-weight: 800;
+    }
+
+    h2 {
+        font-size: 34px;
+        font-weight: 700;
+    }
+
+    h3 {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    h4 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .font-menu {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .font-btn {
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .font-body {
+        font-size: 14px;
+    }
+
+    .font-input {
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+@media (max-width: 744px) {
+    h1 {
+        font-size: 42px;
+        font-weight: 800;
+    }
+
+    h2 {
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    h3 {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    h4 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .font-menu {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .font-btn {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .font-body {
+        font-size: 14px;
+    }
+
+    .font-input {
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+@media (max-width: 360px) {
+    h1 {
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    h4 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .font-menu {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .font-btn {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .font-body {
+        font-size: 12px;
+    }
+
+    .font-input {
+        font-size: 12px;
+        font-weight: 400;
+    }
+}
