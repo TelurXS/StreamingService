@@ -8,7 +8,7 @@
             <i class="bi bi-list"></i>
         </button>
         <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
-            <ul class="navbar-nav mb-2 mb-lg-0 m-auto">
+            <ul class="navbar-nav m-auto">
                 <li class="nav-item mx-3">
                     <a href="/" class="nav-link font-white font-sm">Home</a>
                 </li>
@@ -28,19 +28,6 @@
                     <a href="/" class="nav-link font-white font-sm">Watch via languages</a>
                 </li>
             </ul>
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item dropdown mx-3">
-                    <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-lg-center">
-                        <li><a class="dropdown-item" href="#">Account</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Log Out</a></li>
-                    </ul>
-                </li>
-            </ul>
             <form class="d-flex" role="search">
                 @{
                     //<input class="form-control me-2 form-control rounded-corners back-dark border-primary font-sm font-gray" type="search" placeholder="Search" aria-label="Search">
@@ -50,6 +37,28 @@
                     <i class="bi bi-search"></i>
                 </button>
             </form>
+            <AuthorizeView>
+                <Authorized>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item dropdown mx-3">
+                            <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @context.User.Identity?.Name!
+                                <img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-lg-end">
+                                <li><a class="dropdown-item" href="#">Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">My Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Log Out</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="button font-white font-sm" style="width: 100px">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+     
         </div>
     </div>
 </nav>

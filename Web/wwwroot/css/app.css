@@ -216,12 +216,6 @@ input::placeholder {
     align-items: center;
 }
 
-@media(min-height: 1080px) {
-    .page-container {
-        min-height: 1080px;
-    }
-}
-
 .page {
     position: relative;
     display: flex;
@@ -239,5 +233,11 @@ main {
 @media (max-width: 400px) {
     .card-form {
         width: 100%;
+    }
+}
+
+@media(min-height: 1080px) {
+    .page-container {
+        min-height: 1080px;
     }
 }

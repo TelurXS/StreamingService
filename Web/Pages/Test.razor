@@ -4,9 +4,32 @@
 
 <Background />
 
-<VideoPlayer/>
+<VideoPlayer Series="Series"/>
+
+<div class="mt-5 mb-5"></div>
 
 @code {
 
-	
+	private List<Series> Series { get; set; } = [
+		new Series()
+		{
+			Name = "Ep. 1 Ghost Of Me",
+			Uri = "/video/Ghost Of Me.mp4",
+		},
+		new Series()
+		{
+			Name = "Ep. 2 Death by a Thousand Cuts",
+			Uri = "/video/Death by a Thousand Cuts.mp4",
+		},
+		new Series()
+		{
+			Name = "Ep. 3 Keeping Secrets",
+			Uri = "/video/Keeping Secrets.mp4",
+		},
+		new Series()
+		{
+			Name = "Ep. 4 The Fail of Cats",
+			Uri = "/video/Funny Cat Fails.mp4",
+		},
+	];
 }

@@ -1,5 +1,6 @@
 ﻿
 .footer {
+    border: 2px solid var(--stroke);
     min-height: 250px;
     background-color: var(--dark);
 }
