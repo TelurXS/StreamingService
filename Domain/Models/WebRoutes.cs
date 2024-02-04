@@ -33,6 +33,6 @@ public static class WebRoutes
 	{
 		public const string Base = "/titles";
 
-		public const string Title = "/titles/{id}";
+		public const string Title = "/titles/{slug}";
 	}
 }

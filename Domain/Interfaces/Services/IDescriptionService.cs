@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Services;
 
-public interface IDescriptionService : IEntityService<Description>
+public interface IDescriptionService : IWebService<Description>
 {
     
 }

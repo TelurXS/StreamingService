@@ -27,4 +27,23 @@ public static class ApiRoutes
 		public const string Genres = Base + GroupName + "/genres";
 	}
 
+    public static class Titles
+    {
+		public const string GroupName = "/titles";
+		
+        public const string Route = Base + GroupName;
+
+		public const string All = Base + GroupName;
+
+        public const string ById = Base + GroupName + "/{id}";
+
+        public const string BySlug = Base + GroupName + "/{slug}";
+	}
+
+	public static class Comments
+	{
+		public const string GroupName = "/comments";
+
+		public const string CreateForTitle = Base + GroupName + "/{titleId}";
+	}
 }

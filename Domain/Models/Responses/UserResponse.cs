@@ -2,7 +2,7 @@
 
 public sealed class UserResponse
 {
-	public Guid Id { get; set; }
+	public Guid Id { get; set; } = default;
 
 	public string Email { get; set; } = string.Empty;
 
@@ -14,5 +14,7 @@ public sealed class UserResponse
 
 	public string Surname { get; set; } = string.Empty;
 
-	public DateTime BirthDate { get; set; }
+	public string ProfileImage { get; set; } = string.Empty;
+
+	public DateTime BirthDate { get; set; } = default;
 }

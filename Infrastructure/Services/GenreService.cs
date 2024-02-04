@@ -25,15 +25,55 @@ public sealed class GenreService : IGenreService
         return result;
     }
 
-    public GetAllResult<Genre> FindAll()
+	public GetResult<Genre> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Genre> FindByName(string name)
+	{
+		var result = Repository.FindByName(name);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Genre> FindByNameWithTracking(string name)
+	{
+		var result = Repository.FindByNameWithTracking(name);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Genre> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Genre> Create(Genre value)
+	public GetAllResult<Genre> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Genre> Create(Genre value)
     {
-        return Repository.Insert(value);
-    }
+        var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Genre> Update(Guid id, Genre value)
     {
@@ -49,9 +89,19 @@ public sealed class GenreService : IGenreService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Genre value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var result = Repository.FindById(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return Delete(result);
+	}
+
+	public DeleteResult Delete(Genre value)
     {
         var result = Repository.Delete(value);
 
@@ -60,34 +110,4 @@ public sealed class GenreService : IGenreService
 
         return new Success();
     }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var result = Repository.FindById(id);
-
-        if (result is null)
-            return new NotFound();
-
-        return Delete(result);
-    }
-
-    public GetResult<Genre> FindByName(string name)
-    {
-        var result = Repository.FindByName(name);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
-    }
-
-	public GetResult<Genre> FindByNameWithTracking(string name)
-	{
-		var result = Repository.FindByNameWithTracking(name);
-
-		if (result is null)
-			return new NotFound();
-
-		return result;
-	}
 }

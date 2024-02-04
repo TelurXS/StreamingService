@@ -15,22 +15,53 @@ public sealed class AccountRepository : EntityRepository<Account>, IAccountRepos
     {
         return Entities
             .AsNoTracking()
-            //.Include(x => x.Rates)
             .FirstOrDefault(x => x.Id == id);
-    }
+	}
 
-    public List<Account> FindAll()
+	public Account? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public Account? FindByLogin(string login)
+	{
+		return Entities
+			.AsNoTracking()
+			.FirstOrDefault(x => x.Login == login);
+	}
+
+	public Account? FindByEmail(string email)
+	{
+		return Entities
+			.AsNoTracking()
+			.FirstOrDefault(x => x.Email == email);
+	}
+
+	public List<Account> FindAll()
     {
         return Entities
             .AsNoTracking()
-            //.Include(x => x.Rates)
             .ToList();
-    }
-    
-    public Account Insert(Account value)
+	}
+
+	public List<Account> FindAllWithTracking()
+	{
+		return Entities
+			.ToList();
+	}
+
+	public Account? Insert(Account value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Account value)
     {
@@ -51,21 +82,5 @@ public sealed class AccountRepository : EntityRepository<Account>, IAccountRepos
             .ExecuteDelete();
 
         return result > 0;
-    }
-
-    public Account? FindByLogin(string login)
-    {
-        return Entities
-            .AsNoTracking()
-            //.Include(x => x.Rates)
-            .FirstOrDefault(x => x.Login == login);
-    }
-
-    public Account? FindByEmail(string email)
-    {
-        return Entities
-            .AsNoTracking()
-            //.Include(x => x.Rates)
-            .FirstOrDefault(x => x.Email == email);
     }
 }

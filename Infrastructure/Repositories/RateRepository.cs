@@ -18,21 +18,64 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
             .Include(x => x.Author)
             .Include(x => x.Title)
             .FirstOrDefault(x => x.Id == id);
-    }
+	}
 
-    public List<Rate> FindAll()
+	public Rate? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public List<Rate> FindAll()
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Author)
             .Include(x => x.Title)
             .ToList();
-    }
+	}
 
-    public Rate Insert(Rate value)
+	public List<Rate> FindAllWithTracking()
+	{
+		return Entities
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.ToList();
+	}
+
+	public List<Rate> FindAllByAuthor(Account account)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.Where(x => x.Author.Id == account.Id)
+			.ToList();
+	}
+
+	public List<Rate> FindAllByTitle(Title title)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.Where(x => x.Title.Id == title.Id)
+			.ToList();
+	}
+
+	public Rate? Insert(Rate value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Rate value)
     {
@@ -51,25 +94,5 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
             .ExecuteDelete();
 
         return result > 0;
-    }
-
-    public List<Rate> FindAllByAuthor(Account account)
-    {
-        return Entities
-            .AsNoTracking()
-            .Include(x => x.Author)
-            .Include(x => x.Title)
-            .Where(x => x.Author.Id == account.Id)
-            .ToList();
-    }
-
-    public List<Rate> FindAllByTitle(Title title)
-    {
-        return Entities
-            .AsNoTracking()
-            .Include(x => x.Author)
-            .Include(x => x.Title)
-            .Where(x => x.Title.Id == title.Id)
-            .ToList();
     }
 }

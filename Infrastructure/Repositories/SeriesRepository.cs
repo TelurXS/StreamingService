@@ -7,57 +7,78 @@ namespace Infrastructure.Repositories;
 
 public sealed class SeriesRepository : EntityRepository<Series>, ISeriesRepository
 {
-    public SeriesRepository(DataContext dataContext) : base(dataContext)
-    {
-    }
+	public SeriesRepository(DataContext dataContext) : base(dataContext)
+	{
+	}
 
-    public Series? FindById(Guid id)
-    {
-        return Entities
-             .AsNoTracking()
-             .Include(x => x.Title)
-             .FirstOrDefault(x => x.Id == id);
-    }
+	public Series? FindById(Guid id)
+	{
+		return Entities
+			 .AsNoTracking()
+			 .Include(x => x.Title)
+			 .FirstOrDefault(x => x.Id == id);
+	}
 
-    public List<Series> FindAll()
-    {
-        return Entities
-            .AsNoTracking()
-            .Include(x => x.Title)
-            .ToList();
-    }
+	public Series? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			 .Include(x => x.Title)
+			 .FirstOrDefault(x => x.Id == id);
+	}
 
-    public Series Insert(Series value)
-    {
-        return Entities.Add(value).Entity;
-    }
+	public List<Series> FindAll()
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Title)
+			.ToList();
+	}
 
-    public bool Update(Guid id, Series value)
-    {
-        var result = Entities
-            .Where(x => x.Id == id)
-            .ExecuteUpdate(setters => setters
-                .SetProperty(x => x.Name, x => value.Name)
-                .SetProperty(x => x.Uri, x => value.Uri));
+	public List<Series> FindAllWithTracking()
+	{
+		return Entities
+			.Include(x => x.Title)
+			.ToList();
+	}
 
-        return result > 0;
-    }
+	public Series? Insert(Series value)
+	{
+		var entity = Entities.Add(value).Entity;
 
-    public bool Delete(Series value)
-    {
-        var result = Entities
-            .Where(x => x.Id == value.Id)
-            .ExecuteDelete();
+		var result = Context.SaveChanges();
 
-        return result > 0;
-    }
+		if (result > 0)
+			return entity;
 
-    public List<Series> FindAllByTitle(Title title)
-    {
-        return Entities
-            .AsNoTracking()
-            .Include(x => x.Title)
-            .Where(x => x.Title.Id == title.Id)
-            .ToList();
-    }
+		return default;
+	}
+
+	public bool Update(Guid id, Series value)
+	{
+		var result = Entities
+			.Where(x => x.Id == id)
+			.ExecuteUpdate(setters => setters
+				.SetProperty(x => x.Name, x => value.Name)
+				.SetProperty(x => x.Uri, x => value.Uri));
+
+		return result > 0;
+	}
+
+	public bool Delete(Series value)
+	{
+		var result = Entities
+			.Where(x => x.Id == value.Id)
+			.ExecuteDelete();
+
+		return result > 0;
+	}
+
+	public List<Series> FindAllByTitle(Title title)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Title)
+			.Where(x => x.Title.Id == title.Id)
+			.ToList();
+	}
 }

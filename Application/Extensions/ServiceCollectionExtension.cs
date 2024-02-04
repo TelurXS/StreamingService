@@ -1,6 +1,9 @@
-﻿using Application.Interfaces;
+﻿using Application.Features.Accounts;
+using Application.Interfaces;
 using Application.Interfaces.Mappings;
 using Application.Mappings;
+using Application.Models;
+using Domain.Interfaces.Mappings;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,13 +17,14 @@ public static class ServiceCollectionExtension
         services.AddTransient<IAccountMapper, AccountMapper>();
         services.AddTransient<IGenreMapper, GenreMapper>();
         services.AddTransient<IImageMapper, ImageMapper>();
-        services.AddTransient<IDescriptionsMapper, LocalizedDescriptionMapper>();
-        services.AddTransient<INameMapper, LocalizedNameMapper>();
+        services.AddTransient<IDescriptionsMapper, DescriptionMapper>();
+        services.AddTransient<INameMapper, NameMapper>();
         services.AddTransient<IRateMapper, RateMapper>();
         services.AddTransient<ISeriesMapper, SeriesMapper>();
         services.AddTransient<ITitleMapper, TitleMapper>();
         services.AddTransient<IUserMapper, UserMapper>();
-        
+        services.AddTransient<IResponseMapper, ResponseMapper>();
+
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
         
         services.AddMediatR(x => 

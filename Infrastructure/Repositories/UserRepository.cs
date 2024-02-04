@@ -11,13 +11,25 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 	{
 	}
 
-	public bool Delete(User value)
+	public User? FindById(Guid id)
 	{
-		var result = Entities
-			.Where(x => x.Id == value.Id)
-			.ExecuteDelete();
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Subscription)
+			.Include(x => x.Rates)
+			.Include(x => x.Comments)
+			.Include(x => x.FavouriteGenres)
+			.FirstOrDefault(x => x.Id == id);
+	}
 
-		return result > 0;
+	public User? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Subscription)
+			.Include(x => x.Rates)
+			.Include(x => x.Comments)
+			.Include(x => x.FavouriteGenres)
+			.FirstOrDefault(x => x.Id == id);
 	}
 
 	public List<User> FindAll()
@@ -31,27 +43,19 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.ToList();
 	}
 
-	public User? FindById(Guid id)
+	public List<User> FindAllWithTracking()
 	{
 		return Entities
-            .AsNoTracking()
-            .Include(x => x.Subscription)
-            .Include(x => x.Rates)
-            .Include(x => x.Comments)
+			.Include(x => x.Subscription)
+			.Include(x => x.Rates)
+			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
-            .FirstOrDefault(x => x.Id == id);
-	}
-
-	public User Insert(User value)
-	{
-		return Entities.Add(value).Entity;
+			.ToList();
 	}
 
 	public bool SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
 	{
-		var user = Entities
-			.Include(x => x.FavouriteGenres)
-			.FirstOrDefault(x => x.Id == id);
+		var user = FindByIdWithTracking(id);
 
 		if (user is null)
 			return false;
@@ -66,7 +70,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 
 	public bool SetSubscription(Guid id, Subscription subscription, DateTime expiresIn)
 	{
-		var user = Entities.FirstOrDefault(x => x.Id == id);
+		var user = FindByIdWithTracking(id);
 
 		if (user is null)
 			return false;
@@ -75,6 +79,18 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 		user.SubscriptionExpiresIn = expiresIn;
 
 		return Context.SaveChanges() > 0;
+	}
+
+	public User? Insert(User value)
+	{
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
 	}
 
 	public bool Update(Guid id, User value)
@@ -86,6 +102,15 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 				.SetProperty(x => x.Surname, x => value.Surname)
 				.SetProperty(x => x.BirthDate, x => value.BirthDate)
 				.SetProperty(x => x.SubscriptionExpiresIn, x => value.SubscriptionExpiresIn));
+
+		return result > 0;
+	}
+
+	public bool Delete(User value)
+	{
+		var result = Entities
+			.Where(x => x.Id == value.Id)
+			.ExecuteDelete();
 
 		return result > 0;
 	}

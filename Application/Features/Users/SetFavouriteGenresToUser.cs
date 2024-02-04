@@ -4,6 +4,7 @@ using Domain.Interfaces.Services;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Users;
 
@@ -11,9 +12,10 @@ public static class SetFavouriteGenresToUser
 {
 	public class Request : IRequest<UpdateResult<Success>> 
 	{
-		public Guid UserId { get; set; } = default;
-
 		public List<string> Genres { get; set; } = new();
+
+		[JsonIgnore]
+		public Guid UserId { get; set; } = default;
 	}
 
 	public class Handler : SyncRequestHandler<Request, UpdateResult<Success>>

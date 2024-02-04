@@ -3,7 +3,7 @@ using Domain.Models.Results.Unions;
 
 namespace Domain.Interfaces.Services;
 
-public interface IGenreService : IEntityService<Genre>
+public interface IGenreService : IWebService<Genre>
 {
     GetResult<Genre> FindByName(string name);
 

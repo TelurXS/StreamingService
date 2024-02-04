@@ -21,12 +21,55 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
-            .Include(x => x.Rates)
             .Include(x => x.Comments)
+			.ThenInclude(x => x.Author)
             .FirstOrDefault(x => x.Id == id);
-    }
+	}
 
-    public List<Title> FindAll()
+	public Title? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.Screenshots)
+			.Include(x => x.Genres)
+			.Include(x => x.Series)
+			.Include(x => x.Comments)
+			.ThenInclude(x => x.Author)
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public Title? FindBySlug(string slug)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.Screenshots)
+			.Include(x => x.Genres)
+			.Include(x => x.Series)
+			.Include(x => x.Comments)
+			.ThenInclude(x => x.Author)
+			.FirstOrDefault(x => x.Slug == slug);
+	}
+
+	public Title? FindBySlugWithTracking(string slug)
+	{
+		return Entities
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.Screenshots)
+			.Include(x => x.Genres)
+			.Include(x => x.Series)
+			.Include(x => x.Comments)
+			.ThenInclude(x => x.Author)
+			.FirstOrDefault(x => x.Slug == slug);
+	}
+
+	public List<Title> FindAll()
     {
         return Entities
             .AsNoTracking()
@@ -36,15 +79,36 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
-            .Include(x => x.Rates)
             .Include (x => x.Comments)
-            .ToList();
-    }
+			.ThenInclude(x => x.Author)
+			.ToList();
+	}
 
-    public Title Insert(Title value)
+	public List<Title> FindAllWithTracking()
+	{
+		return Entities
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.Screenshots)
+			.Include(x => x.Genres)
+			.Include(x => x.Series)
+			.Include(x => x.Comments)
+			.ThenInclude(x => x.Author)
+			.ToList();
+	}
+
+	public Title? Insert(Title value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Title value)
     {

@@ -6,7 +6,7 @@ using Domain.Models.Results.Unions;
 
 namespace Infrastructure.Services;
 
-public class RateService : IRateService
+public sealed class RateService : IRateService
 {
     public RateService(IRateRepository repository)
     {
@@ -23,17 +23,57 @@ public class RateService : IRateService
             return new NotFound();
 
         return result;
-    }
+	}
 
-    public GetAllResult<Rate> FindAll()
+	public GetResult<Rate> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Rate> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Rate> Create(Rate value)
+	public GetAllResult<Rate> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public GetAllResult<Rate> FindAllByAuthor(Account account)
+	{
+		var result = Repository.FindAllByAuthor(account);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Rate> FindAllByTitle(Title title)
+	{
+		var result = Repository.FindAllByTitle(title);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public CreateResult<Rate> Create(Rate value)
     {
-        return Repository.Insert(value);
-    }
+        var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Rate> Update(Guid id, Rate value)
     {
@@ -49,9 +89,19 @@ public class RateService : IRateService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Rate value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Rate value)
     {
         var result = Repository.Delete(value);
 
@@ -59,35 +109,5 @@ public class RateService : IRateService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
-    }
-
-    public GetAllResult<Rate> FindAllByAuthor(Account account)
-    {
-        var result = Repository.FindAllByAuthor(account);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
-    }
-
-    public GetAllResult<Rate> FindAllByTitle(Title title)
-    {
-        var result = Repository.FindAllByTitle(title);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
     }
 }

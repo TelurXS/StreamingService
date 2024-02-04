@@ -12,8 +12,8 @@ public sealed class UnitOfWork : IUnitOfWork
 
 	private DataContext DataContext { get; }
 
-	public void SaveChages()
+	public bool SaveChages()
 	{
-		DataContext.SaveChanges();
+		return DataContext.SaveChanges() > 0;
 	}
 }

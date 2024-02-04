@@ -18,17 +18,36 @@ public sealed class ImageRepository : EntityRepository<Image>, IImageRepository
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<Image> FindAll()
+	public Image? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public List<Image> FindAll()
     {
         return Entities
             .AsNoTracking()
             .ToList();
-    }
+	}
 
-    public Image Insert(Image value)
+	public List<Image> FindAllWithTracking()
+	{
+		return Entities
+			.ToList();
+	}
+
+	public Image? Insert(Image value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Image value)
     {

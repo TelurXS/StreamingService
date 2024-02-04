@@ -6,7 +6,7 @@ using Domain.Models.Results.Unions;
 
 namespace Infrastructure.Services;
 
-public class NameService : INameService
+public sealed class NameService : INameService
 {
     public NameService(INameRepository repository)
     {
@@ -23,17 +23,37 @@ public class NameService : INameService
             return new NotFound();
 
         return result;
-    }
+	}
 
-    public GetAllResult<Name> FindAll()
+	public GetResult<Name> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Name> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Name> Create(Name value)
+	public GetAllResult<Name> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Name> Create(Name value)
     {
-        return Repository.Insert(value);
-    }
+        var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Name> Update(Guid id, Name value)
     {
@@ -49,9 +69,19 @@ public class NameService : INameService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Name value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Name value)
     {
         var result = Repository.Delete(value);
 
@@ -59,15 +89,5 @@ public class NameService : INameService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
     }
 }

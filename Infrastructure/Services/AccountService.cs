@@ -23,17 +23,57 @@ public sealed class AccountService : IAccountService
             return new NotFound();
 
         return result;
-    }
+	}
 
-    public GetAllResult<Account> FindAll()
+	public GetResult<Account> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Account> FindByLogin(string login)
+	{
+		var result = Repository.FindByLogin(login);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Account> FindByEmail(string email)
+	{
+		var result = Repository.FindByEmail(email);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Account> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Account> Create(Account value)
+	public GetAllResult<Account> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Account> Create(Account value)
     {
-        return Repository.Insert(value);
-    }
+        var result =  Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Account> Update(Guid id, Account value)
     {
@@ -49,9 +89,19 @@ public sealed class AccountService : IAccountService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Account value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Account value)
     {
         var result = Repository.Delete(value);
 
@@ -59,35 +109,5 @@ public sealed class AccountService : IAccountService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
-    }
-
-    public GetResult<Account> FindByLogin(string login)
-    {
-        var result = Repository.FindByLogin(login);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
-    }
-
-    public GetResult<Account> FindByEmail(string email)
-    {
-        var result = Repository.FindByEmail(email);
-
-        if (result is null)
-            return new NotFound();
-
-        return result;
     }
 }

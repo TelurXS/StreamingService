@@ -4,24 +4,19 @@ using Domain.Interfaces.Services;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Users;
 
 public static class GetFavouriteGenresFromUser
 {
-	public class Request : IRequest<GetAllResult<Response>>
+	public class Request : IRequest<GetAllResult<Genre>>
 	{
+		[JsonIgnore]
 		public Guid UserId { get; set; } = default;
 	}
 
-	public class Response
-	{
-		public Guid Id { get; set; }
-
-		public required string Name { get; set; }
-	}
-
-	public class Handler : SyncRequestHandler<Request, GetAllResult<Response>>
+	public class Handler : SyncRequestHandler<Request, GetAllResult<Genre>>
 	{
 		public Handler(IUserService userService)
 		{
@@ -30,7 +25,7 @@ public static class GetFavouriteGenresFromUser
 
 		private IUserService UserService { get; }
 
-		protected override GetAllResult<Response> Handle(Request request)
+		protected override GetAllResult<Genre> Handle(Request request)
 		{
 			var userResult = UserService.FindById(request.UserId);
 
@@ -40,7 +35,6 @@ public static class GetFavouriteGenresFromUser
 			return userResult
 				.AsFound
 				.FavouriteGenres
-				.Select(x => new Response { Id = x.Id, Name = x.Name })
 				.ToList();
 		}
 	}

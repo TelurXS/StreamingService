@@ -6,7 +6,7 @@ using Domain.Models.Results.Unions;
 
 namespace Infrastructure.Services;
 
-public class TitleService : ITitleService
+public sealed class TitleService : ITitleService
 {
     public TitleService(ITitleRepository repository)
     {
@@ -23,17 +23,57 @@ public class TitleService : ITitleService
             return new NotFound();
 
         return result;
-    }
+	}
 
-    public GetAllResult<Title> FindAll()
+	public GetResult<Title> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Title> FindBySlug(string slug)
+	{
+		var result = Repository.FindBySlug(slug);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Title> FindBySlugWithTracking(string slug)
+	{
+		var result = Repository.FindBySlugWithTracking(slug);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Title> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Title> Create(Title value)
+	public GetAllResult<Title> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Title> Create(Title value)
     {
-        return Repository.Insert(value);
-    }
+        var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Title> Update(Guid id, Title value)
     {
@@ -49,9 +89,19 @@ public class TitleService : ITitleService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Title value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Title value)
     {
         var result = Repository.Delete(value);
 
@@ -59,15 +109,5 @@ public class TitleService : ITitleService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
     }
 }

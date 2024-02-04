@@ -4,7 +4,7 @@ using Domain.Models.Results.Unions;
 
 namespace Domain.Interfaces.Services;
 
-public interface IUserService : IEntityService<User>
+public interface IUserService : IWebService<User>
 {
 	UpdateResult<Success> SetSubscription(Guid id, Subscription subscription, DateTime expiresIn);
 

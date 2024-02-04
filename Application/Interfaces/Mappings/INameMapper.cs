@@ -1,4 +1,4 @@
-﻿using Application.Features.LocalizedNames;
+﻿using Application.Features.Names;
 using Domain.Entities;
 
 namespace Application.Interfaces.Mappings;

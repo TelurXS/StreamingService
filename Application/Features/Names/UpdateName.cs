@@ -2,7 +2,7 @@
 using Domain.Models.Results.Unions;
 using MediatR;
 
-namespace Application.Features.LocalizedNames;
+namespace Application.Features.Names;
 
 public static class UpdateName
 {

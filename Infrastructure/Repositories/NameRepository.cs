@@ -19,18 +19,39 @@ public sealed class NameRepository : EntityRepository<Name>, INameRepository
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<Name> FindAll()
+	public Name? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public List<Name> FindAll()
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Title)
             .ToList();
-    }
+	}
 
-    public Name Insert(Name value)
+	public List<Name> FindAllWithTracking()
+	{
+		return Entities
+			.Include(x => x.Title)
+			.ToList();
+	}
+
+	public Name? Insert(Name value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Name value)
     {

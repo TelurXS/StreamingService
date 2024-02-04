@@ -2,5 +2,5 @@
 
 public interface IUnitOfWork
 {
-	void SaveChages();
+	bool SaveChages();
 }

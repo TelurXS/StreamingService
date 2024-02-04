@@ -5,5 +5,5 @@ namespace Application.Interfaces.Mappings;
 
 public interface IUserMapper
 {
-	UserResponse ToResponse(User user);
+	UserResponse ToResponse(User value);
 }

@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Services;
 
-public interface IImageService : IEntityService<Image>
+public interface IImageService : IWebService<Image>
 {
     
 }

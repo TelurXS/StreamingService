@@ -8,9 +8,9 @@ public sealed class Comment
 
     public required DateTime CreationDate { get; set; }
 
-    public User Author { get; set; } = default!;
+	public User Author { get; set; } = default!;
 
-    public Title Title { get; set; } = default!;
+	public Title Title { get; set; } = default!;
 
     public Comment? Parent { get; set; } = default;
 

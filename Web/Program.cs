@@ -16,6 +16,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(x =>
 	x.GetRequiredService<CookieAuthenticationStateProvider>());
 
 builder.Services.AddTransient<IIdentityService, IdentityService>();
+builder.Services.AddTransient<ITitleService, TitleService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

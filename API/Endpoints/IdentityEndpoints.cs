@@ -4,7 +4,9 @@ using API.Extensions;
 using Application.Features.Users;
 using Carter;
 using Domain.Entities;
+using Domain.Interfaces.Mappings;
 using Domain.Models;
+using Domain.Models.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -55,12 +57,13 @@ public class IdentityEndpoints : CarterModule
         return Results.SignOut(authenticationSchemes: [IdentityConstants.ApplicationScheme]);
     }
 
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetUserProfileAsync(
 	[FromServices] IMediator mediator,
+	[FromServices] IResponseMapper mapper,
 	ClaimsPrincipal claims)
 	{
 		var request = new GetUserById.Request
@@ -71,7 +74,7 @@ public class IdentityEndpoints : CarterModule
 		var result = await mediator.Send(request);
 
 		return result.Match(
-			user => Results.Ok(user),
+			user => Results.Ok(mapper.ToResponse(user)),
 			notFound => Results.NotFound(),
 			failed => Results.BadRequest());
 	}
@@ -118,12 +121,13 @@ public class IdentityEndpoints : CarterModule
             failed => Results.BadRequest());
     }
 
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<GenreResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetGenresFromUserAsync(
 		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
 		ClaimsPrincipal claims)
 	{
 		var request = new GetFavouriteGenresFromUser.Request
@@ -134,7 +138,7 @@ public class IdentityEndpoints : CarterModule
 		var result = await mediator.Send(request);
 
 		return result.Match(
-			genres => Results.Ok(genres),
+			genres => Results.Ok(genres.Select(x => mapper.ToResponse(x))),
 			notFound => Results.NotFound(),
 			failed => Results.BadRequest());
 	}
