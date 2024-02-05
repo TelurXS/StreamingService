@@ -1,0 +1,141 @@
+﻿@using Domain.Entities
+@attribute [Route(WebRoutes.Accounts.MyProfile)]
+@layout ProfileLayout
+
+@inject IIdentityService IdentityService
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+
+			<div class="col-sm-5 col-md-3">
+				<div class="circle-profile-picture" 
+					style="background-image: url('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png');" />
+			</div>
+
+			<div class="col-sm-7 col-md-9 d-flex flex-column">
+				<span class="font-xl">Natalia</span>
+				<span class="font-md mt-1">Lisa Pushcarenko</span>
+				<span class="font-sm mt-2 font-gray">Favourite Genres:</span>
+				<div class="d-flex flex-wrap">
+					@foreach (var genre in Selected)
+					{
+						<span class="button button-fit font-xs m-1 px-2 py-1">@genre</span>
+					}
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+
+			<div class="col-md-8 d-flex mt-2 mt-md-0">
+				<div class="info-card">
+					<span class="font-md">5</span>
+					<span class="font-sm font-gray">Readers</span>
+				</div>
+				<div class="info-card">
+					<span class="font-md">10</span>
+					<span class="font-sm font-gray">Folowers</span>
+				</div>
+				<div class="info-card">
+					<span class="font-md">6</span>
+					<span class="font-sm font-gray">Favourite</span>
+				</div>
+			</div>
+
+			<div class="col-md-4"></div>
+
+			<div class="col-md-12 mt-2">
+				<div class="row">
+
+					<div class="col-md-6 d-flex overflow-hidden mt-2 mt-md-0">
+						@foreach (var i in Enumerable.Range(0, 5))
+						{
+							<MiniTitleCard Title="Title" Shift="@(i * -10)" Index="@(5 - i)" />
+						}
+					</div>
+
+					<div class="col-md-6 mt-2 mt-md-0 d-flex">
+						<MiniTitleCard Title="Title"/>
+
+						<div class="d-flex w-100 px-3 flex-column">
+							<span class="font-xs font-gray">Latest Watched:</span>
+							<span class="font-md">Squid Game</span>
+							<span class="font-sm">Ep. 1 The Beginning</span>
+							<progress class="mt-2" min="0" max="100" value="77"></progress>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="gradient-divider mt-1"></div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-lg-6 mt-2 mt-md-0 h-100">
+		<h4>Favourite</h4>
+
+		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+			@foreach(var title in Titles)
+			{
+				<div class="col mt-2 px-1">
+					<ResponsiveTitleCard Title="title"/>
+				</div>
+			}
+		</div>
+	</div>
+
+	<div class="col-lg-6 mt-2 mt-md-0">
+		<h4>Lists</h4>
+
+		<div class="row row-cols-4 p-3 profile-content-background">
+
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private Title Title { get; set; } = new()
+	{
+		Id = Guid.NewGuid(),
+		Name = string.Empty,
+		Description = string.Empty,
+		Slug = string.Empty,
+		ReleaseDate = DateTime.Now,
+		Director = string.Empty,
+		Country = Country.AF,
+		Cast = string.Empty,
+		AvarageRate = 9.9f,
+		AgeRestriction = AgeRestriction.AdultsOnly,
+		Image = new Image { Uri = "https://images-cdn.ubuy.co.in/63ef0a397f1d781bea0a2464-star-wars-rogue-one-movie-poster.jpg" },
+		Genres = [],
+		Comments = [],
+		Screenshots = [],
+		Series = [new() { Name = "Loading Failed", Uri = "" }],
+	};
+
+	private List<Title> Titles { get; set; } = new();
+
+	private List<string> Selected { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		Titles = [Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title];
+
+		var result = await IdentityService.GetFavouriteGenresAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		Selected = result.AsFound.Select(x => x.Name).ToList();
+
+		StateHasChanged();
+	}
+}

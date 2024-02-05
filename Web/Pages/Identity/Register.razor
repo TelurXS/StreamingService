@@ -25,12 +25,7 @@
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="register">
 				<DataAnnotationsValidator />
 
-				<InputText @bind-Value="Input.Username" autocomplete="name" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
-						   placeholder="Username" />
-
-				<ValidationMessage For="() => Input.Username" class="text-danger mt-2" />
-
-				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
 						   placeholder="Email" />
 
 				<ValidationMessage For="() => Input.Email" class="text-danger mt-2" />
@@ -50,7 +45,7 @@
 
 			<div class="mt-5 d-flex flex-column">
 				<label class="font-gray font-md">Have an account?</label>
-				<a href="/login" class="link-primary font-gray link-no-underline font-md">Login</a>
+				<a href="@WebRoutes.Login" class="link-primary font-gray link-no-underline font-md">Login</a>
 			</div>
 		</div>
 	</div>
@@ -70,7 +65,6 @@
 	{
 		var request = new RegisterRequest
 			{
-				Username = Input.Username,
 				Email = Input.Email,
 				Password = Input.Password,
 			};
@@ -99,10 +93,6 @@
 
 	private class InputModel
 	{
-		[Required]
-		[MaxLength(64)]
-		public string Username { get; set; } = string.Empty;
-
 		[Required]
 		[MaxLength(64)]
 		[EmailAddress]

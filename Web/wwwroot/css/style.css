@@ -35,6 +35,10 @@
     color: var(--white) !important;
 }
 
+.font-xs {
+    font-size: 12px;
+}
+
 .font-sm {
     font-size: 14px;
 }
@@ -45,6 +49,10 @@
 
 .font-lg {
     font-size: 18px;
+}
+
+.font-xl {
+    font-size: 20px;
 }
 
 h1, h2, h3, h4 {
@@ -106,9 +114,15 @@ h4 {
     border-radius: var(--border-radius);
 }
 
+.button-fit {
+    min-height: fit-content;
+    height: fit-content;
+    width: fit-content;
+}
+
 .button-md {
     max-width: 280px;
-    padding: 3px 5px;
+    padding: 2px 5px;
 }
 
 .button {  
@@ -217,6 +231,10 @@ a {
         font-weight: 400;
     }
 
+    .font-xs {
+        font-size: 10px;
+    }
+
     .font-sm {
         font-size: 12px;
     }
@@ -227,6 +245,10 @@ a {
 
     .font-lg {
         font-size: 16px;
+    }
+
+    .font-xl {
+        font-size: 18px;
     }
 }
 
@@ -270,6 +292,10 @@ a {
         font-weight: 400;
     }
 
+    .font-xs {
+        font-size: 8px;
+    }
+
     .font-sm {
         font-size: 10px;
     }
@@ -280,5 +306,9 @@ a {
 
     .font-lg {
         font-size: 14px;
+    }
+
+    .font-xl {
+        font-size: 16px;
     }
 }

@@ -18,7 +18,11 @@
 
 .poster {
     width: 100%;
-    aspect-ratio: 9 / 16;
+    border-radius: 20px;
+    aspect-ratio: 3 / 4;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .profile-picture {
@@ -27,4 +31,17 @@
     margin: 5px 10px;
     border-radius: 50%;
     border: 2px solid var(--gray);
+}
+
+@media (max-width: 1200px) {
+    .poster {
+        aspect-ratio: 3 / 5;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .poster {
+        aspect-ratio: 3 / 4;
+    }
 }

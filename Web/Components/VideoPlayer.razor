@@ -5,7 +5,7 @@
 <div id="container" class="video-player-container">
 	<div class="series-select-panel">
 		<div class="series-list">
-			@foreach (var series in Series)
+			@foreach (var series in Series.OrderBy(x => x.Name))
 			{
 				<button @onclick="() => SelectSeriesAsync(series)" class="button-glass series-select-button">@series.Name</button>
 			}
@@ -71,7 +71,7 @@
 
 	protected override void OnInitialized()
 	{
-		Selected = Series.First();
+		Selected = Series.OrderBy(x => x.Name).First();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

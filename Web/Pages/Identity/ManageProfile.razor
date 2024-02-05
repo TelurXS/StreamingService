@@ -28,19 +28,26 @@
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
 				<DataAnnotationsValidator />
 
-				<div class="row mt-5">
-					<div class="col-6">
-						<InputText @bind-Value="Input.Name" autocomplete="name" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
-								   placeholder="Name" />
-					</div>
-					<div class="col-6">
-						<InputText @bind-Value="Input.Surname" autocomplete="surname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
-								   placeholder="Surname" />
-					</div>
+				<div class="mt-5">
+					<InputText @bind-Value="Input.Name" autocomplete="username" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+							   placeholder="Username" />
 				</div>
 
 				<ValidationMessage For="() => Input.Name" class="text-danger mt-2" />
-				<ValidationMessage For="() => Input.Surname" class="text-danger mt-2" />
+
+				<div class="row mt-3">
+					<div class="col-6">
+						<InputText @bind-Value="Input.FirstName" autocomplete="firstname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="First Name" />
+					</div>
+					<div class="col-6">
+						<InputText @bind-Value="Input.SecondName" autocomplete="secondname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="Second Name" />
+					</div>
+				</div>
+
+				<ValidationMessage For="() => Input.FirstName" class="text-danger mt-2" />
+				<ValidationMessage For="() => Input.SecondName" class="text-danger mt-2" />
 
 				<InputDate @bind-Value="Input.BirthDate" autocomplete="birthDate" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
 						   placeholder="Password" />
@@ -76,7 +83,8 @@
 		var profile = result.AsFound;
 
 		Input.Name = profile.Name ?? string.Empty;
-		Input.Surname = profile.Surname ?? string.Empty;
+		Input.FirstName = profile.FirstName ?? string.Empty;
+		Input.SecondName = profile.SecondName ?? string.Empty;
 		Input.BirthDate = profile.BirthDate;
 	}
 
@@ -85,7 +93,8 @@
 		var request = new UpdateUserProfile.Request
 		{
 			Name = Input.Name,
-			Surname = Input.Surname,
+			FirstName = Input.FirstName,
+			SecondName = Input.SecondName,
 			BirthDate = Input.BirthDate,
 		};
 
@@ -114,14 +123,19 @@
 	private class InputModel
 	{
 		[Required]
-		[MaxLength(64)]
+		[MinLength(2)]
+		[MaxLength(128)]
 		public string Name { get; set; } = string.Empty;
 
 		[Required]
-		[MaxLength(64)]
-		public string Surname { get; set; } = string.Empty;
+		[MaxLength(128)]
+		public string FirstName { get; set; } = string.Empty;
 
 		[Required]
-		public DateTime BirthDate { get; set; } = DateTime.Now;
+		[MaxLength(128)]
+		public string SecondName { get; set; } = string.Empty;
+
+		[Required]
+		public DateTime BirthDate { get; set; } = DateTime.Now.AddYears(-18);
 	}
 }

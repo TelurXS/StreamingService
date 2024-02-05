@@ -16,7 +16,7 @@ public partial class CreateResult<T>
     public bool IsValidationFailed => IsT1;
     public bool IsFailed => IsT2;
     
-    public T AsFound => AsT0;
+    public T AsCreated => AsT0;
     public ValidationFailed AsValidationFailed => AsT1;
     public Failed AsFailed => AsT2;
 }

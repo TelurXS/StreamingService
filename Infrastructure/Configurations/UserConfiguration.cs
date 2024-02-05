@@ -7,7 +7,8 @@ namespace Infrastructure.Configurations;
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
 	public const int NAME_MAX_LENGTH = 128;
-	public const int SURNAME_MAX_LENGTH = 128;
+	public const int FIRSTNAME_MAX_LENGTH = 128;
+	public const int SECONDNAME_MAX_LENGTH = 128;
 
 	public void Configure(EntityTypeBuilder<User> builder)
 	{
@@ -19,8 +20,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 		builder.Property(x => x.Name)
 			.HasMaxLength(NAME_MAX_LENGTH);
 
-		builder.Property(x => x.Name)
-			.HasMaxLength(SURNAME_MAX_LENGTH);
+		builder.Property(x => x.FirstName)
+			.HasMaxLength(FIRSTNAME_MAX_LENGTH);
+		
+		builder.Property(x => x.SecondName)
+			.HasMaxLength(SECONDNAME_MAX_LENGTH);
 
 		builder.Property(x => x.BirthDate);
 

@@ -6,9 +6,13 @@ public sealed class User : IdentityUser<Guid>
 {
     public string Name { get; set; } = string.Empty;
 
-    public string Surname { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
 
-    //public string ProfileImage { get; set; } = string.Empty;
+    public string SecondName { get; set; } = string.Empty;
+
+    public string FullName => $"{FirstName} {SecondName}";
+
+    public string ProfileImage { get; set; } = string.Empty;
 
     public DateTime BirthDate { get; set; } = default;
 

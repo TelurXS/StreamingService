@@ -44,6 +44,8 @@ public static class ApiRoutes
 	{
 		public const string GroupName = "/comments";
 
+		public const string Route = Base + GroupName;
+
 		public const string CreateForTitle = Base + GroupName + "/{titleId}";
 	}
 }

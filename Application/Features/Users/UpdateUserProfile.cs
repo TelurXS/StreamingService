@@ -17,7 +17,9 @@ public static class UpdateUserProfile
 
 		public required string Name { get; set; }
 
-		public required string Surname { get; set; }
+		public required string FirstName { get; set; }
+
+		public required string SecondName { get; set; }
 
 		public required DateTime BirthDate { get; set; }
 	}
@@ -34,9 +36,13 @@ public static class UpdateUserProfile
 				.NotEmpty()
 				.MaximumLength(UserConfiguration.NAME_MAX_LENGTH);
 
-			RuleFor(x => x.Surname)
+            RuleFor(x => x.FirstName)
+                .NotEmpty()
+                .MaximumLength(UserConfiguration.FIRSTNAME_MAX_LENGTH);
+
+            RuleFor(x => x.SecondName)
 				.NotEmpty()
-				.MaximumLength(UserConfiguration.SURNAME_MAX_LENGTH);
+				.MaximumLength(UserConfiguration.SECONDNAME_MAX_LENGTH);
 
 			RuleFor(x => x.BirthDate)
 				.NotNull()
@@ -71,7 +77,8 @@ public static class UpdateUserProfile
 			var user = userResult.AsFound;
 
 			user.Name = request.Name;
-			user.Surname = request.Surname;
+			user.FirstName = request.FirstName;
+			user.SecondName = request.SecondName;
 			user.BirthDate = request.BirthDate;
 
 			var result = UserService.Update(request.Id, user);

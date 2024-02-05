@@ -12,7 +12,9 @@ public sealed class UserResponse
 
 	public string Name { get; set; } = string.Empty;
 
-	public string Surname { get; set; } = string.Empty;
+	public string FirstName { get; set; } = string.Empty;
+
+	public string SecondName { get; set; } = string.Empty;
 
 	public string ProfileImage { get; set; } = string.Empty;
 

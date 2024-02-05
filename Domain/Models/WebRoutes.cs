@@ -33,6 +33,13 @@ public static class WebRoutes
 	{
 		public const string Base = "/titles";
 
-		public const string Title = "/titles/{slug}";
+		public const string Title = Base + "/{slug}";
+	}
+
+	public static class Accounts
+	{
+		public const string MyProfile = "/profile";
+
+		public const string Profile = "/profile/{userId}";
 	}
 }

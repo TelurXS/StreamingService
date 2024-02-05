@@ -99,7 +99,8 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Where(x => x.Id == id)
 			.ExecuteUpdate(setters => setters
 				.SetProperty(x => x.Name, x => value.Name)
-				.SetProperty(x => x.Surname, x => value.Surname)
+				.SetProperty(x => x.FirstName, x => value.FirstName)
+				.SetProperty(x => x.SecondName, x => value.SecondName)
 				.SetProperty(x => x.BirthDate, x => value.BirthDate)
 				.SetProperty(x => x.SubscriptionExpiresIn, x => value.SubscriptionExpiresIn));
 
