@@ -60,6 +60,15 @@ window.initializePlayer = () => {
         video.paused ? video.play() : video.pause();
     }
 
+    const getProgress = () => {
+        var result = (video.currentTime / video.duration);
+        return isNaN(result) ? 0 : result;
+    }
+
+    const setProgress = (value) => {
+        video.currentTime = video.duration * value;
+    }
+
     const skipForward = () => {
         video.currentTime += SKIP_SECONDS;
     }
@@ -130,6 +139,15 @@ window.initializePlayer = () => {
 
     const onVideoDataLoaded = () => {
         durationSpan.innerText = formatTime(video.duration);
+        const urlParams = new URLSearchParams(window.location.search);
+        let progress = parseFloat(urlParams.get('progress'));
+
+        progress = isNaN(progress) ? 0 : progress;
+
+        setProgress(progress / 100);
+        progressBar.style.width = `${progress}%`;
+
+        history.replaceState(null, '', window.location.href.split('?')[0]);   
     }
 
     const onTimelineMouseMove = (e) => {
@@ -191,5 +209,14 @@ window.initializePlayer = () => {
         video.currentTime = 0;
         progressBar.style.width = `0%`;
         changeToPlayButtonIcon();
+    }
+
+    window.setProgress = (value) => {
+        setProgress(value)
+        progressBar.style.width = `${value * 100}%`;
+    }
+
+    window.getProgress = () => {
+        return getProgress();
     }
 }

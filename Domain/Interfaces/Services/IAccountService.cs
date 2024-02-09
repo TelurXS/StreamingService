@@ -3,7 +3,7 @@ using Domain.Models.Results.Unions;
 
 namespace Domain.Interfaces.Services;
 
-public interface IAccountService : IWebService<Account>
+public interface IAccountService : IEntityService<Account>
 {
     GetResult<Account> FindByLogin(string login);
     

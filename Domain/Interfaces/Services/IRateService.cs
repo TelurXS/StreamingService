@@ -3,7 +3,7 @@ using Domain.Models.Results.Unions;
 
 namespace Domain.Interfaces.Services;
 
-public interface IRateService : IWebService<Rate>
+public interface IRateService : IEntityService<Rate>
 {
     GetAllResult<Rate> FindAllByAuthor(Account account);
     

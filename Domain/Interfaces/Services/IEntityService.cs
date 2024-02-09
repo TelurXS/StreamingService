@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Services;
 
-public interface IWebService<T>
+public interface IEntityService<T>
 {
     GetResult<T> FindById(Guid id);
 

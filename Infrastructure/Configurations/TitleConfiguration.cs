@@ -72,5 +72,14 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
 
         builder.HasMany(x => x.Comments)
             .WithOne(x => x.Title);
-    }
+
+        builder.HasMany(x => x.Lists)
+            .WithMany(x => x.Titles);
+
+        builder.HasMany(x => x.FavouriteInUsers)
+            .WithMany(x => x.FavouriteTitles);
+
+		builder.HasMany(x => x.ViewRecords)
+			.WithOne(x => x.Title);
+	}
 }

@@ -1,7 +1,7 @@
-﻿using Application.Features.Users;
+﻿using Application.Features.TitleLists;
+using Application.Features.Users;
 using Domain.Entities;
 using Domain.Models.Requests;
-using Domain.Models.Responses;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 
@@ -17,7 +17,25 @@ public interface IIdentityService
 
 	Task<UpdateResult<Success>> SetFavouriteGenresAsync(SetFavouriteGenresToUser.Request request);
 
-	Task<GetResult<UserResponse>> GetProfileAsync();
+	Task<GetResult<User>> GetProfileAsync();
 
 	Task<UpdateResult<Success>> UpdateProfileAsync(UpdateUserProfile.Request request);
+
+	Task<GetAllResult<ViewRecord>> GetViewRecordsAsync();
+
+	Task<CreateResult<Success>> RegisterViewRecordAsync(Guid seriesId, RegisterViewRecordToUser.Request request);
+
+	Task<GetAllResult<Title>> GetFavouriteTitlesAsync();
+	
+	Task<UpdateResult<Success>> AddTitleToFavouriteAsync(Title title);
+
+	Task<UpdateResult<Success>> RemoveTitleFromFavouriteAsync(Title title);
+
+	Task<GetAllResult<TitlesList>> GetTitlesListsAsync();
+
+	Task<UpdateResult<Success>> AddTitleToListAsync(Guid listId, Title title);
+
+	Task<UpdateResult<Success>> RemoveTitleFromListAsync(Guid listId, Title title);
+
+	Task<CreateResult<TitlesList>> CreateListAsync(CreateTitlesList.Request request);
 }

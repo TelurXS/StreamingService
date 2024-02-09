@@ -1,8 +1,17 @@
-﻿@using Domain.Entities
-@attribute [Route(WebRoutes.Accounts.MyProfile)]
+﻿@attribute [Route(WebRoutes.Accounts.Profile.MyProfile)]
 @layout ProfileLayout
 
+@using Domain.Entities
+
 @inject IIdentityService IdentityService
+
+<RequireAuthorization />
+
+@if (Loaded is false)
+{
+	<div>Loading...</div>
+	return;
+}
 
 <div class="row">
 	<div class="col-md-6">
@@ -14,14 +23,22 @@
 			</div>
 
 			<div class="col-sm-7 col-md-9 d-flex flex-column">
-				<span class="font-xl">Natalia</span>
-				<span class="font-md mt-1">Lisa Pushcarenko</span>
+				<span class="font-xl d-flex align-items-center">
+					@User.Name 
+					<a href="@WebRoutes.Manage.Profile?returnUrl=/profile" class="button button-fit mx-2 p-1">
+						<img style="width: 15px" src="/img/pencil.svg" />
+					</a>
+				</span>
+				<span class="font-md mt-1">@User.FirstName @User.SecondName</span>
 				<span class="font-sm mt-2 font-gray">Favourite Genres:</span>
-				<div class="d-flex flex-wrap">
-					@foreach (var genre in Selected)
+				<div class="d-flex flex-wrap align-items-center">
+					@foreach (var genre in Genres)
 					{
 						<span class="button button-fit font-xs m-1 px-2 py-1">@genre</span>
 					}
+					<a href="@WebRoutes.Manage.Genres?returnUrl=/profile" class="button button-fit mx-2 p-1">
+						<img style="width: 15px" src="/img/pencil.svg" />
+					</a>
 				</div>
 			</div>
 
@@ -40,7 +57,7 @@
 					<span class="font-sm font-gray">Folowers</span>
 				</div>
 				<div class="info-card">
-					<span class="font-md">6</span>
+					<span class="font-md">@FavouriteTitles.Count</span>
 					<span class="font-sm font-gray">Favourite</span>
 				</div>
 			</div>
@@ -51,21 +68,28 @@
 				<div class="row">
 
 					<div class="col-md-6 d-flex overflow-hidden mt-2 mt-md-0">
-						@foreach (var i in Enumerable.Range(0, 5))
+						@foreach (var i in Enumerable.Range(0, ViewRecords.Count))
 						{
-							<MiniTitleCard Title="Title" Shift="@(i * -10)" Index="@(5 - i)" />
+							<MiniTitleCard Title="ViewRecords[i].Title" Shift="@(i * -10)" Index="@(5 - i)" />
 						}
 					</div>
 
-					<div class="col-md-6 mt-2 mt-md-0 d-flex">
-						<MiniTitleCard Title="Title"/>
+					<div class="col-md-6 mt-2 mt-md-0">
 
-						<div class="d-flex w-100 px-3 flex-column">
-							<span class="font-xs font-gray">Latest Watched:</span>
-							<span class="font-md">Squid Game</span>
-							<span class="font-sm">Ep. 1 The Beginning</span>
-							<progress class="mt-2" min="0" max="100" value="77"></progress>
-						</div>
+						@if (LastWatched is not null)
+						{
+							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@((int)(LastWatched.Progress * 100))">
+								<MiniTitleCard Title="LastWatched.Title" />
+
+								<div class="d-flex w-100 px-3 flex-column">
+									<span class="font-xs font-gray">Latest Watched:</span>
+									<span class="font-md">@LastWatched.Title.Name</span>
+									<span class="font-sm">@LastWatched.Series.Name</span>
+									<progress class="mt-2" min="0" max="100" value="@((int)(LastWatched.Progress * 100))"></progress>
+								</div>
+							</a>
+						}
+						
 					</div>
 
 				</div>
@@ -79,16 +103,18 @@
 
 <div class="row mt-4">
 	<div class="col-lg-6 mt-2 mt-md-0 h-100">
-		<h4>Favourite</h4>
+		<a href="@WebRoutes.Accounts.Profile.Favourites">
+			<h4>Favourite</h4>
 
-		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
-			@foreach(var title in Titles)
-			{
-				<div class="col mt-2 px-1">
-					<ResponsiveTitleCard Title="title"/>
-				</div>
-			}
-		</div>
+			<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+				@foreach (var title in FavouriteTitles)
+				{
+					<div class="col mt-2 px-1">
+						<ResponsiveTitleCard Title="title" />
+					</div>
+				}
+			</div>
+		</a>
 	</div>
 
 	<div class="col-lg-6 mt-2 mt-md-0">
@@ -102,40 +128,50 @@
 
 @code {
 
-	private Title Title { get; set; } = new()
-	{
-		Id = Guid.NewGuid(),
-		Name = string.Empty,
-		Description = string.Empty,
-		Slug = string.Empty,
-		ReleaseDate = DateTime.Now,
-		Director = string.Empty,
-		Country = Country.AF,
-		Cast = string.Empty,
-		AvarageRate = 9.9f,
-		AgeRestriction = AgeRestriction.AdultsOnly,
-		Image = new Image { Uri = "https://images-cdn.ubuy.co.in/63ef0a397f1d781bea0a2464-star-wars-rogue-one-movie-poster.jpg" },
-		Genres = [],
-		Comments = [],
-		Screenshots = [],
-		Series = [new() { Name = "Loading Failed", Uri = "" }],
-	};
+	private User User { get; set; } = default!;
 
-	private List<Title> Titles { get; set; } = new();
+	private List<string> Genres { get; set; } = [];
 
-	private List<string> Selected { get; set; } = [];
+	private bool Loaded { get; set; } = false;
+
+	private List<Title> FavouriteTitles { get; set; } = new();
+
+	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	private ViewRecord? LastWatched { get; set; } = default;
 
 	protected override async Task OnInitializedAsync()
 	{
-		Titles = [Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title, Title];
+		var userResult = await IdentityService.GetProfileAsync();
 
-		var result = await IdentityService.GetFavouriteGenresAsync();
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
 
-		if (result.IsFound is false)
-			return;
+		var genresResult = await IdentityService.GetFavouriteGenresAsync();
 
-		Selected = result.AsFound.Select(x => x.Name).ToList();
+		if (genresResult.IsFound)
+		{
+			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+		}
 
+		var favouriteTitlesResult = await IdentityService.GetFavouriteTitlesAsync();
+
+		if (favouriteTitlesResult.IsFound)
+		{
+			FavouriteTitles = favouriteTitlesResult.AsFound;
+		}
+
+		var viewRecordsResult = await IdentityService.GetViewRecordsAsync();
+
+		if (viewRecordsResult.IsFound)
+		{
+			LastWatched = viewRecordsResult.AsFound.LastOrDefault();
+			ViewRecords = viewRecordsResult.AsFound.DistinctBy(x => x.Title.Id).ToList();
+		}
+
+		Loaded = true;
 		StateHasChanged();
 	}
 }

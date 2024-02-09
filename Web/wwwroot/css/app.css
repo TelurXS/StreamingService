@@ -300,6 +300,14 @@ main {
                 linear-gradient(to bottom right, var(--primary-transparent) 0%, transparent 30%);
 }
 
+.content-container {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid var(--stroke);
+    border-radius: 20px;
+    background: linear-gradient(to top left, var(--primary-transparent) 0%, transparent 30%), linear-gradient(to bottom right, var(--primary-transparent) 0%, transparent 30%);
+}
+
 
 @media (max-width: 400px) {
     .card-form {

@@ -1,4 +1,6 @@
-﻿@using Domain.Entities
+﻿@implements IAsyncDisposable
+
+@using Domain.Entities
 
 @inject IJSRuntime JS
 
@@ -67,24 +69,62 @@
 	private Series Selected { get; set; } = default!;
 
 	[Parameter]
+	public Guid SelectedId { get; set; } = default;
+
+	[Parameter]
 	public List<Series> Series { get; set; } = new();
+
+	[Parameter]
+	public Func<Series, float, Task> OnLeaveSeries { get; set; } = default!;
 
 	protected override void OnInitialized()
 	{
-		Selected = Series.OrderBy(x => x.Name).First();
+		var series = Series.FirstOrDefault(x => x.Id == SelectedId);
+
+		if (series is null)
+		{
+			Selected = Series.OrderBy(x => x.Name).First();
+			return;
+		}
+
+		Selected = series;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
-			await JS.InvokeVoidAsync("initializePlayer");
+		{
+			await InitializePlayer();
+		}
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		await RaiseOnLeaveSeries();
+	}
+
+	private async Task RaiseOnLeaveSeries()
+	{
+		var progress = await JS.InvokeAsync<float>("getProgress");
+		OnLeaveSeries?.Invoke(Selected, progress);
 	}
 
 	private async Task SelectSeriesAsync(Series value)
 	{
+		await RaiseOnLeaveSeries();
 		Selected = value;
 		StateHasChanged();
 
 		await JS.InvokeVoidAsync("changePlayerSource", Selected.Uri);
+	}
+
+	public async Task InitializePlayer()
+	{
+		await JS.InvokeVoidAsync("initializePlayer");
+	}
+
+	public async Task SetProgress(float value)
+	{
+		await JS.InvokeVoidAsync("setProgress", value);
 	}
 }

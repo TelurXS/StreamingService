@@ -45,6 +45,11 @@ public sealed class UserService : IUserService
 		return Repository.FindAllWithTracking();
 	}
 
+	public GetAllResult<Title> FindFavouriteTitlesById(Guid id)
+	{
+		return Repository.FindFavouriteTitlesById(id);
+	}
+
 	public UpdateResult<Success> SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
 	{
 		var user = Repository.FindById(id);
@@ -65,6 +70,42 @@ public sealed class UserService : IUserService
 			return new NotFound();
 
 		var result = Repository.SetSubscription(id, subscription, expiresIn);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
+	public UpdateResult<Success> AddViewRecord(Guid id, ViewRecord viewRecord)
+	{
+		var result = Repository.AddViewRecord(id, viewRecord);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
+	public UpdateResult<Success> AddTitleToFavourite(Guid id, Title title)
+	{
+		if (Repository.FindById(id) is null)
+			return new NotFound();
+
+		var result = Repository.AddTitleToFavourite(id, title);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
+	public UpdateResult<Success> RemoveTitleFromFavourite(Guid id, Title title)
+	{
+		if (Repository.FindById(id) is null)
+			return new NotFound();
+
+		var result = Repository.RemoveTitleFromFavourite(id, title);
 
 		if (result is false)
 			return new Failed();

@@ -335,6 +335,30 @@ namespace Infrastructure.Migrations
                     b.ToTable("Titles");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TitlesList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Availability")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("TitlesList");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -429,6 +453,35 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SubscriptionId");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViewRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Progress")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("SeriesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("SeriesId");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("ViewRecord");
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -564,6 +617,51 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TitleTitlesList", b =>
+                {
+                    b.Property<Guid>("ListsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TitlesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ListsId", "TitlesId");
+
+                    b.HasIndex("TitlesId");
+
+                    b.ToTable("TitleTitlesList");
+                });
+
+            modelBuilder.Entity("TitleUser", b =>
+                {
+                    b.Property<Guid>("FavouriteInUsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FavouriteTitlesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FavouriteInUsersId", "FavouriteTitlesId");
+
+                    b.HasIndex("FavouriteTitlesId");
+
+                    b.ToTable("TitleUser");
+                });
+
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.Property<Guid>("FollowersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FollowersId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Comment", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Author")
@@ -659,6 +757,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TitlesList", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("Lists")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.HasOne("Domain.Entities.Subscription", "Subscription")
@@ -666,6 +775,33 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SubscriptionId");
 
                     b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViewRecord", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("ViewRecords")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Series", "Series")
+                        .WithMany()
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", "Title")
+                        .WithMany("ViewRecords")
+                        .HasForeignKey("TitleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Series");
+
+                    b.Navigation("Title");
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -749,6 +885,51 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TitleTitlesList", b =>
+                {
+                    b.HasOne("Domain.Entities.TitlesList", null)
+                        .WithMany()
+                        .HasForeignKey("ListsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", null)
+                        .WithMany()
+                        .HasForeignKey("TitlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TitleUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteInUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteTitlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.Comment", b =>
                 {
                     b.Navigation("Childs");
@@ -767,13 +948,19 @@ namespace Infrastructure.Migrations
                     b.Navigation("Screenshots");
 
                     b.Navigation("Series");
+
+                    b.Navigation("ViewRecords");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Lists");
+
                     b.Navigation("Rates");
+
+                    b.Navigation("ViewRecords");
                 });
 #pragma warning restore 612, 618
         }

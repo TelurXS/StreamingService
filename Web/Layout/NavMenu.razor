@@ -2,19 +2,19 @@
 <div>
     <nav class="navigation">
         <div class="nav-item">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                 <!--<i class="bi bi-house-door-fill"></i>-->
                 <img class="nav-icon" src="/img/nav-home.svg" />
             </NavLink>
         </div>
         <div class="nav-item">
-            <NavLink class="nav-link" href="/profile">
+            <NavLink class="nav-link" href="@WebRoutes.Accounts.Profile.MyProfile" Match="NavLinkMatch.Prefix">
                 <!--<i class="bi bi-5-circle"></i>-->
                 <img class="nav-icon" src="/img/nav-profile.svg" />
             </NavLink>
         </div>
         <div class="nav-item">
-            <NavLink class="nav-link" href="weather">
+            <NavLink class="nav-link" href="@WebRoutes.Accounts.Lists">
                 <!--<i class="bi bi-cloud-drizzle-fill"></i>-->
                 <img class="nav-icon" src="/img/nav-favourite.svg" />
             </NavLink>
@@ -29,7 +29,7 @@
                     </NavLink>
                 </div>
                 <div class="nav-item">
-                    <NavLink class="nav-link" href="/logout">
+                    <NavLink class="nav-link" href="@WebRoutes.Accounts.History">
                         <!--<i class="bi bi-box-arrow-in-left"></i>-->
                         <img class="nav-icon" src="/img/nav-recent.svg" />
                     </NavLink>

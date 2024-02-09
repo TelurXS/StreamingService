@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces.Services;
 
-public interface ICommentService : IWebService<Comment>
+public interface ICommentService : IEntityService<Comment>
 {
 
 }

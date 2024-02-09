@@ -40,5 +40,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
 		builder.HasMany(x => x.FavouriteGenres)
 			.WithMany(x => x.FavouriteInUsers);
+
+		builder.HasMany(x => x.FavouriteTitles)
+			.WithMany(x => x.FavouriteInUsers);
+
+		builder.HasMany(x => x.ViewRecords)
+			.WithOne(x => x.Author);
+
+		builder.HasMany(x => x.Followers)
+			.WithMany();
+
+		builder.HasMany(x => x.Lists)
+			.WithOne(x => x.Author);
 	}
 }

@@ -2,6 +2,6 @@
 
 <AuthorizeView>
 	<NotAuthorized>
-		@{ NavigationManager.NavigateTo(WebRoutes.NotAuthorized); }
+		@{ NavigationManager.NavigateTo(WebRoutes.Login + "?returnUrl=" + NavigationManager.GetCurrentRoute()); }
 	</NotAuthorized>
 </AuthorizeView>

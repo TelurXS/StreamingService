@@ -25,6 +25,12 @@ public partial class ResponseMapper : IResponseMapper
 	public partial SubscriptionResponse ToResponse(Subscription value);
 		   
 	public partial TitleResponse ToResponse(Title value);
-		   
+
+	public partial TitleInfoResponse ToInfoResponse(Title value);
+
 	public partial UserResponse ToResponse(User value);
+
+	public partial ViewRecordResponse ToResponse(ViewRecord value);
+
+	public partial TitlesListResponse ToResponse(TitlesList value);
 }

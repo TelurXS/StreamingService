@@ -1,0 +1,38 @@
+﻿@attribute [Route(WebRoutes.Accounts.History)]
+@layout ProfileLayout
+
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+
+<h2>History</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+	@foreach (var group in ViewRecords.GroupBy(x => x.Title.Id))
+	{
+		var title = ViewRecords.Select(x => x.Title).First(x => x.Id == group.Key);
+		var record = group.Last();
+			
+		<div class="col d-flex flex-column justify-content-center align-items-center mt-2">
+			<TitleCard Title="title" />
+
+			<span class="font-sm font-gray">@record.Series.Name</span>
+
+			<progress class="mt-1 w-100" value="@((int)(record.Progress * 100))" min="0" max="100" />
+		</div>
+	}
+</div>
+
+@code {
+	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.GetViewRecordsAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		ViewRecords = result.AsFound;
+	}
+}

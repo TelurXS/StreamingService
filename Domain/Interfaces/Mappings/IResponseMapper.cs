@@ -23,5 +23,11 @@ public interface IResponseMapper
 
 	TitleResponse ToResponse(Title value);
 
+	TitleInfoResponse ToInfoResponse(Title value);
+
 	UserResponse ToResponse(User value);
+
+	ViewRecordResponse ToResponse(ViewRecord value);
+
+	TitlesListResponse ToResponse(TitlesList value);
 }

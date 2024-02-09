@@ -26,6 +26,8 @@ public static class ServiceCollectionExtension
         services.AddTransient<ITitleRepository, TitleRepository>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<ICommentRepository, CommentRepository>();
+        services.AddTransient<IViewRecordRepository, ViewRecordRepository>();
+        services.AddTransient<ITitlesListRepository, TitlesListRepository>();
 
         services.AddTransient<IAccountService, AccountService>();
         services.AddTransient<IDescriptionService, DescriptionService>();
@@ -37,6 +39,8 @@ public static class ServiceCollectionExtension
         services.AddTransient<ITitleService, TitleService>();
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ICommentService, CommentService>();
+        services.AddTransient<IViewRecordService, ViewRecordService>();
+        services.AddTransient<ITitlesListService, TitlesListService>();
 
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 

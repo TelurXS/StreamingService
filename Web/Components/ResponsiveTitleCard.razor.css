@@ -12,8 +12,8 @@
 .title-card-background {
 	width: 100%;
 	height: 100%;
-	border-radius: 10%;
-	padding: 10px;
+	border-radius: 20px;
+	padding: 5px;
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;

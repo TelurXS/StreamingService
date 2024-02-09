@@ -23,6 +23,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<ISeriesMapper, SeriesMapper>();
         services.AddTransient<ITitleMapper, TitleMapper>();
         services.AddTransient<IUserMapper, UserMapper>();
+        services.AddTransient<ITitlesListMapper, TitlesListMapper>();
         services.AddTransient<IResponseMapper, ResponseMapper>();
 
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);

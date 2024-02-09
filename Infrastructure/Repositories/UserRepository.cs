@@ -19,6 +19,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Rates)
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
+			.Include(x => x.FavouriteTitles)
+			.Include(x => x.Followers)
+			.Include(x => x.ViewRecords)
+			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
 	}
 
@@ -29,6 +33,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Rates)
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
+			.Include(x => x.FavouriteTitles)
+			.Include(x => x.Followers)
+			.Include(x => x.ViewRecords)
+			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
 	}
 
@@ -40,6 +48,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Rates)
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
+			.Include(x => x.FavouriteTitles)
+			.Include(x => x.Followers)
+			.Include(x => x.ViewRecords)
+			.Include(x => x.Lists)
 			.ToList();
 	}
 
@@ -50,7 +62,28 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Rates)
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
+			.Include(x => x.FavouriteTitles)
+			.Include(x => x.Followers)
+			.Include(x => x.ViewRecords)
+			.Include(x => x.Lists)
 			.ToList();
+	}
+
+	public List<Title> FindFavouriteTitlesById(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.FavouriteTitles)
+				.ThenInclude(x => x.Names)
+			.Include(x => x.FavouriteTitles)
+				.ThenInclude(x => x.Descriptions)
+			.Include(x => x.FavouriteTitles)
+				.ThenInclude(x => x.Image)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.FavouriteTitles.ToList();
 	}
 
 	public bool SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
@@ -77,6 +110,42 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 
 		user.Subscription = subscription;
 		user.SubscriptionExpiresIn = expiresIn;
+
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool AddViewRecord(Guid id, ViewRecord viewRecord)
+	{
+		var user = FindByIdWithTracking(id);
+
+		if (user is null)
+			return false;
+
+		user.ViewRecords.Add(viewRecord);
+
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool AddTitleToFavourite(Guid id, Title title)
+	{
+		var user = FindByIdWithTracking(id);
+
+		if (user is null)
+			return false;
+
+		user.FavouriteTitles.Add(title);
+
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool RemoveTitleFromFavourite(Guid id, Title title)
+	{
+		var user = FindByIdWithTracking(id);
+
+		if (user is null)
+			return false;
+
+		user.FavouriteTitles.Remove(title);
 
 		return Context.SaveChanges() > 0;
 	}

@@ -38,8 +38,19 @@ public static class WebRoutes
 
 	public static class Accounts
 	{
-		public const string MyProfile = "/profile";
+		public const string History = "/history";	
 
-		public const string Profile = "/profile/{userId}";
+		public const string Lists = "/lists";	
+
+		public static class Profile
+		{
+			public const string Base = "/profile";
+
+			public const string MyProfile = Base;
+
+			public const string UserProfile = Base + "/{userId}";
+
+			public const string Favourites = Base + "/favourites";
+		}
 	}
 }

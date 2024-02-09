@@ -25,4 +25,12 @@ public sealed class User : IdentityUser<Guid>
     public ICollection<Comment> Comments { get; set; } = default!;
 
     public ICollection<Genre> FavouriteGenres { get; set; } = default!;
+
+    public ICollection<Title> FavouriteTitles { get; set; } = default!;
+
+    public ICollection<ViewRecord> ViewRecords { get; set; } = default!;
+
+    public ICollection<User> Followers { get; set; } = default!;
+
+    public ICollection<TitlesList> Lists { get; set; } = default!;
 }
