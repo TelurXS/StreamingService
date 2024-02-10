@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Notifications.NotificationsPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid Margin="112">
+
+                <VerticalStackLayout>
+                    <HorizontalStackLayout>
+                        <Button FontSize="28" FontAttributes="Bold" BackgroundColor="Transparent" BorderWidth="0"
+                                Opacity="0.5" Text="Чати" Margin="10,0" Clicked="ChatsButtonClicked">
+                        </Button>
+
+                        <Ellipse Fill="#0044E9" WidthRequest="16" HeightRequest="16" Margin="0,0,50,0"></Ellipse>
+                        <Button FontSize="28" FontAttributes="Bold" BackgroundColor="Transparent" BorderWidth="0"
+                                Text="Сповіщення">
+                        </Button>
+                        <HorizontalStackLayout Margin="183, 0,0 ,0">
+                            <Image x:Name="CurrentDialogAvatar" WidthRequest="70" HeightRequest="70" Margin="0,0,15,0">
+                                <Image.Clip>
+                                    <RoundRectangleGeometry CornerRadius="100">
+                                        <RoundRectangleGeometry.Rect>
+                                            <Rect Width="70" Height="70" X="0" Y="0"></Rect>
+                                        </RoundRectangleGeometry.Rect>
+                                    </RoundRectangleGeometry>
+                                </Image.Clip>
+                            </Image>
+                            <VerticalStackLayout>
+                                <Label x:Name="CurrentDialogNickname" FontSize="22" FontAttributes="Bold"></Label>
+                                <Label x:Name="CurrentDialogLastSeen" FontSize="20" Opacity="0.5"></Label>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    <Rectangle Margin="0,25,0,0"
+                               WidthRequest="1577"
+                               HeightRequest="3">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#0044E900" Offset="0" />
+                                <GradientStop Color="#0044E9" Offset="0.2" />
+                                <GradientStop Color="#0044E900" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                <VerticalStackLayout x:Name="NotificationContainer"></VerticalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

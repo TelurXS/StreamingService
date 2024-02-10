@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             x:Class="VideoDemos.Views.Auth.Registration.AddCardPage">
+    <ContentPage.Content>
+
+        <Grid x:Name="View">
+            <Image
+                Margin="0"
+                Aspect="AspectFill"
+                Source="login_bg.png"
+                VerticalOptions="Center"
+                HorizontalOptions="Center" />
+            <Border 
+                    HeightRequest="597"
+                    WidthRequest="415"
+                    StrokeShape="RoundRectangle 20,20,20,20"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="2"
+                    Padding="0"
+                    Margin="0">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#0044E9"
+                        Offset="1,3"
+                        Radius="3"
+                    ></Shadow>
+                </Border.Shadow>
+                <Border.Stroke>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                        <GradientStop Color="#0044E9" Offset="0.1"></GradientStop>
+                        <GradientStop Color="Black" Offset="1.0"></GradientStop>
+                    </LinearGradientBrush>
+                </Border.Stroke>
+                <VerticalStackLayout
+                    Padding="50"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="597"
+                    WidthRequest="415"
+                    BackgroundColor="Black">
+                    <Label Text="Налаштуйте оплату за банківською карткою" x:Name="TitleLabel" FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White" Margin="0" />
+                    <HorizontalStackLayout Margin="0, 6, 0, 16">
+                        <Image Source="visa.png" HeightRequest="15"></Image>
+                        <Image Source="mastercard.png" HeightRequest="15"></Image>
+                    </HorizontalStackLayout>
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 20,20,20,20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            StrokeThickness="1"
+                            Padding="0"
+                            Margin="0, 15">
+                        <Grid
+                            VerticalOptions="Center" HorizontalOptions="End">
+                            <Image Source="card_icon.png" HeightRequest="24" WidthRequest="24" HorizontalOptions="End"
+                                   Margin="0,0,15,0" />
+
+                            <Entry x:Name="CardNumberEntry"
+                                   Placeholder="Номер карти"
+                                   MaxLength="50"
+                                   WidthRequest="315"
+                                   HeightRequest="39" />
+                        </Grid>
+
+                    </Border>
+                    <HorizontalStackLayout Padding="0" Margin="0, 0, 0, 0">
+                        <Border Stroke="#0044E9"
+                                StrokeShape="RoundRectangle 20,20,20,20"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                StrokeThickness="1"
+                                Padding="0"
+                                Margin="0">
+                            <Entry x:Name="ExpDateEntry"
+                                   Placeholder="Строк дії"
+                                   IsPassword="False"
+                                   MaxLength="20"
+                                   WidthRequest="152"
+                                   HeightRequest="39" />
+                        </Border>
+                        <Border Stroke="#0044E9"
+                                StrokeShape="RoundRectangle 20,20,20,20"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                StrokeThickness="1"
+                                Padding="0"
+                                Margin="11,0,0,0">
+                            <Grid
+                                VerticalOptions="Center" HorizontalOptions="End">
+                                <Image Source="cvv_icon.png" HeightRequest="24" WidthRequest="24"
+                                       HorizontalOptions="End"
+                                       Margin="0,0,15,0" />
+
+                                <Entry x:Name="CvvEntry"
+                                       Placeholder="CVV"
+                                       MaxLength="3"
+                                       WidthRequest="152"
+                                       HeightRequest="39" />
+                            </Grid>
+                        </Border>
+                    </HorizontalStackLayout>
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 20,20,20,20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            StrokeThickness="1"
+                            Padding="0"
+                            Margin="0, 15">
+                        <Grid ColumnDefinitions="0.5*,0.5*" Padding="15, 10" WidthRequest="315"
+                              HeightRequest="61" x:Name="PlanDetailsGrid">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Name}" FontSize="18" TextColor="White" Padding="0" Margin="0"></Label>
+                                <Label Text="{Binding PricePerMonth}" FontSize="14" TextColor="#A7A7A7" Padding="0"
+                                       Margin="0">
+                                </Label>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1" FontSize="16" Text="Змінити" TextColor="Blue"
+                                    BackgroundColor="Transparent" BorderColor="Transparent" HorizontalOptions="End"
+                                    VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Label Margin="0, 20" Padding="0">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Встановлюючи прапорець нижче, ви погоджуєтеся з "></Span>
+                                <Span Text="Правилами використання" TextDecorations="Underline">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding TapCommand}"
+                                                              CommandParameter="https://learn.microsoft.com/dotnet/maui/" />
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=" та "></Span>
+                                <Span Text="Положенням про конфіденційність." TextDecorations="Underline">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding TapCommand}"
+                                                              CommandParameter="https://learn.microsoft.com/dotnet/maui/" />
+                                    </Span.GestureRecognizers>
+                                </Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <RadioButton Content="Я соглашаюсь" x:Name="TermsOfUseRadioButton" TextColor="White"
+                                 Margin="0,3,0,25" Padding="0">
+                    </RadioButton>
+
+                    <Button
+                        Text="Активувати підписку"
+                        SemanticProperties.Hint="Активувати підписку"
+                        Clicked="OnContinueClicked"
+                        CornerRadius="20"
+                        BackgroundColor="#0042E2"
+                        TextColor="White"
+                        HeightRequest="39"
+                        WidthRequest="315"
+                        FontSize="18" />
+
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

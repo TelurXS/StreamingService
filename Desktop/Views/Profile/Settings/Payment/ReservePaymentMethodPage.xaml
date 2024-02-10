@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Profile.Settings.Payment.ReservePaymentMethodPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid>
+                <Image Source="bg_profile_1.png" HorizontalOptions="End" VerticalOptions="Start" Margin="19, -400"
+                       WidthRequest="600" HeightRequest="700">
+                </Image>
+                <Image Source="bg_profile_2.png" HorizontalOptions="Start" VerticalOptions="Center"
+                       Margin="100,140,0,0" WidthRequest="190" HeightRequest="190">
+                </Image>
+                <Image Source="bg_profile_3.png" HorizontalOptions="End" VerticalOptions="Center" Margin="0,355,150,0"
+                       WidthRequest="230" HeightRequest="230">
+                </Image>
+                <VerticalStackLayout Margin="112,153,0,0">
+                    <Label Text="Оберіть спосіб оплати" x:Name="TitleLabel" FontSize="40" TextColor="White" />
+
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 20,20,20,20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            StrokeThickness="2"
+                            Padding="0"
+                            Margin="0,5"
+                            WidthRequest="355"
+                            HeightRequest="89">
+                        <Grid WidthRequest="355"
+                              HeightRequest="89" Padding="10">
+                            <Button BorderWidth="0" BackgroundColor="Transparent" Text="0" TextColor="Transparent"
+                                    FontSize="0"
+                                    Grid.RowSpan="4" Grid.ColumnSpan="4" Margin="0" Padding="0"
+                                    Clicked="PayByCreditCard" />
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.7*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Text="Банківська карта" FontSize="22" FontAttributes="Bold"></Label>
+                            <HorizontalStackLayout Margin="5" Grid.Row="1" Grid.Column="0">
+                                <Image Source="mastercard.png" HeightRequest="15"></Image>
+                                <Image Source="visa.png" HeightRequest="15"></Image>
+                            </HorizontalStackLayout>
+                            <Image Grid.Column="1" Grid.RowSpan="2" Source="payment_arrow.png" HeightRequest="34"
+                                   WidthRequest="17" Margin="0,28,15,28" />
+                        </Grid>
+                    </Border>
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 20,20,20,20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            StrokeThickness="2"
+                            Padding="0"
+                            Margin="0,5"
+                            WidthRequest="355"
+                            HeightRequest="89">
+                        <Grid WidthRequest="355"
+                              HeightRequest="89" Padding="10">
+                            <Button BorderWidth="0" BackgroundColor="Transparent" Text="0" TextColor="Transparent"
+                                    FontSize="0"
+                                    Grid.RowSpan="4" Grid.ColumnSpan="4" Margin="0" Padding="0"
+                                    Clicked="PayByPayPal" />
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.7*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Text="PayPal" FontSize="22" FontAttributes="Bold"></Label>
+                            <HorizontalStackLayout Margin="5" Grid.Row="1" Grid.Column="0">
+                                <Image Source="paypal.png" HeightRequest="15"></Image>
+                            </HorizontalStackLayout>
+                            <Image Grid.Column="1" Grid.RowSpan="2" Source="payment_arrow.png" HeightRequest="34"
+                                   WidthRequest="17" Margin="0,28,15,28" />
+                        </Grid>
+                    </Border>
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 20,20,20,20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            StrokeThickness="2"
+                            Padding="0"
+                            Margin="0,5"
+                            WidthRequest="355"
+                            HeightRequest="89">
+                        <Grid WidthRequest="355"
+                              HeightRequest="89" Padding="10">
+                            <Button BorderWidth="0" BackgroundColor="Transparent" Text="" TextColor="Transparent"
+                                    FontSize="0"
+                                    Grid.RowSpan="4" Grid.ColumnSpan="4" Margin="0" Padding="0"
+                                    Clicked="PayByApplePay" />
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.7*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Text="Apple Pay" FontSize="22" FontAttributes="Bold"></Label>
+                            <HorizontalStackLayout Margin="5" Grid.Row="1" Grid.Column="0">
+                                <Image Source="applepay.png" HeightRequest="15"></Image>
+                            </HorizontalStackLayout>
+                            <Image Grid.Column="1" Grid.RowSpan="2" Source="payment_arrow.png" HeightRequest="34"
+                                   WidthRequest="17" Margin="0,28,15,28" />
+                        </Grid>
+                    </Border>
+
+                    <Button Text="Назады" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
+                            FontAttributes="Bold" BackgroundColor="#042678">
+                    </Button>
+                </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
+
+    </ContentPage.Content>
+</ContentPage>

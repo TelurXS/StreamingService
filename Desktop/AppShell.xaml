@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Shell
+    x:Class="VideoDemos.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:VideoDemos.Views"
+    xmlns:notifications="using:VideoDemos.Views.Notifications"
+    TabBarIsVisible="False"
+    Shell.FlyoutWidth="60"
+    Shell.FlyoutBehavior="Locked"
+    Shell.NavBarIsVisible="False"
+    Title="Xflick">
+
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid Margin="0, 50, 0, 60">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Image Source="{Binding Icon}"
+                       Margin="5" />
+                <Label Grid.Column="1"
+                       Text="{Binding Title}"
+                       TextColor="White"
+                       HorizontalTextAlignment="Start"
+                       VerticalTextAlignment="Center" />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <ShellContent ContentTemplate="{DataTemplate views:LoadingPage}"
+                  Route="LoadingPage"
+                  FlyoutItemIsVisible="False" />
+    <ShellContent ContentTemplate="{DataTemplate views:AuthPage}"
+                  Route="LoginPage"
+                  FlyoutItemIsVisible="False" />  
+    <ShellContent ContentTemplate="{DataTemplate views:ListeningPage}"
+                  Route="ListeningPage"
+                  FlyoutItemIsVisible="False" />
+    <ShellContent ContentTemplate="{DataTemplate views:AuthPage}"
+                  Route="AuthPage"
+                  FlyoutItemIsVisible="False" />
+    <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}"
+                  Route="VideoPlayer"
+                  FlyoutItemIsVisible="False" />
+    <ShellContent ContentTemplate="{DataTemplate views:BannerDetailsPage}"
+                  Route="BannerDetails"
+                  FlyoutItemIsVisible="False" />
+    <ShellContent ContentTemplate="{DataTemplate views:HelloPage}"
+                  Route="HelloPage"
+                  FlyoutItemIsVisible="False" />
+
+    <FlyoutItem Icon="home.png" Title="Home">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:MainPage}"
+                          Route="MainPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Icon="profile.png" Title="Profile">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}"
+                          Route="ProfilePage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Icon="bookmark.png" Title="Bookmark">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:BookmarksPage}"
+                          Route="BookmarksPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Icon="letter.png" Title="Letter">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate notifications:ChatPage}"
+                          Route="ChatPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Icon="history.png" Title="History">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:HistoryPage}"
+                          Route="HistoryPage" />
+        </Tab>
+    </FlyoutItem>
+
+    <ShellContent Title="Exit"
+                  Icon="door_exit.png" 
+                  Route="ExitPage"
+                  ContentTemplate="{DataTemplate views:AuthPage}"/>
+</Shell>

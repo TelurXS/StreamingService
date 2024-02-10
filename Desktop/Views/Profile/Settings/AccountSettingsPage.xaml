@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Profile.Settings.AccountSettingsPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid> 
+                <Image Source="bg_profile_1.png" HorizontalOptions="End" VerticalOptions="End" Margin="19, -400"
+                       WidthRequest="600" HeightRequest="700">
+                </Image>
+                <Image Source="bg_profile_2.png" HorizontalOptions="Start" VerticalOptions="Center"
+                       Margin="100,140,0,0" WidthRequest="190" HeightRequest="190">
+                </Image>
+                <Image Source="bg_profile_3.png" HorizontalOptions="End" VerticalOptions="Center" Margin="0,355,150,0"
+                       WidthRequest="230" HeightRequest="230">
+                </Image>
+                <FlexLayout FlowDirection="LeftToRight" AlignSelf="Center" AlignContent="SpaceAround">
+                    <VerticalStackLayout Margin="112,153,0,0" HorizontalOptions="Start">
+                        <Label Text="Обліковий запис" FontSize="40" FontAttributes="Bold" TextColor="White"
+                               Margin="0,0,0,50" />
+                        <Label Text="{x:Binding Email}" Margin="0,0,0,10" FontSize="22" FontAttributes="Bold" />
+                        <Label Text="Пароль: ********" Margin="0,0,0,56" FontSize="18" />
+                        <Rectangle Margin="0,0,0,0"
+                                   WidthRequest="1577"
+                                   HeightRequest="4">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#0044E900" Offset="0" />
+                                    <GradientStop Color="#0044E9" Offset="0.2" />
+                                    <GradientStop Color="#0044E900" Offset="1" />
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Label Text="Підписка й оплата" FontSize="40" FontAttributes="Bold" TextColor="White"
+                               Margin="0, 50" />
+                        <HorizontalStackLayout>
+                            <Image WidthRequest="46" HeightRequest="15" Source="visa.png" />
+                            <Label Text="•••• •••• •••• " x:Name="CardLabel" FontSize="22" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                        <Label Text="Дата наступної оплати: " x:Name="PaymentDateLabel" FontSize="24" />
+                        <Button Text="Скасувати підписку" HorizontalOptions="Start" TextColor="White"
+                                WidthRequest="274"
+                                BackgroundColor="#0044E9" CornerRadius="20" HeightRequest="50" Margin="0,30,0,50"
+                                FontAttributes="Bold" FontSize="18" Clicked="CancelSubscribeButtonClicked" />
+                        <Rectangle Margin="0,0,0,0"
+                                   WidthRequest="1577"
+                                   HeightRequest="4">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#0044E900" Offset="0" />
+                                    <GradientStop Color="#0044E9" Offset="0.4" />
+                                    <GradientStop Color="#0044E900" Offset="1" />
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Label Text="Умови плану" FontSize="40" FontAttributes="Bold" TextColor="White" Margin="0, 50" />
+                        <Label Text="{x:Binding Plan}" FontSize="22" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="0" HorizontalOptions="End" VerticalOptions="Start" Margin="0,200,112,0">
+                        <Button Clicked="ChangeEmailButtonClicked" Text="Змінити адресу електронної пошти" BackgroundColor="Transparent"
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End" />
+                        <Button Clicked="ChangePasswordButtonClicked" Text="Змінити пароль" BackgroundColor="Transparent"
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End"/>
+                        <Label  FontSize="24" Text="Підписник із " x:Name="SubribedFromDate" Margin="0,110,0,30"/>
+                        <Button Clicked="ManagePaymentDataClicked" Text="Керування платіжними даними" BackgroundColor="Transparent"
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End"  />
+                        <Button Clicked="AddReservePaymentMethod" Text="Додати резервний спосіб оплати" BackgroundColor="Transparent"
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End"/>
+                        <Button Clicked="PaymentDataClicked" Text="Платіжні дані" BackgroundColor="Transparent"
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End"/>                       
+                        <Button Clicked="ChangePlanButtonClicked" Text="Змінити план" BackgroundColor="Transparent" 
+                                BorderColor="Transparent" FontSize="22" TextColor="#6B96FF" HorizontalOptions="End" Margin="0,100,0,0"/>
+                    </VerticalStackLayout>
+                </FlexLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

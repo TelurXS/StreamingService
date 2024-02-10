@@ -1,9 +1,24 @@
-﻿<Application x:Class="Desktop.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Desktop"
-             StartupUri="MainWindow.xaml">
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:VideoDemos.Controls"
+             xmlns:local="clr-namespace:VideoDemos"
+             x:Class="VideoDemos.App">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Effects.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <controls:UriVideoSource x:Key="ElephantsDream"
+                                     Uri="https://archive.org/download/ElephantsDream/ed_hd_512kb.mp4" />
+            <controls:UriVideoSource x:Key="BigBuckBunny"
+                                     Uri="https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4" />
+            <controls:UriVideoSource x:Key="Sintel"
+                                     Uri="https://archive.org/download/Sintel/sintel-2048-stereo_512kb.mp4" />
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

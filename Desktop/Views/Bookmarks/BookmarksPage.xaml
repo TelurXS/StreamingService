@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.BookmarksPage">
+    <ContentPage.Content>
+        <Grid>
+            <Image Source="bg_profile_3.png" Margin="250, 100" HorizontalOptions="End"></Image>
+            <Image Source="bg_profile_3.png" Margin="650, 740" HorizontalOptions="Center"></Image>
+            <Image Source="bg_profile_3.png" Margin="550, 500" HorizontalOptions="Start"></Image>
+            <VerticalStackLayout Margin="100">
+                <Label Text="Збережені" FontSize="28"/>
+                <ScrollView >
+                    <FlexLayout x:Name="MainContainer"></FlexLayout>
+                </ScrollView>
+            </VerticalStackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
