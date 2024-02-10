@@ -1,45 +1,46 @@
-﻿using System.Security.Claims;
+﻿using System.Net.Mime;
+using System.Security.Claims;
+using API.Extensions;
+using Application.Features.Users;
 using Carter;
 using Domain.Entities;
+using Domain.Interfaces.Mappings;
+using Domain.Models;
+using Domain.Models.Responses;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
-public class IdentityEndpoints : ICarterModule
+public class IdentityEndpoints : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public IdentityEndpoints()
     {
-        app.MapGet("/identity", GetIdentityName)
-            .RequireAuthorization();
-
-        app.MapGet("/for-admin", ForAdminOnly)
-            .RequireAuthorization(x => x.RequireRole(Role.Admin));
-
-        app.MapIdentityApi<User>();
-
-        app.MapPost("/logout", Logout);
-
-        app.MapGet("/user", GetUserClaims)
-            .RequireAuthorization();
     }
 
-    private IResult GetIdentityName(ClaimsPrincipal claims)
+    public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        return Results.Ok(claims.Identity!.Name);
-    }
+		app.MapGroup(ApiRoutes.Base).MapIdentityApi<User>();
 
-	private IResult ForAdminOnly(ClaimsPrincipal claims)
-	{
-		return Results.Ok(claims.Identity!.Name);
+		app.MapPost(ApiRoutes.Logout, Logout)
+            .RequireAuthorization();
+
+		app.MapGet(ApiRoutes.User, GetUserClaims)
+            .RequireAuthorization();
 	}
 
-    private IResult GetUserClaims(HttpContext context)
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	private static IResult GetUserClaims(HttpContext context)
     {
         return Results.Ok(context.User.Claims
             .Select(x => KeyValuePair.Create(x.Type, x.Value)));
     }
 
-    private IResult Logout(HttpContext context)
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	private static IResult Logout(HttpContext context)
     {
         return Results.SignOut(authenticationSchemes: [IdentityConstants.ApplicationScheme]);
     }

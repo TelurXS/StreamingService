@@ -1,0 +1,18 @@
+﻿@using Domain.Entities
+
+<a class="mini-title-card" href="@WebRoutes.Titles.Base/@Title.Slug"
+    style="left: @(Shift)px; z-index: @(Index);">
+	
+	<div class="mini-title-card-background" style="background-image: url(@Title.Image.Uri);"></div>
+</a>
+
+@code {
+	[Parameter]
+	public int Shift { get; set; } = default;
+
+	[Parameter]
+	public int Index { get; set; } = default;
+
+	[Parameter]
+	public Title Title { get; set; } = default!;
+}

@@ -2,7 +2,7 @@
 using Domain.Models.Results.Unions;
 using MediatR;
 
-namespace Application.Features.LocalizedDescriptions;
+namespace Application.Features.Descriptions;
 
 public static class UpdateDescription
 {

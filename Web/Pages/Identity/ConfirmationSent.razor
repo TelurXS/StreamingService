@@ -1,0 +1,26 @@
+﻿@attribute [Route(WebRoutes.ConfirmationSent)]
+@layout MinimalisticLayout
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h2 class="mb-2">Register</h2>
+
+			<p>
+				You have successfully registered.
+			</p>
+
+			<p>
+				A confirmation email has been sent to your email address. Follow the link in the email to continue registration
+			</p>
+
+			<a href="/" class="button font-btn mt-3">To Home Page</a>
+		</div>
+	</div>
+</div>

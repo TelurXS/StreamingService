@@ -21,5 +21,8 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
 
         builder.HasMany(x => x.Titles)
             .WithMany(x => x.Genres);
-    }
+
+		builder.HasMany(x => x.FavouriteInUsers)
+			.WithMany(x => x.FavouriteGenres);
+	}
 }

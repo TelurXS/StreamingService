@@ -19,7 +19,14 @@ public sealed class DescriptionRepository : EntityRepository<Description>, IDesc
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<Description> FindAll()
+	public Description? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public List<Description> FindAll()
     {
         return Entities
             .AsNoTracking()
@@ -27,10 +34,24 @@ public sealed class DescriptionRepository : EntityRepository<Description>, IDesc
             .ToList();
     }
 
-    public Description Insert(Description value)
+	public List<Description> FindAllWithTracking()
+	{
+		return Entities
+			.Include(x => x.Title)
+			.ToList();
+	}
+
+	public Description? Insert(Description value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Description value)
     {

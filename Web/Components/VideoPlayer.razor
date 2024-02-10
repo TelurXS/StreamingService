@@ -1,0 +1,131 @@
+﻿@implements IAsyncDisposable
+
+@using Domain.Entities
+
+@inject IJSRuntime JS
+
+<div id="container" class="video-player-container">
+	<div class="series-select-panel">
+		<div class="series-list">
+			@foreach (var series in Series.OrderBy(x => x.Name))
+			{
+				<button @onclick="() => SelectSeriesAsync(series)" class="button-glass series-select-button">@series.Name</button>
+			}
+		</div>
+	</div>
+	<div id="player" class="player">
+		<video id="video" class="video" src="@Selected.Uri">
+		</video>
+	</div>
+	<div class="player-controls">
+		<div class="controls-progress">
+			<span id="span-current-time" class="font-sm playback-time">00:00</span>
+
+			<div id="video-timeline" class="progress player-progress">
+				<div id="progress-bar" class="progress-bar player-progress-bar" role="progressbar" style="width: 0%;"></div>
+				<span id="span-progress-time" class="progress-time">20:20:20</span>
+			</div>
+
+			<span id="span-duration" class="font-sm playback-time">00:00</span>
+		</div>
+		<div class="controls-playback row">
+			<div class="col-6 col-lg-4 d-flex align-items-center justify-content-start">
+				<a id="button-back">
+					<img src="/img/player-arrow-back.svg" class="button-icon" />
+				</a>
+				<a id="button-play">
+					<img id="control-icon" src="/img/player-play.svg" class="button-icon" />
+				</a>
+				<a id="button-forward">
+					<img src="/img/player-arrow-forward.svg" class="button-icon" />
+				</a>
+				<div class="controls-volume">
+					<a id="button-mute">
+						<img id="control-volume-icon" src="/img/player-sound-high.svg" class="button-icon" />
+					</a>
+					<input id="input-volume" class="" type="range" min="0" max="1" step="any" />
+				</div>
+			</div>
+			<div class="d-none d-lg-flex col-lg-4 align-items-center justify-content-center">
+				<span class="font-sm">@Selected.Name</span>
+			</div>
+			<div class="col-6 col-lg-4 d-flex align-items-center justify-content-end">
+				<a>
+					<img src="/img/player-next.svg" class="button-icon" />
+				</a>
+				<a>
+					<img src="/img/player-hide-series.svg" class="button-icon" />
+				</a>
+				<a id="button-fullscreen">
+					<img src="/img/player-fullscreeb.svg" class="button-icon" />
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private Series Selected { get; set; } = default!;
+
+	[Parameter]
+	public Guid SelectedId { get; set; } = default;
+
+	[Parameter]
+	public List<Series> Series { get; set; } = new();
+
+	[Parameter]
+	public Func<Series, float, Task> OnLeaveSeries { get; set; } = default!;
+
+	protected override void OnInitialized()
+	{
+		var series = Series.FirstOrDefault(x => x.Id == SelectedId);
+
+		if (series is null)
+		{
+			Selected = Series.OrderBy(x => x.Name).First();
+			return;
+		}
+
+		Selected = series;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await InitializePlayer();
+		}
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		await RaiseOnLeaveSeries();
+	}
+
+	private async Task RaiseOnLeaveSeries()
+	{
+		var progress = await JS.InvokeAsync<float>("getProgress");
+		Console.WriteLine($"Revieved progress {progress} from player");
+		OnLeaveSeries?.Invoke(Selected, progress);
+	}
+
+	private async Task SelectSeriesAsync(Series value)
+	{
+		await RaiseOnLeaveSeries();
+		Selected = value;
+		StateHasChanged();
+
+		await JS.InvokeVoidAsync("changePlayerSource", Selected.Uri);
+	}
+
+	public async Task InitializePlayer()
+	{
+		await JS.InvokeVoidAsync("initializePlayer");
+	}
+
+	public async Task SetProgress(float value)
+	{
+		await JS.InvokeVoidAsync("setProgress", value);
+	}
+}

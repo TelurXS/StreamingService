@@ -6,7 +6,7 @@ using Domain.Models.Results.Unions;
 
 namespace Infrastructure.Services;
 
-public class DescriptionService : IDescriptionService
+public sealed class DescriptionService : IDescriptionService
 {
     public DescriptionService(IDescriptionRepository repository)
     {
@@ -23,17 +23,37 @@ public class DescriptionService : IDescriptionService
             return new NotFound();
 
         return result;
-    }
+	}
 
-    public GetAllResult<Description> FindAll()
+	public GetResult<Description> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Description> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Description> Create(Description value)
+	public GetAllResult<Description> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Description> Create(Description value)
     {
-        return Repository.Insert(value);
-    }
+        var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Description> Update(Guid id, Description value)
     {
@@ -51,7 +71,17 @@ public class DescriptionService : IDescriptionService
         return entity;
     }
 
-    public DeleteResult Delete(Description value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Description value)
     {
         var result = Repository.Delete(value);
 
@@ -59,15 +89,5 @@ public class DescriptionService : IDescriptionService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
     }
 }

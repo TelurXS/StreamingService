@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@attribute [Route(WebRoutes.Login)]
 @layout MinimalisticLayout
 
 @inject CookieAuthenticationStateProvider AuthenticationStateProvider
@@ -10,7 +10,7 @@
 	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
 		<div class="card-body">
 
-			<h1 class="text-white mb-2">Login</h1>
+			<h2 class="mb-2">Login</h2>
 
 			@if (Message is not null)
 			{
@@ -37,7 +37,7 @@
 					</label>
 				</div>
 
-				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-3 shadow-primary">Sign In</button>
+				<button type="submit" class="button font-btn mt-3 shadow-primary">Sign In</button>
 			</EditForm>
 
 			<div class="mt-3">
@@ -45,12 +45,15 @@
 			</div>
 
 			<div class="mt-5">
-				<a class="btn btn-outline-primary rounded-corners w-100 font-gray"><i class="bi bi-google"></i> Sign In via Google</a>
+				<a class="button-glass font-btn font-gray">
+					Sign In via Google 
+					<i class="bi bi-google mx-2"></i>
+				</a>
 			</div>
 
 			<div class="mt-3 d-flex flex-column">
 				<label class="font-gray font-md">Dont have an account?</label>
-				<a href="/register" class="link-primary font-gray link-no-underline font-md">Register</a>
+				<a href="@WebRoutes.Register" class="link-primary font-gray link-no-underline font-md">Register</a>
 			</div>
 		</div>
 	</div>

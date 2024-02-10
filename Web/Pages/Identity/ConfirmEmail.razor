@@ -1,4 +1,4 @@
-﻿@page "/confirm-email"
+﻿@attribute [Route(WebRoutes.ConfirmEmail)]
 @layout MinimalisticLayout
 
 @inject NavigationManager NavigationManager
@@ -10,11 +10,20 @@
 	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
 		<div class="card-body">
 
-			<h1 class="text-white mb-2">Email Confirmation</h1>
+			<h2 class="mb-2">Email Confirmation</h2>
 
 			@if (Message is not null)
 			{
 				<div>@Message</div>
+			}
+
+			@if (IsSuccess)
+			{
+				<p>You have successfully verified your email.</p>
+
+				<p>To continue, log in to your account using the link below</p>
+
+				<a href="@WebRoutes.Login?returnUrl=@WebRoutes.Manage.Profile" class="button font-btn mt-3">Login</a>
 			}
 
 		</div>
@@ -24,6 +33,8 @@
 @code {
 
 	private string? Message { get; set; }
+
+	private bool IsSuccess { get; set; }
 
 	[SupplyParameterFromQuery]
 	private string? UserId { get; set; }
@@ -41,12 +52,13 @@
 
 		var result = await IdentityService.ConfirmEmailAsync(UserId, Code);
 
-		if (result is false)
+		if (result.IsFailed)
 		{
 			Message = "Oops! Something went wrong while processing your request";
 			return;
 		}
 
 		Message = "Success";
+		IsSuccess = true;
 	}
 }

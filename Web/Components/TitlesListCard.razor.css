@@ -1,0 +1,43 @@
+﻿
+.titles-list-card-holder {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    position: relative;
+    padding: 20px;
+    display: flex;
+}
+
+.titles-list-card-back {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    background: var(--white);
+    opacity: 0.3;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.titles-list-card {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    background: var(--white);
+    opacity: 0.3;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.titles-list-card-forward {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    background: var(--white);
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}

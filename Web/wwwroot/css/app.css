@@ -4,26 +4,18 @@ html, body {
 
 }
 
-:root {
-    --primary: #0042E2;
-    --primary-light: #5B8BFF;
-    --dark: #080808;
-    --light: #D4D4D4;
-    --gray: #D4D4D4;
-    --white: #FFFFFF;
-    --bs-dark: #080808;
-}
-
-@font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-VariableFont_slnt,wght.ttf")
-}
-
 * {
-    font-family: "Inter";
-    font-weight: 500;
-    color: var(--white);
     z-index: 3;
+}
+
+:root {
+    --swiper-pagination-bullet-width: 20px;
+    --swiper-pagination-bullet-height: 5px;
+    --swiper-pagination-bullet-border-radius: 3px;
+    --swiper-pagination-color: var(--primary);
+    --swiper-pagination-bullet-inactive-color: #4B4B4B;
+    --bs-primary: var(--primary);
+    --bs-dropdown-divider-bg: var(--white);
 }
 
 input:-webkit-autofill,
@@ -33,34 +25,28 @@ input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 40rem var(--dark) inset;
 }
 
-h1:focus {
-    outline: none;
-}
-
-a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+h1:focus {
+    outline: none;
 }
 
 .content {
     padding-top: 1.1rem;
 }
 
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+input {
+    color-scheme: dark;
 }
 
 .invalid {
-    outline: 1px solid red;
+    border: 1px solid red !important;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: none;
 }
 
 .validation-message {
@@ -68,7 +54,7 @@ a, .btn-link {
 }
 
 #blazor-error-ui {
-    background: lightyellow;
+    background: var(--dark);
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
@@ -101,7 +87,7 @@ a, .btn-link {
     display: block;
     width: 8rem;
     height: 8rem;
-    margin: 20vh auto 1rem auto;
+    margin: 40vh auto 1rem auto;
 }
 
     .loading-progress circle {
@@ -122,15 +108,48 @@ a, .btn-link {
     position: absolute;
     text-align: center;
     font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+    inset: calc(40vh + 3.25rem) 0 auto 0.2rem;
 }
 
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
 
-code {
-    color: #c02d76;
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 5px
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
+
+progress[value] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+}
+
+progress[value]::-webkit-progress-bar {
+    background-color: var(--stroke);
+    border-radius: 0px;
+    height: 5px;
+}
+
+progress[value]::-webkit-progress-value {
+    background-color: var(--bs-primary);
+    border-radius: 0px;
 }
 
 .shadow-primary {
@@ -186,22 +205,6 @@ input::placeholder {
     background-color: transparent !important;
 }
 
-.font-gray {
-    color: var(--gray) !important;
-}
-
-.font-white {
-    color: var(--white) !important;
-}
-
-.font-sm {
-    font-size: 14px;
-}
-
-.font-md {
-    font-size: 16px;
-}
-
 .btn-primary {
     background-color: var(--primary) !important;
 }
@@ -221,37 +224,6 @@ input::placeholder {
 .header-margin {
     margin-top: 80px;
 }
-
-.background {
-    opacity: 0.4;
-    background: url("/img/background.png");
-    filter: blur(2.5px);
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    z-index: -1;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-    .background:after {
-        display: block;
-        content: "";
-        background: linear-gradient(251deg, #080808 3.03%, rgba(8, 8, 8, 0.00) 50.98%), 
-                    linear-gradient(41deg, #080808 6.09%, rgba(8, 8, 8, 0.00) 50%);
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 100%;
-        z-index: 0;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
 
 .page-container {
     width: 100%;
@@ -276,8 +248,82 @@ main {
     width: 400px;
 }
 
+.dropdown-item {
+    color: var(--white) !important;
+}
+
+.dropdown-item:hover {
+    color: var(--bs-primary) !important;
+    background-color: transparent !important;
+}
+
+.dropdown-divider {
+    border-top: 1px solid var(--white);
+}
+
+.info-card {
+    width: inherit;
+    height: inherit;
+    margin: 5px;
+    padding: 2px 20px;
+    border-radius: 20px;
+    background-color: var(--stroke);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.gradient-divider {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dark) 0%, var(--primary) 50%, var(--dark) 100%);
+}
+
+.circle-profile-picture {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid var(--gray);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.profile-content-background {
+    height: 500px;
+    margin: 5px;
+    border: 1px solid var(--stroke);
+    border-radius: 20px;
+    overflow-y: auto;
+    background: linear-gradient(to top left, var(--primary-transparent) 0%, transparent 30%), 
+                linear-gradient(to bottom right, var(--primary-transparent) 0%, transparent 30%);
+}
+
+.content-container {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid var(--stroke);
+    border-radius: 20px;
+    background: linear-gradient(to top left, var(--primary-transparent) 0%, transparent 30%), linear-gradient(to bottom right, var(--primary-transparent) 0%, transparent 30%);
+}
+
+
 @media (max-width: 400px) {
     .card-form {
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .circle-profile-picture {
+        width: 60%;
+        margin: auto;
+    }
+}
+
+@media(min-height: 1080px) {
+    .page-container {
+        min-height: 1080px;
     }
 }

@@ -25,15 +25,35 @@ public sealed class ImageService : IImageService
         return result;
     }
 
-    public GetAllResult<Image> FindAll()
+	public GetResult<Image> FindByIdWithTracking(Guid id)
+	{
+		var result = Repository.FindByIdWithTracking(id);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Image> FindAll()
     {
         return Repository.FindAll();
-    }
+	}
 
-    public CreateResult<Image> Create(Image value)
+	public GetAllResult<Image> FindAllWithTracking()
+	{
+		return Repository.FindAllWithTracking();
+	}
+
+	public CreateResult<Image> Create(Image value)
     {
-        return Repository.Insert(value);
-    }
+		var result = Repository.Insert(value);
+
+		if (result is null)
+			return new Failed();
+
+		return result;
+	}
 
     public UpdateResult<Image> Update(Guid id, Image value)
     {
@@ -49,9 +69,19 @@ public sealed class ImageService : IImageService
             return new Failed();
 
         return entity;
-    }
+	}
 
-    public DeleteResult Delete(Image value)
+	public DeleteResult DeleteById(Guid id)
+	{
+		var account = Repository.FindById(id);
+
+		if (account is null)
+			return new NotFound();
+
+		return Delete(account);
+	}
+
+	public DeleteResult Delete(Image value)
     {
         var result = Repository.Delete(value);
 
@@ -59,15 +89,5 @@ public sealed class ImageService : IImageService
             return new Failed();
 
         return new Success();
-    }
-
-    public DeleteResult DeleteById(Guid id)
-    {
-        var account = Repository.FindById(id);
-
-        if (account is null)
-            return new NotFound();
-
-        return Delete(account);
     }
 }

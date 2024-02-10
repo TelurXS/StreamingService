@@ -188,9 +188,6 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -201,8 +198,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.HasIndex("AuthorId");
 
@@ -244,6 +239,14 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Dubbing")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -340,6 +343,30 @@ namespace Infrastructure.Migrations
                     b.ToTable("Titles");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TitlesList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Availability")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("TitlesList");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -348,6 +375,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -360,11 +390,21 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -382,6 +422,15 @@ namespace Infrastructure.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfileImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -414,6 +463,38 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.ViewRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Progress")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("SeriesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("SeriesId");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("ViewRecord");
+                });
+
             modelBuilder.Entity("GenreTitle", b =>
                 {
                     b.Property<Guid>("GenresId")
@@ -427,6 +508,21 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TitlesId");
 
                     b.ToTable("GenreTitle");
+                });
+
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.Property<Guid>("FavouriteGenresId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FavouriteInUsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FavouriteGenresId", "FavouriteInUsersId");
+
+                    b.HasIndex("FavouriteInUsersId");
+
+                    b.ToTable("GenreUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -532,6 +628,51 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TitleTitlesList", b =>
+                {
+                    b.Property<Guid>("ListsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TitlesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ListsId", "TitlesId");
+
+                    b.HasIndex("TitlesId");
+
+                    b.ToTable("TitleTitlesList");
+                });
+
+            modelBuilder.Entity("TitleUser", b =>
+                {
+                    b.Property<Guid>("FavouriteInUsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FavouriteTitlesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FavouriteInUsersId", "FavouriteTitlesId");
+
+                    b.HasIndex("FavouriteTitlesId");
+
+                    b.ToTable("TitleUser");
+                });
+
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.Property<Guid>("FollowersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FollowersId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Comment", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Author")
@@ -588,10 +729,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>
                 {
-                    b.HasOne("Domain.Entities.Account", null)
-                        .WithMany("Rates")
-                        .HasForeignKey("AccountId");
-
                     b.HasOne("Domain.Entities.User", "Author")
                         .WithMany("Rates")
                         .HasForeignKey("AuthorId")
@@ -631,6 +768,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TitlesList", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("Lists")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.HasOne("Domain.Entities.Subscription", "Subscription")
@@ -638,6 +786,33 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SubscriptionId");
 
                     b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViewRecord", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("ViewRecords")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Series", "Series")
+                        .WithMany()
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", "Title")
+                        .WithMany("ViewRecords")
+                        .HasForeignKey("TitleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Series");
+
+                    b.Navigation("Title");
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -651,6 +826,21 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Title", null)
                         .WithMany()
                         .HasForeignKey("TitlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.HasOne("Domain.Entities.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteGenresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteInUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -706,9 +896,49 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Account", b =>
+            modelBuilder.Entity("TitleTitlesList", b =>
                 {
-                    b.Navigation("Rates");
+                    b.HasOne("Domain.Entities.TitlesList", null)
+                        .WithMany()
+                        .HasForeignKey("ListsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", null)
+                        .WithMany()
+                        .HasForeignKey("TitlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TitleUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteInUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Title", null)
+                        .WithMany()
+                        .HasForeignKey("FavouriteTitlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Comment", b =>
@@ -729,13 +959,19 @@ namespace Infrastructure.Migrations
                     b.Navigation("Screenshots");
 
                     b.Navigation("Series");
+
+                    b.Navigation("ViewRecords");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Lists");
+
                     b.Navigation("Rates");
+
+                    b.Navigation("ViewRecords");
                 });
 #pragma warning restore 612, 618
         }

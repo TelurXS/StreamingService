@@ -8,8 +8,12 @@ public static class CreateSeries
 {
     public class Request : IRequest<CreateResult<Series>>
     {
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public required string Uri { get; set; }
+        public string Uri { get; set; } = string.Empty;
+
+        public string Dubbing { get; set; } = string.Empty;
+
+        public int Index { get; set; } = default;
     }
 }

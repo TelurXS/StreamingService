@@ -1,13 +1,25 @@
-﻿@page "/logout"
+﻿@attribute [Route(WebRoutes.Logout)]
+@layout MinimalisticLayout
 
 @inject CookieAuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Logout</h3>
+<Background />
 
-@if (Message is not null)
-{
-	<div>@Message</div>
-}
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h2 class="mb-2">Logout</h2>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<a href="/" class="button font-btn mt-3">To Home Page</a>
+		</div>
+	</div>
+</div>
 
 @code {
 	private string? Message { get; set; }

@@ -1,0 +1,7 @@
+﻿@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+	<NotAuthorized>
+		@{ NavigationManager.NavigateTo(WebRoutes.Login + "?returnUrl=" + NavigationManager.GetCurrentRoute()); }
+	</NotAuthorized>
+</AuthorizeView>

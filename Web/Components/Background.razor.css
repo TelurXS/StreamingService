@@ -1,0 +1,39 @@
+﻿
+.background {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    z-index: -1;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+    .background:after {
+        display: block;
+        content: "";
+        background: linear-gradient(251deg, #080808 3.03%, rgba(8, 8, 8, 0.00) 50.98%), linear-gradient(41deg, #080808 6.09%, rgba(8, 8, 8, 0.00) 50%);
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        z-index: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+@media(min-height: 1080px) {
+    .background {
+        height: 1080px;
+    }
+
+        .background:after {
+            height: 1080px;
+        }
+}

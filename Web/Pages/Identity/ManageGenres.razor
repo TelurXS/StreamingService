@@ -1,0 +1,118 @@
+﻿@attribute [Route(WebRoutes.Manage.Genres)]
+@layout MinimalisticLayout
+
+@using Application.Features.Users
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<RequireAuthorization />
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h2 class="mb-2">Manage Genres</h2>
+
+			@if (Message is not null)
+			{
+				<div>@Message</div>
+			}
+
+			<div class="genre-select-panel mt-3">
+				@foreach (var name in Genres)
+				{
+					if (Selected.Contains(name))
+					{
+						<div @onclick="() => Toggle(name)" class="genre active rounded-corners mt-1 mx-1 font-white font-sm">
+							@name
+						</div>
+					}
+					else
+					{
+						<div @onclick="() => Toggle(name)" class="genre rounded-corners mt-1 mx-1 font-white font-sm">
+							@name
+						</div>
+					}
+				}
+			</div>
+
+			<button @onclick="OnSubmit" class="button font-btn mt-3">Continue</button>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private string? Message { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	private List<string> Genres { get; set; } =
+	[
+		"Biography", "Genre 1",	  "Long Genre",
+		"Battle",	 "Genre 2",	  "Very long Genre",
+		"Military",	 "Genre 3",	  "Extremely Long Genre",
+		"Horror",	 "Genre 4",	  
+		"Action",	 "Genre 5",	  
+		"Western",	 "Genre 6",	  
+		"Anime",	 "Genre 7",	  
+		"Family",	 "Genre 8",	  
+		"Comedy",	 "Genre 9",	  
+		"Drama",	 "Genre 10",  
+		"Sport",	 "Genre 11",  
+		"Triler",	 "Genre 12",  
+		"Fantasy",	 "Genre 13",  
+		"History",	 "Genre 14",  
+		"Film",		 "Genre 15",  
+	];
+
+	private List<string> Selected { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.GetFavouriteGenresAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		Selected = result.AsFound.Select(x => x.Name).ToList();
+
+		StateHasChanged();
+	}
+
+	private async Task OnSubmit()
+	{
+		var request = new SetFavouriteGenresToUser.Request
+			{
+				Genres = Selected,
+			};
+
+		var result = await IdentityService.SetFavouriteGenresAsync(request);
+
+		if (result.IsFailed)
+		{
+			Message = "Something went wrong while processing your request";
+			return;
+		}
+
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo(WebRoutes.Manage.Subscription);
+	}
+
+	private void Toggle(string genre)
+	{
+		if (Selected.Contains(genre))
+		{
+			Selected.Remove(genre);
+			return;
+		}
+
+		Selected.Add(genre);
+	}
+}

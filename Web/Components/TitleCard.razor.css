@@ -1,0 +1,29 @@
+﻿
+.title-card {
+    width: 260px;
+    height: 420px;
+    margin-right: 5px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-card-background {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    padding: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.title-card-info {
+    padding: 2px 5px;
+    background-color: var(--secondary-glass);
+    backdrop-filter: blur(10px);
+    border-radius: 5px;
+    user-select: none;
+}

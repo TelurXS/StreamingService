@@ -39,4 +39,11 @@ public sealed class Title
     public ICollection<Rate> Rates { get; set; } = default!;
 
     public ICollection<Comment> Comments { get; set; } = default!;
+
+    public ICollection<TitlesList> Lists { get; set; } = default!;
+
+    public ICollection<User> FavouriteInUsers { get; set; } = default!;
+
+    public ICollection<ViewRecord> ViewRecords { get; set; } = default!;
+
 }

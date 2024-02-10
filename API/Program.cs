@@ -30,6 +30,8 @@ builder.Services.AddCarter();
 builder.Services.AddSingleton<ExceptionHandler>();
 builder.Services.AddSingleton<ClientRoutesService>();
 builder.Services.AddSingleton<IEmailSender<User>, EmailSender>();
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>,
+		AdditionalUserClaimsPrincipalFactory>();
 
 builder.Services
     .AddAuthentication(options =>
@@ -75,10 +77,9 @@ app.UseCors();
 app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandler>();
 
-app.UseBlazorFrameworkFiles();
-
 app.MapCarter();
 
+app.UseBlazorFrameworkFiles();
 app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -1,0 +1,141 @@
+﻿@attribute [Route(WebRoutes.Manage.Profile)]
+@layout MinimalisticLayout
+
+@using Application.Features.Users
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<RequireAuthorization />
+<Background />
+
+<div class="row g-3 align-items-center justify-content-center">
+	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
+		<div class="card-body">
+
+			<h2 class="mb-2">Manage Profile</h2>
+
+			@if (Messages.Any())
+			{
+				<ul>
+					@foreach (var message in Messages)
+					{
+						<li class="text-danger">@message</li>
+					}
+				</ul>
+			}
+
+			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
+				<DataAnnotationsValidator />
+
+				<div class="mt-5">
+					<InputText @bind-Value="Input.Name" autocomplete="username" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+							   placeholder="Username" />
+				</div>
+
+				<ValidationMessage For="() => Input.Name" class="text-danger mt-2" />
+
+				<div class="row mt-3">
+					<div class="col-6">
+						<InputText @bind-Value="Input.FirstName" autocomplete="firstname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="First Name" />
+					</div>
+					<div class="col-6">
+						<InputText @bind-Value="Input.SecondName" autocomplete="secondname" class="form-control rounded-corners back-dark border-primary font-sm font-gray"
+								   placeholder="Second Name" />
+					</div>
+				</div>
+
+				<ValidationMessage For="() => Input.FirstName" class="text-danger mt-2" />
+				<ValidationMessage For="() => Input.SecondName" class="text-danger mt-2" />
+
+				<InputDate @bind-Value="Input.BirthDate" autocomplete="birthDate" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+						   placeholder="Password" />
+
+				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-4 shadow-primary">Continue</button>
+			</EditForm>
+
+			<div class="mt-5 d-flex flex-column">
+				<label class="font-gray font-md">Have an account?</label>
+				<a href="/login" class="link-primary font-gray link-no-underline font-md">Login</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private List<string> Messages { get; set; } = new();
+
+	[SupplyParameterFromQuery]
+	private string? ReturnUrl { get; set; }
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.GetProfileAsync();
+
+		if (result.IsFound is false)
+			return;
+
+		var profile = result.AsFound;
+
+		Input.Name = profile.Name ?? string.Empty;
+		Input.FirstName = profile.FirstName ?? string.Empty;
+		Input.SecondName = profile.SecondName ?? string.Empty;
+		Input.BirthDate = profile.BirthDate;
+	}
+
+	private async Task OnSubmit()
+	{
+		var request = new UpdateUserProfile.Request
+		{
+			Name = Input.Name,
+			FirstName = Input.FirstName,
+			SecondName = Input.SecondName,
+			BirthDate = Input.BirthDate,
+		};
+
+		var result = await IdentityService.UpdateProfileAsync(request);
+
+		if (result.IsValidationFailed)
+		{
+			var failures = result.AsValidationFailed.Errors;
+			Messages = failures.Select(x => x.ErrorMessage).ToList();
+			return;
+		}
+
+		if (result.IsFailed)
+		{
+			var failures = result.AsFailed.Errors;
+			Messages = failures.ToList();
+			return;
+		}
+
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo(WebRoutes.Manage.Genres);
+	}
+
+	private class InputModel
+	{
+		[Required]
+		[MinLength(2)]
+		[MaxLength(128)]
+		public string Name { get; set; } = string.Empty;
+
+		[Required]
+		[MaxLength(128)]
+		public string FirstName { get; set; } = string.Empty;
+
+		[Required]
+		[MaxLength(128)]
+		public string SecondName { get; set; } = string.Empty;
+
+		[Required]
+		public DateTime BirthDate { get; set; } = DateTime.Now.AddYears(-18);
+	}
+}

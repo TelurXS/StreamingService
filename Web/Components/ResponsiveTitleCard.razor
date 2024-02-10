@@ -1,0 +1,15 @@
+﻿@using Domain.Entities
+
+<a class="title-card" href="@WebRoutes.Titles.Base/@Title.Slug">
+	<div class="title-card-background" style="background-image: url(@Title.Image.Uri)">
+		<span class="title-card-info font-xs">@Title.AvarageRate <i class="bi bi-star-fill"></i></span>
+		<span class="title-card-info font-xs">@Title.ReleaseDate.Year</span>
+	</div>
+	<span class="title-card-label user-select-none font-sm">@Title.Name</span>
+</a>
+
+@code {
+
+	[Parameter]
+	public Title Title { get; set; } = default!;
+}

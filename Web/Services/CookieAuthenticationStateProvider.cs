@@ -1,4 +1,5 @@
-﻿using Domain.Models.Requests;
+﻿using Domain.Models;
+using Domain.Models.Requests;
 using Domain.Models.Responses;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +23,7 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 	{
 		try
 		{
-			var user = await Client.GetFromJsonAsync<ClaimResponse>("/user");
+			var user = await Client.GetFromJsonAsync<ClaimResponse>(ApiRoutes.User);
 
 			if (user is null || user.Count <= 0)
 				return new AuthenticationState(Anonymous);
@@ -46,7 +47,7 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 	{
 		var response = await Client
 			.PostAsJsonAsync(
-			$"/login?useCookies=true&useSessionCookies={!request.RememberMe}", 
+			$"{ApiRoutes.Login}?useCookies=true&useSessionCookies={!request.RememberMe}", 
 			request);
 
 		NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
@@ -55,7 +56,7 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 
 	public async Task<bool> LogoutAsync()
 	{
-		var response = await Client.PostAsJsonAsync("/logout", new { });
+		var response = await Client.PostAsJsonAsync(ApiRoutes.Logout, new { });
 		NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 		return response.IsSuccessStatusCode;
 	}

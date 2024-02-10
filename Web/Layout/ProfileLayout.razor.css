@@ -1,0 +1,36 @@
+﻿
+.profile-page-container {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    background-color: var(--dark);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+@media (min-width: 641px) {
+
+    .sidebar {
+        width: 50px;
+        height: 100vh;
+        position: fixed;
+        border-top-left-radius: 0;
+        border-top-right-radius: 20px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 20px;
+        top: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center
+    }
+}

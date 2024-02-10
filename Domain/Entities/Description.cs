@@ -7,6 +7,6 @@ public sealed class Description
     public required string Language { get; set; }
 
     public required string Value { get; set; }
-    
-    public Title Title { get; set; } = default!;
+
+	public Title Title { get; set; } = default!;
 }

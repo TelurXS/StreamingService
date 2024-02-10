@@ -1,4 +1,4 @@
-﻿@page "/register"
+﻿@attribute [Route(WebRoutes.Register)]
 @layout MinimalisticLayout
 
 @inject IIdentityService IdentityService
@@ -12,20 +12,20 @@
 
 			<h1 class="text-white mb-2">Register</h1>
 
-			@if (Message is not null)
+			@if (Messages.Any())
 			{
-				<div>@Message</div>
+				<ul>
+					@foreach (var message in Messages)
+					{
+						<li class="text-danger">@message</li>
+					}
+				</ul>
 			}
 
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="register">
 				<DataAnnotationsValidator />
 
-				<InputText @bind-Value="Input.Username" autocomplete="name" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
-						   placeholder="Username" />
-
-				<ValidationMessage For="() => Input.Username" class="text-danger mt-2" />
-
-				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-3 rounded-corners back-dark border-primary font-sm font-gray"
+				<InputText @bind-Value="Input.Email" autocomplete="email" class="form-control mt-5 rounded-corners back-dark border-primary font-sm font-gray"
 						   placeholder="Email" />
 
 				<ValidationMessage For="() => Input.Email" class="text-danger mt-2" />
@@ -40,12 +40,12 @@
 
 				<ValidationMessage For="() => Input.ConfigrmPassword" class="text-danger mt-2" />
 
-				<button type="submit" class="btn btn-primary rounded-corners w-100 mt-3 shadow-primary">Continue</button>
+				<button type="submit" class="button font-btn mt-3 shadow-primary">Continue</button>
 			</EditForm>
 
 			<div class="mt-5 d-flex flex-column">
 				<label class="font-gray font-md">Have an account?</label>
-				<a href="/login" class="link-primary font-gray link-no-underline font-md">Login</a>
+				<a href="@WebRoutes.Login" class="link-primary font-gray link-no-underline font-md">Login</a>
 			</div>
 		</div>
 	</div>
@@ -53,7 +53,7 @@
 
 @code {
 
-	private string? Message { get; set; }
+	private List<string> Messages { get; set; } = new();
 
 	[SupplyParameterFromQuery]
 	private string? ReturnUrl { get; set; }
@@ -65,29 +65,34 @@
 	{
 		var request = new RegisterRequest
 			{
-				Username = Input.Username,
 				Email = Input.Email,
 				Password = Input.Password,
 			};
 
 		var result = await IdentityService.RegisterAsync(request);
 
-		//Message = $"{request.Username} {request.Email} {request.Password}";
+		if (result.IsValidationFailed)
+		{
+			var failures = result.AsValidationFailed.Errors;
+			Messages = failures.Select(x => x.ErrorMessage).ToList();
+			return;
+		}
 
-		Message = result;
+		if (result.IsFailed)
+		{
+			var failures = result.AsFailed.Errors;
+			Messages = failures.ToList();
+			return;
+		}
 
-		//if (ReturnUrl is not null)
-		//	NavigationManager.NavigateTo(ReturnUrl);
-		//
-		//else NavigationManager.NavigateToCurrentPage();
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		else NavigationManager.NavigateTo(WebRoutes.ConfirmationSent);
 	}
 
 	private class InputModel
 	{
-		[Required]
-		[MaxLength(64)]
-		public string Username { get; set; } = string.Empty;
-
 		[Required]
 		[MaxLength(64)]
 		[EmailAddress]

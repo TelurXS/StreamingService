@@ -4,9 +4,13 @@ public interface IRepository<T>
 {
     T? FindById(Guid id);
 
+    T? FindByIdWithTracking(Guid id);
+
     List<T> FindAll();
 
-    T Insert(T value);
+    List<T> FindAllWithTracking();
+
+    T? Insert(T value);
 
     bool Update(Guid id, T value);
 

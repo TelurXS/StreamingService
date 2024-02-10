@@ -19,17 +19,54 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public List<Genre> FindAll()
+	public Genre? FindByIdWithTracking(Guid id)
+	{
+		return Entities
+			.Include(x => x.Titles)
+			.FirstOrDefault(x => x.Id == id);
+	}
+
+	public Genre? FindByName(string name)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Titles)
+			.FirstOrDefault(x => x.Name == name);
+	}
+
+	public Genre? FindByNameWithTracking(string name)
+	{
+		return Entities
+			.Include(x => x.Titles)
+			.FirstOrDefault(x => x.Name == name);
+	}
+
+	public List<Genre> FindAll()
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Titles)
             .ToList();
     }
-    public Genre Insert(Genre value)
+
+	public List<Genre> FindAllWithTracking()
+	{
+		return Entities
+		   .Include(x => x.Titles)
+		   .ToList();
+	}
+
+	public Genre Insert(Genre value)
     {
-        return Entities.Add(value).Entity;
-    }
+		var entity = Entities.Add(value).Entity;
+
+		var result = Context.SaveChanges();
+
+		if (result > 0)
+			return entity;
+
+		return default;
+	}
 
     public bool Update(Guid id, Genre value)
     {
@@ -48,13 +85,5 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
             .ExecuteDelete();
 
         return result > 0;
-    }
-
-    public Genre? FindByName(string Name)
-    {
-        return Entities
-            .AsNoTracking()
-            .Include(x => x.Titles)
-            .FirstOrDefault(x => x.Name == Name);
     }
 }

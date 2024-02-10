@@ -1,0 +1,308 @@
+﻿@attribute [Route(WebRoutes.Titles.Title)]
+
+@inject ITitleService TitleService
+@inject IIdentityService IdentityService
+@inject ICommentsService CommentsService
+
+@using Application.Features.Comments
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Extensions
+@using System.Collections
+
+@if (Loaded is false)
+{
+	<div>Loading...</div>
+	<div class="my-5"></div>
+	return;
+}
+
+<Background Blur="15" Url="@Title.Image.Uri" />
+
+<div class="d-flex align-items-center">
+	<a href="@WebRoutes.Home" class="font-sm font-gray page-link">Home</a>
+	<span class="mx-2 font-gray"> > </span>
+	@Title.Name
+</div>
+
+<div class="row mt-3 mb-5">
+	<div class="col-md-4">
+		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
+		<div class="poster p-3" style="background-image: url('@Title.Image.Uri')">
+			<AuthorizeView>
+				<Authorized>
+					<div class="d-flex flex-column align-items-end">
+						<img height="30" src="@(InFavourite ? "/img/heart-fill.svg" : "/img/heart.svg")" @onclick="ToggleFavourite" />
+						<img height="30" src="/img/bookmark.svg" class="mt-2" @onclick="() => TitlesListWindow.Open()" />
+					</div>
+				</Authorized>
+			</AuthorizeView>
+		</div>
+		<a href="@Title.Image.Uri" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+	</div>
+
+	<div class="col-md-8">
+		<span class="font-lg font-gray">Series</span>
+		<h1>@Title.Name</h1>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Raiting:</div>
+			<div class="col-sm-9 font-gray">@Title.AvarageRate</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Release Date:</div>
+			<div class="col-sm-9 font-gray">@Title.ReleaseDate.ToShortDateString()</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Country:</div>
+			<div class="col-sm-9 font-gray">@Title.Country.GetDescription()</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Genres:</div>
+			<div class="col-sm-9 font-gray">@string.Join(", ", Title.Genres.Select(x => x.Name))</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Director:</div>
+			<div class="col-sm-9 font-gray">@Title.Director</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Cast:</div>
+			<div class="col-sm-9 font-gray">@Title.Cast</div>
+		</div>
+
+		<div class="row mt-2">
+			<div class="col-sm-3">Age:</div>
+			<div class="col-sm-9 font-gray">@Title.AgeRestriction.GetDescription()</div>
+		</div>
+
+		<div class="d-flex mt-2 screenshot-panel">
+			@foreach (var screenshot in Title.Screenshots)
+			{
+				<img src="@screenshot.Uri" class="screenshot" />
+			}
+		</div>
+	</div>
+</div>
+
+<div>
+	<h3>What is the "@Title.Name" about:</h3>
+	<p class="font-gray mt-3">@Title.Description</p>
+</div>
+
+<div class="mt-5">
+	<h4 class="mb-3">Watch:</h4>
+
+	<VideoPlayer Series="Title.Series.ToList()" SelectedId="SeriesId" OnLeaveSeries="OnLeaveSeries" />
+</div>
+
+<div class="mt-3 row align-items-center">
+	<span class="font-lg col-md-2">Rate Title:</span>
+	<div class="col-md-10">
+		@foreach (var i in Enumerable.Range(1, 10))
+		{
+			if (i > Rate.Value)
+			{
+				<i @onclick="() => SetRate(i)" class=" star bi bi-star"></i>
+			}
+			else
+			{
+				<i @onclick="() => SetRate(i)" class="star bi bi-star-fill"></i>
+			}
+		}
+		<span class="font-lg mx-3">@Rate.Value / 10</span>
+	</div>
+</div>
+
+<div class="mt-3">
+	<Slider Header="Recomendations" Titles="Recomendations" />
+</div>
+
+<div class="mt-3">
+	<h3>Comments:</h3>
+
+	<div class="mt-2">
+
+		<AuthorizeView>
+			<Authorized>
+
+				@if(string.IsNullOrEmpty(Message) is false)
+				{
+					<div class="text-danger">@Message</div>
+				}
+
+				@if (Input.Parent is not null)
+				{
+					<div class="mt-3 mx-2">
+						<a href="/titles/@Slug#comment-@Input.Parent.Id" class="font-gray">
+							<i class="bi bi-reply-fill"></i>
+							Replying to @Input.Parent.Author.Name
+						</a>
+						<a @onclick="() => Input.Parent = null">
+							<i class="bi bi-x-lg"></i>
+						</a>
+					</div>
+				}
+
+				<EditForm Model="Input" OnValidSubmit="SendComment" Context="form_context">
+					<div class="row">
+						<div class="col-md-10 col-sm-8">
+							<InputTextArea @bind-Value="Input.Content" class="form-control rounded-corners back-dark border-primary font-sm font-gray" />
+						</div>
+						<div class="col-md-2 col-sm-4 mt-2">
+							<button class="button">Send</button>
+						</div>
+					</div>
+				</EditForm>
+			</Authorized>
+			<NotAuthorized>
+				<div class="font-md font-gray">To send comments you need to be logined into account</div>
+			</NotAuthorized>
+		</AuthorizeView>
+	</div>
+
+	<div class="d-flex flex-column">
+		@foreach (var comment in Title.Comments.OrderByDescending(x => x.CreationDate))
+		{
+			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
+				<img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+
+				<div class="w-100">
+					<div class="d-flex justify-content-between">
+						<span class="font-sm font-white">@comment.Author.Name</span>
+						<span class="font-sm font-gray">created: @comment.CreationDate.ToShortDateString()</span>
+					</div>
+
+					@comment.Content
+
+					<div class="d-flex justify-content-between">
+						<a class="font-sm font-gray" @onclick="() => Input.Parent = comment">
+							Reply <i class="bi bi-reply-fill"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+<div class="mt-5"></div>
+
+<TitlesListModalWindow @ref="TitlesListWindow" Title="Title"/>
+
+@code {
+	[Parameter]
+	public string Slug { get; set; } = default!;
+
+	[SupplyParameterFromQuery]
+	public Guid SeriesId { get; set; } = default;
+
+	private InputModel Input { get; set; } = new();
+
+	public Title Title { get; set; } = default!;
+
+	public List<Title> Recomendations { get; set; } = new();
+
+	public Rate Rate = new Rate { Value = 8 };
+
+	private bool Loaded { get; set; } = false;
+
+	private bool InFavourite { get; set; } = false;
+
+	private string Message { get; set; } = string.Empty;
+
+	private TitlesListModalWindow TitlesListWindow { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await TitleService.FindBySlugAsync(Slug);
+
+		if (result.IsFound is false)
+			return;
+
+		Title = result.AsFound;
+		Loaded = true;
+
+		Recomendations = [Title, Title, Title, Title];
+
+		var favouriteResult = await IdentityService.GetFavouriteTitlesAsync();
+
+		if (favouriteResult.IsFound)
+		{
+			InFavourite = favouriteResult.AsFound.Any(x => x.Id == Title?.Id);
+		}
+
+		StateHasChanged();
+	}
+
+	private void SetRate(int value)
+	{
+		Rate.Value = value;
+	}
+
+	private async Task OnLeaveSeries(Series series, float progress)
+	{
+		Console.WriteLine("Starting to save the progress");
+		if (progress <= 0 || progress > 1)
+		{
+			Console.WriteLine($"Progress for {series?.Name} {progress} is not valid");
+			return;
+		}
+
+		var request = new RegisterViewRecordToUser.Request
+			{
+				Progress = progress,
+			};
+
+		await IdentityService.RegisterViewRecordAsync(series.Id, request);
+	}
+
+	private async Task SendComment()
+	{
+		var request = new CreateCommentForTitleFromAuthor.Request
+		{
+			Content = Input.Content,
+			CreationDate = DateTime.Now,
+		};
+		var result = await CommentsService.CreateCommentForTitle(Title.Id, request);
+
+		if (result.IsCreated is false)
+		{
+			Message = "Oops! Something went wrong...";
+			return;
+		}
+
+
+		Input.Content = string.Empty;
+		Title.Comments.Add(result.AsCreated);
+	}
+
+	private async Task ToggleFavourite()
+	{
+		if (InFavourite)
+		{
+			var result = await IdentityService.RemoveTitleFromFavouriteAsync(Title);
+
+			if (result.IsUpdated)
+				InFavourite = false;
+		}
+		else
+		{
+			var result = await IdentityService.AddTitleToFavouriteAsync(Title);
+
+			if (result.IsUpdated)
+				InFavourite = true;
+		}
+	}
+
+	private class InputModel
+	{
+		public Comment? Parent { get; set; } = default;
+
+		public string Content { get; set; } = string.Empty;
+	}
+}

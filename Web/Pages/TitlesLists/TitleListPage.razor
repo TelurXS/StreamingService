@@ -1,0 +1,37 @@
+﻿@attribute [Route(WebRoutes.TitlesLists.ById)]
+@layout ProfileLayout
+
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+
+<RequireAuthorization />
+
+<h2 class="mb-3">Favourites</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+	@foreach (var title in Titles)
+	{
+		<div class="col d-flex justify-content-center mt-2">
+			<TitleCard Title="title" />
+		</div>
+	}
+</div>
+
+@code {
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private List<Title> Titles { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var favouriteTitlesResult = await IdentityService.GetFavouriteTitlesAsync();
+
+		if (favouriteTitlesResult.IsFound)
+		{
+			Titles = favouriteTitlesResult.AsFound;
+		}
+	}
+}
