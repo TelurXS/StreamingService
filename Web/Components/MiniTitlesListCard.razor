@@ -1,0 +1,24 @@
+﻿@using Domain.Entities
+
+<div class="w-100 d-flex flex-column justify-content-center align-items-center">
+	<div class="titles-list-card-holder">
+		<div class="titles-list-card-back"></div>
+		<div class="titles-list-card"></div>
+		<div class="titles-list-card-forward" style="background-image: @(List.Titles.Count == 0 ? "white" : $"url('{List.Titles.First().Image.Uri}')")"></div>
+	</div>
+	@if (ShowName)
+	{
+		<span>Name</span>
+	}
+</div>
+
+
+
+@code {
+	[Parameter]
+	public TitlesList List { get; set; } = default!;
+
+	[Parameter]
+	public bool ShowName { get; set; } = true;
+}
+

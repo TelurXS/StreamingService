@@ -15,6 +15,9 @@ public class ViewRecordConfiguration : IEntityTypeConfiguration<ViewRecord>
 
 		builder.Property(x => x.Progress)
 			.IsRequired();
+		
+		builder.Property(x => x.Time)
+			.IsRequired();
 
 		builder.HasOne(x => x.Author)
 			.WithMany(x => x.ViewRecords);

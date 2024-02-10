@@ -24,6 +24,9 @@ public static class UpdateTitlesList
 
 		[JsonIgnore]
 		public Guid Id { get; set; }
+
+		[JsonIgnore]
+		public Guid UserId { get; set; }
 	}
 
 	public class RequestValidator : AbstractValidator<Request>
@@ -58,6 +61,14 @@ public static class UpdateTitlesList
 
 			if (validationResult.IsValid is false)
 				return new ValidationFailed(validationResult.Errors);
+
+			var titleListResult = TitlesListService.FindById(request.Id);
+
+			if (titleListResult.IsFound is false)
+				return new NotFound();
+
+			if (titleListResult.AsFound.Author.Id != request.UserId)
+				return new Failed();
 
 			var titlesList = Mapper.FromRequest(request);
 

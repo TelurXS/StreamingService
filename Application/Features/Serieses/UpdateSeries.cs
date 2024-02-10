@@ -8,10 +8,14 @@ public static class UpdateSeries
 {
     public class Request : IRequest<UpdateResult<Series>>
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = default;
 
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public required string Uri { get; set; }
+        public string Uri { get; set; } = string.Empty;
+
+        public string Dubbing { get; set; } = string.Empty;
+
+        public int Index { get; set; } = default;
     }
 }

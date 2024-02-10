@@ -1,0 +1,35 @@
+﻿@attribute [Route(WebRoutes.My.Lists)]
+@layout ProfileLayout
+
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+
+<RequireAuthorization />
+
+<h2 class="mb-3">Lists</h2>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+	@foreach (var list in Lists)
+	{
+		<div class="col d-flex justify-content-center mt-2">
+			<a href="@WebRoutes.My.Lists/@list.Id" class="m-4 w-100">
+				<TitlesListCard List="list" />
+			</a>
+		</div>
+	}
+</div>
+
+@code {
+	private List<TitlesList> Lists { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var listsResult = await IdentityService.GetTitlesListsAsync();
+
+		if (listsResult.IsFound)
+		{
+			Lists = listsResult.AsFound;
+		}
+	}
+}

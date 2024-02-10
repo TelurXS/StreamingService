@@ -7,4 +7,8 @@ public class SeriesResponse
 	public string Name { get; set; } = string.Empty;
 
 	public string Uri { get; set; } = string.Empty;
+	
+	public string Dubbing { get; set; } = string.Empty;
+	
+	public int Index { get; set; } = default;
 }

@@ -1,25 +1,13 @@
-﻿@using Domain.Entities
+﻿@using Application.Features.TitleLists
+@using Application.Features.TitlesLists
+@using Domain.Entities
 
 @inject IIdentityService IdentityService
+@inject ITitlesListService TitlesListService
 
 <ModalWindow @ref="Window">
-	@*
-	<div class="row g-3 align-items-center justify-content-center" @onclick="() => {}">
-		<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
-			<div class="card-body">
-				<h4>Save to List</h4>
 
-				@foreach (var list in TitlesLists)
-				{
-					<div>@list.Name</div>
-				}
-
-			</div>
-		</div>
-	</div>
-	*@
-
-	<div class="gradient-panel card-form">
+	<div class="gradient-panel card-form" @onclick:stopPropagation="true">
 
 		<div class="d-flex flex-column align-items-center">
 			<img class="w-25" src="/img/bookmark.svg"/>
@@ -28,26 +16,49 @@
 
 		<div class="gradient-divider"></div>
 
-		<div class="overflow-auto" style="height: 300px;">
+		<div class="overflow-auto" style="height: 300px; padding-right: 5px">
 			@foreach (var list in TitlesLists)
 			{
 				<div class="gradient-panel my-2">
 					<div class="row mw-100">
 
-						<div class="col-2">
-							@if (list.Titles.Count > 0)
-							{
-								<img src="@list.Titles.First().Image.Uri" height="70" />
-							}
+						<div class="col-3">
+							<div class="m-1">
+								<MiniTitlesListCard List="list" ShowName="false" />
+							</div>
 						</div>
 
-						<div class="col-6 d-flex flex-column justify-content-center">
-							<span>@list.Name</span>
-							<span>@list.Availability.ToString()</span>
+						<div class="col-5 d-flex flex-column justify-content-center">
+							<span class="font-md">@list.Name</span>
+							
+							@if (list.Availability is Availability.Public)
+							{
+								<span class="font-sm font-gray">
+									<img height="18" src="/img/unlock.svg" style="opacity: 0.3"/>
+									Public
+								</span>
+							}
+							else
+							{
+								<span class="font-sm font-gray">
+									<img height="18" src="/img/lock.svg" />
+									Private
+								</span>
+							}
+							
 						</div>
 
 						<div class="col-4 d-flex align-items-center">
-							<button class="button my-auto">Save</button>
+
+							@if (list.Titles.Any(x => x.Id == Title.Id))
+							{
+								<button class="button-glass" @onclick="() => RemoveTitleFromList(list)">Remove</button>
+							}
+							else
+							{
+								<button class="button" @onclick="() => AddTitleToList(list)">Save</button>
+							}
+
 						</div>
 					</div>
 				</div>
@@ -56,12 +67,45 @@
 
 		<div class="gradient-divider"></div>
 
-		<a class="mx-3 my-2 d-flex align-items-center">
-			<div class="button button-fit mx-2">
-				<img src="/img/plus-fill.svg" />	
-			</div>
-			<span>Create List</span>
-		</a>
+		@if (CreateMode)
+		{
+			<EditForm Model="Input" OnValidSubmit="CreateListAsync" class="mx-3 my-2">
+				<DataAnnotationsValidator/>
+				<ValidationSummary/>
+
+				<div class="d-flex">
+					<InputText @bind-Value="Input.Name" class="form-control rounded-corners back-dark border-primary font-sm font-gray" />
+
+					@if (Input.IsPrivate)
+					{
+						<a class="button button-fit mx-2" @onclick="() => Input.IsPrivate = false">
+							<img width="30" height="30" class="m-1" src="/img/lock.svg" />
+						</a>
+					}
+					else
+					{
+						<a class="button button-fit mx-2" @onclick="() => Input.IsPrivate = true">
+							<img width="30" height="30" class="m-1" src="/img/unlock.svg" />
+						</a>
+					}
+
+					<button class="button button-fit mx-2" style="width: 40px">
+						<img width="30" height="30" class="m-1" src="/img/plus-fill.svg" />
+					</button>
+				</div>
+				
+			</EditForm>
+		}
+		else
+		{
+			<a class="mx-3 my-2 d-flex align-items-center" @onclick="() => CreateMode = true">
+				<div class="button button-fit mx-2">
+					<img width="30" height="30" class="m-1" src="/img/plus-fill.svg" />
+				</div>
+				<span>Create List</span>
+			</a>
+		}
+		
 	</div>
 
 </ModalWindow>
@@ -75,6 +119,10 @@
 
 	private List<TitlesList> TitlesLists { get; set; } = new();
 
+	private InputModel Input { get; set; } = new();
+
+	private bool CreateMode { get; set; } = false;
+
 	protected override async Task OnInitializedAsync()
 	{
 		var titlesListsResult = await IdentityService.GetTitlesListsAsync();
@@ -85,7 +133,54 @@
 		}
 	}
 
+	private async Task AddTitleToList(TitlesList list)
+	{
+		var result = await TitlesListService.AddTitleToListAsync(list.Id, Title);
+
+		if (result.IsUpdated)
+		{
+			list.Titles.Add(Title);
+		}
+	}
+
+	private async Task RemoveTitleFromList(TitlesList list)
+	{
+		var result = await TitlesListService.RemoveTitleFromListAsync(list.Id, Title);
+
+		if (result.IsUpdated)
+		{
+			list.Titles.Remove(list.Titles.First(x => x.Id == Title.Id));
+		}
+	}
+
+	private async Task CreateListAsync()
+	{
+		var request = new CreateTitlesList.Request
+		{
+			Name = Input.Name,
+			Availability = Input.IsPrivate ? Availability.Private : Availability.Public,
+		};
+
+		var result = await TitlesListService.CreateAsync(request);
+
+		if (result.IsCreated)
+		{
+			TitlesLists.Add(result.AsCreated);
+			CreateMode = false;
+		}
+	}
+
 	public void Open() => Window.Open();
 
 	public void Close() => Window.Close();
+
+	private sealed class InputModel
+	{
+		[Required]
+		[MaxLength(64)]
+		public string Name { get; set; } = string.Empty;
+
+		[Required]
+		public bool IsPrivate { get; set; } = false;
+	}
 }

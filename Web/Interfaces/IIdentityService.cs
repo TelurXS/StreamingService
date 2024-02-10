@@ -32,10 +32,4 @@ public interface IIdentityService
 	Task<UpdateResult<Success>> RemoveTitleFromFavouriteAsync(Title title);
 
 	Task<GetAllResult<TitlesList>> GetTitlesListsAsync();
-
-	Task<UpdateResult<Success>> AddTitleToListAsync(Guid listId, Title title);
-
-	Task<UpdateResult<Success>> RemoveTitleFromListAsync(Guid listId, Title title);
-
-	Task<CreateResult<TitlesList>> CreateListAsync(CreateTitlesList.Request request);
 }

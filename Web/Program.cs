@@ -17,6 +17,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(x =>
 
 builder.Services.AddTransient<IIdentityService, IdentityService>();
 builder.Services.AddTransient<ITitleService, TitleService>();
+builder.Services.AddTransient<ITitlesListService, TitlesListService>();
 builder.Services.AddTransient<ICommentsService, CommentService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

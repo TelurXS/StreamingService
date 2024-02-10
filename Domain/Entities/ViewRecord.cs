@@ -7,6 +7,10 @@ public class ViewRecord
 	public Guid Id { get; set; }
 
 	public required float Progress { get; set; }
+	
+	public required DateTime Time { get; set; }
+	
+	public int PercentProgress => (int)(Progress * 100);
 
 	public User Author { get; set; } = default!;
 

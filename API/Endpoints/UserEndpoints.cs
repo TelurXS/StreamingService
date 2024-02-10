@@ -48,30 +48,6 @@ public class UserEndpoints : ICarterModule
 
 		app.MapGet(ApiRoutes.TitlesLists.All, GetTitlesListsFromUserAsync)
 			.RequireAuthorization();
-
-		app.MapPost(ApiRoutes.TitlesLists.Route, CreateTitlesListAsync)
-			.RequireAuthorization();
-	}
-
-	[Consumes(MediaTypeNames.Application.Json)]
-	[ProducesResponseType<TitlesListResponse>(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private static async Task<IResult> CreateTitlesListAsync(
-		[FromBody] CreateTitlesList.Request request,
-		[FromServices] IMediator mediator,
-		[FromServices] IResponseMapper mapper,
-		ClaimsPrincipal claims)
-	{
-		request.UserId = claims.GetIdentifier();
-
-		var result = await mediator.Send(request);
-
-		return result.Match(
-			list => Results.Ok(mapper.ToResponse(list)),
-			invalid => Results.BadRequest(),
-			failed => Results.BadRequest());
 	}
 
 	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]

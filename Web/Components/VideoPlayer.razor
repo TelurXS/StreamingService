@@ -106,6 +106,7 @@
 	private async Task RaiseOnLeaveSeries()
 	{
 		var progress = await JS.InvokeAsync<float>("getProgress");
+		Console.WriteLine($"Revieved progress {progress} from player");
 		OnLeaveSeries?.Invoke(Selected, progress);
 	}
 

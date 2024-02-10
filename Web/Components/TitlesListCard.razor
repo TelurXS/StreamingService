@@ -1,0 +1,35 @@
+﻿@using Domain.Entities
+
+<div class="w-100 d-flex flex-column justify-content-center align-items-center">
+	<div class="titles-list-card-holder">
+		<div class="titles-list-card-back"></div>
+		<div class="titles-list-card"></div>
+		<div class="titles-list-card-forward d-flex justify-content-end" style="background-image: @(List.Titles.Count == 0 ? "url('/img/lock.svg')" : $"url('{List.Titles.First().Image.Uri}')")">
+			<div class="m-2">
+				@if (List.Availability is Availability.Public)
+				{
+					<img width="20" src="/img/unlock.svg" style="opacity: 0.3" />
+				}
+				else
+				{
+					<img width="20" src="/img/lock.svg" />
+				}
+			</div>
+		</div>
+	</div>
+	@if (ShowName)
+	{
+		<span class="mt-2 font-lg">@List.Name</span>
+	}
+</div>
+
+
+
+@code {
+	[Parameter]
+	public TitlesList List { get; set; } = default!;
+
+	[Parameter]
+	public bool ShowName { get; set; } = true;
+}
+

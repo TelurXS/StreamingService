@@ -1,4 +1,4 @@
-﻿@attribute [Route(WebRoutes.My.Profile.Favourites)]
+﻿@attribute [Route(WebRoutes.TitlesLists.ById)]
 @layout ProfileLayout
 
 @using Domain.Entities
@@ -19,6 +19,10 @@
 </div>
 
 @code {
+
+	[Parameter]
+	public Guid Id { get; set; }
+
 	private List<Title> Titles { get; set; } = new();
 
 	protected override async Task OnInitializedAsync()

@@ -13,6 +13,8 @@ public static class RegisterViewRecordToUser
 	public class Request : IRequest<CreateResult<Success>> 
 	{
 		public float Progress { get; set; } = default;
+		
+		public DateTime Time { get; set; } = DateTime.Now;
 
 		[JsonIgnore]
 		public Guid UserId { get; set; } = default;
@@ -73,7 +75,8 @@ public static class RegisterViewRecordToUser
 					Author = user,
 					Series = series,
 					Title = series.Title,
-					Progress = request.Progress
+					Progress = request.Progress,
+					Time = DateTime.Now
 				};
 
 				var result = UserService.AddViewRecord(user.Id, viewRecord);

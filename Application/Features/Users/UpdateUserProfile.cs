@@ -6,6 +6,7 @@ using Domain.Models.Results.Unions;
 using FluentValidation;
 using Infrastructure.Configurations;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Users;
 
@@ -13,6 +14,7 @@ public static class UpdateUserProfile
 {
 	public class Request : IRequest<UpdateResult<Success>>
 	{
+		[JsonIgnore]
 		public Guid Id { get; set; }
 
 		public required string Name { get; set; }

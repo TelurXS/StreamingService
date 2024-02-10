@@ -36,7 +36,7 @@ public static class WebRoutes
 		public const string Title = Base + "/{slug}";
 	}
 
-	public static class Accounts
+	public static class My
 	{
 		public const string History = "/history";	
 
@@ -48,9 +48,24 @@ public static class WebRoutes
 
 			public const string MyProfile = Base;
 
-			public const string UserProfile = Base + "/{userId}";
-
 			public const string Favourites = Base + "/favourites";
 		}
+	}
+
+	public static class Users
+	{
+		public static class Profile
+		{
+			public const string Base = "/profile";
+
+			public const string ById = Base + "/{id}";
+		}
+	}
+
+	public static class TitlesLists 
+	{
+		public const string Base = "/lists";
+
+		public const string ById = Base + "/{id}";
 	}
 }
