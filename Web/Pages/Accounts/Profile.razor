@@ -79,7 +79,9 @@
 						@if (LastWatched is not null)
 						{
 							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@((int)(LastWatched.Progress * 100))">
-								<MiniTitleCard Title="LastWatched.Title" />
+								<div style="pointer-events: none;">
+									<MiniTitleCard Title="LastWatched.Title" />
+								</div>
 
 								<div class="d-flex w-100 px-3 flex-column">
 									<span class="font-xs font-gray">Latest Watched:</span>

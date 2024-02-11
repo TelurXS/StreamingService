@@ -252,13 +252,17 @@
 			Console.WriteLine($"Progress for {series?.Name} {progress} is not valid");
 			return;
 		}
+		else
+		{
+			Console.WriteLine($"Progress for {series?.Name} {progress} is saving...");
+		}
 
 		var request = new RegisterViewRecordToUser.Request
 			{
 				Progress = progress,
 			};
 
-		await IdentityService.RegisterViewRecordAsync(series.Id, request);
+		await IdentityService.RegisterViewRecordAsync(series!.Id, request);
 	}
 
 	private async Task SendComment()

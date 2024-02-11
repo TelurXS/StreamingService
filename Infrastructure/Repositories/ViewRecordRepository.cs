@@ -131,7 +131,8 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 		var result = Entities
 			.Where(x => x.Id == id)
 			.ExecuteUpdate(setters => setters
-				.SetProperty(x => x.Progress, x => value.Progress));
+				.SetProperty(x => x.Progress, x => value.Progress)
+				.SetProperty(x => x.Time, x => value.Time));
 
 		return result > 0;
 	}

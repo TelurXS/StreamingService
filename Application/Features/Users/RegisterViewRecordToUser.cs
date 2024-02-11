@@ -62,6 +62,7 @@ public static class RegisterViewRecordToUser
 				var viewRecord = viewRecordResult.AsFound;
 
 				viewRecord.Progress = request.Progress;
+				viewRecord.Time = request.Time;
 
 				var result = ViewRecordService.Update(viewRecord.Id, viewRecord);
 

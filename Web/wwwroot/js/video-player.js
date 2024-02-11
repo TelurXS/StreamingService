@@ -62,6 +62,8 @@ window.initializePlayer = () => {
 
     const getProgress = () => {
         var result = (video.currentTime / video.duration);
+        console.log(`Retrieving progress from js getProgress (${result})`);
+        console.log(`Current Time: ${video.currentTime} Duration: ${video.duration} Src: ${video.src}`);
         return isNaN(result) ? 0 : result;
     }
 
@@ -139,15 +141,18 @@ window.initializePlayer = () => {
 
     const onVideoDataLoaded = () => {
         durationSpan.innerText = formatTime(video.duration);
+
         const urlParams = new URLSearchParams(window.location.search);
         let progress = parseFloat(urlParams.get('progress'));
-
+        
         progress = isNaN(progress) ? 0 : progress;
 
-        setProgress(progress / 100);
-        progressBar.style.width = `${progress}%`;
+        console.log("Retrieved Progress from URL Query: " + progress)
+        //
+        //setProgress(progress / 100);
+        //progressBar.style.width = `${progress}%`;
 
-        history.replaceState(null, '', window.location.href.split('?')[0]);   
+        //history.replaceState(null, '', window.location.href.split('?')[0]);   
     }
 
     const onTimelineMouseMove = (e) => {
@@ -205,7 +210,7 @@ window.initializePlayer = () => {
     container.addEventListener("mousemove", onContainerMouseMove);
 
     window.changePlayerSource = (value) => {
-        video.setAttribute("src", value);
+        //video.setAttribute("src", value);
         video.currentTime = 0;
         progressBar.style.width = `0%`;
         changeToPlayButtonIcon();
@@ -217,6 +222,7 @@ window.initializePlayer = () => {
     }
 
     window.getProgress = () => {
+        console.log("Retrieving progress from window.getProgress");
         return getProgress();
     }
 }

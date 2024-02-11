@@ -105,7 +105,7 @@
 
 	private async Task RaiseOnLeaveSeries()
 	{
-		var progress = await JS.InvokeAsync<float>("getProgress");
+		var progress = await GetProgress();
 		Console.WriteLine($"Revieved progress {progress} from player");
 		OnLeaveSeries?.Invoke(Selected, progress);
 	}
@@ -127,5 +127,10 @@
 	public async Task SetProgress(float value)
 	{
 		await JS.InvokeVoidAsync("setProgress", value);
+	}
+
+	public async Task<float> GetProgress()
+	{
+		return await JS.InvokeAsync<float>("getProgress");
 	}
 }

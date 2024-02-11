@@ -59,7 +59,9 @@ public sealed class SeriesRepository : EntityRepository<Series>, ISeriesReposito
 			.Where(x => x.Id == id)
 			.ExecuteUpdate(setters => setters
 				.SetProperty(x => x.Name, x => value.Name)
-				.SetProperty(x => x.Uri, x => value.Uri));
+				.SetProperty(x => x.Uri, x => value.Uri)
+				.SetProperty(x => x.Dubbing, x => value.Dubbing)
+				.SetProperty(x => x.Index, x => value.Index));
 
 		return result > 0;
 	}

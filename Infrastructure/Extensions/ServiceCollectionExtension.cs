@@ -13,8 +13,11 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default")));
+        var connection = configuration.GetConnectionString("Default")!;
+        var version = new MySqlServerVersion(new Version(5, 7, 35));
+
+		services.AddDbContext<DataContext>(options =>
+            options.UseMySql(connection, version));
 
         services.AddTransient<IAccountRepository, AccountRepository>();
         services.AddTransient<IDescriptionRepository, DescriptionRepository>();
