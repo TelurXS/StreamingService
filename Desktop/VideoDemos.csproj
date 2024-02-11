@@ -1,0 +1,225 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
+        <OutputType>Exe</OutputType>
+        <RootNamespace>VideoDemos</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <!-- Display name -->
+        <ApplicationTitle>VideoDemos</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.videodemos</ApplicationId>
+        <ApplicationIdGuid>E81C8EBC-9B0B-499B-8DD0-7BA486E8A8E7</ApplicationIdGuid>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208"/>
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*"/>
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-android')) != true">
+        <Compile Remove="**\**\*.Android.cs"/>
+        <None Include="**\**\*.Android.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)"/>
+        <Compile Update="Views\Auth\AuthPage.xaml.cs">
+          <DependentUpon>AuthPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Profile\ProfilePage.xaml.cs">
+          <DependentUpon>ProfilePage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Main\MainPage.xaml.cs">
+          <DependentUpon>MainPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Player\BannerDetailsPage.xaml.cs">
+          <DependentUpon>BannerDetailsPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Player\VideoPlayerPage.xaml.cs">
+          <DependentUpon>CustomPositionBarPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Bookmarks\BookmarksPage.xaml.cs">
+          <DependentUpon>BookmarksPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\History\HistoryPage.xaml.cs">
+          <DependentUpon>HistoryPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Loading\ListeningPage.xaml.cs">
+          <DependentUpon>ListeningPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Loading\LoadingPage.xaml.cs">
+          <DependentUpon>LoadingPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Mail\MailPage.xaml.cs">
+          <DependentUpon>MailPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Hello\HelloPage.xaml.cs">
+          <DependentUpon>HelloPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\RegisterSecondPage.xaml.cs">
+          <DependentUpon>RegisterSecondPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\GenreChoosePage.xaml.cs">
+          <DependentUpon>GenreChoosePage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\ChoosePlanPage.xaml.cs">
+          <DependentUpon>ChoosePlanPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\PayChoosePage.xaml.cs">
+          <DependentUpon>PayChoosePage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\AddCardPage.xaml.cs">
+          <DependentUpon>AddCardPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Auth\Registration\SuccessPage.xaml.cs">
+          <DependentUpon>SuccessPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Profile\Settings\ChangeEmail\ChangeEmailPage.xaml.cs">
+          <DependentUpon>ChangeEmailPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-ios')) != true AND $(TargetFramework.StartsWith('net7.0-maccatalyst')) != true">
+        <Compile Remove="**\**\*.MaciOS.cs"/>
+        <None Include="**\**\*.MaciOS.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.Contains('-windows')) != true ">
+        <Compile Remove="**\*.Windows.cs"/>
+        <None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Resources\Raw\AndroidVideo.mp4"/>
+        <None Remove="Resources\Raw\AppleVideo.mp4"/>
+        <None Remove="Resources\Raw\WindowsVideo.mp4"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <MauiXaml Update="Views\Auth\AuthPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Profile\ProfilePage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Main\MainPage.xaml">
+          <SubType>Designer</SubType>
+          <Generator>MSBuild:Compile</Generator>
+        </MauiXaml>
+        <MauiXaml Update="Views\Player\BannerDetailsPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Player\VideoPlayerPage.xaml">
+          <SubType>Designer</SubType>
+          <Generator>MSBuild:Compile</Generator>
+        </MauiXaml>
+        <MauiXaml Update="Views\Bookmarks\BookmarksPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\History\HistoryPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Loading\ListeningPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Loading\LoadingPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Mail\MailPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Hello\HelloPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Resources\Styles\Effects.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\RegisterSecondPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\GenreChoosePage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\ChoosePlanPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\PayChoosePage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\AddCardPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Auth\Registration\SuccessPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Views\Profile\Settings\ChangeEmail\ChangeEmailPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Core\Video\"/>
+        <Folder Include="Resources\Effects\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AcrylicView.Maui" Version="2.1.1" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Identity.Client" Version="4.58.1" />
+      <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.WinUI">
+        <HintPath>C:\Users\tekit\.nuget\packages\microsoft.windowsappsdk\1.2.221209.1\lib\net6.0-windows10.0.18362.0\Microsoft.WinUI.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

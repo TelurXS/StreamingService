@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Profile.Settings.Payment.PaymentControllsPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid>
+                <Image Source="bg_profile_1.png" HorizontalOptions="End" VerticalOptions="Start" Margin="19, -400"
+                       WidthRequest="600" HeightRequest="700">
+                </Image>
+                <Image Source="bg_profile_2.png" HorizontalOptions="Start" VerticalOptions="Center"
+                       Margin="100,140,0,0" WidthRequest="190" HeightRequest="190">
+                </Image>
+                <Image Source="bg_profile_3.png" HorizontalOptions="End" VerticalOptions="Center" Margin="0,355,150,0"
+                       WidthRequest="230" HeightRequest="230">
+                </Image>
+                <VerticalStackLayout Margin="112,153,0,0">
+
+                    <Label FontSize="40" Text="Керування платіжними даними" Margin="0,0,0,35"></Label>
+                    <Label FontSize="22"
+                           Text="Введіть платіжні дані, змініть бажаний спосіб оплати або додайте резервний."
+                           Margin="0">
+                    </Label>
+                    <ListView x:Name="DataListView" Margin="0,25,0,25" WidthRequest="900" HorizontalOptions="Start" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <FlexLayout JustifyContent="SpaceBetween">
+                                        <HorizontalStackLayout>
+                                            <Image WidthRequest="45" HeightRequest="15" Margin="7"
+                                                   Source="{x:Binding Icon}" VerticalOptions="Center"/>
+                                            <Label FontSize="22" Text="{x:Binding Details}" TextColor="White"  VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                        <Button BackgroundColor="Transparent" BorderColor="Transparent"
+                                                TextColor="#0044E9" Text="Редагувати" FontSize="18"
+                                                />
+                                    </FlexLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Label Margin="0,25,0,45" FontSize="18">Спочатку додайте інший спосіб оплати, щоб видалити цей.</Label>
+                    <Button Clicked="Button_OnClicked" Text="Додати спосіб оплати" WidthRequest="297"
+                            HeightRequest="50"
+                            CornerRadius="20" FontSize="18" FontAttributes="Bold" BackgroundColor="#0044E9" HorizontalOptions="Start"
+                            Margin="0,0,20,0">
+                    </Button>
+                </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

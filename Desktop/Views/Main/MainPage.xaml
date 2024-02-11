@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:acrylic="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
+             x:Class="VideoDemos.Views.MainPage"
+             Title="VideoDemos"
+             >
+    <Grid>
+        <ScrollView>
+            <Grid VerticalOptions="Start">
+                <Grid x:Name="NavBarGrid" HeightRequest="100" VerticalOptions="Start" ZIndex="9999"/>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1080"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" ZIndex="1">
+                    <Grid Padding="0" Margin="0">
+                        <Image Source="wallpapers.jpg" Aspect="AspectFill" Margin="0"/>
+                        <Frame Padding="0" BorderColor="Transparent" BackgroundColor="Transparent" Margin="0">
+                            <StackLayout VerticalOptions="End" Padding="10" Margin="0,0,800,300" WidthRequest="614">
+                                <Label Text="Серіал" FontSize="18" FontAttributes="Bold" TextColor="White" />
+                                <Label Text="Гра в кальмара" FontSize="60" TextColor="White"
+                                       FontAttributes="Bold" />
+                                <Label
+                                    Text="Сотні гравців, яким потрібні гроші, приймають дивне запрошення взяти участь у дитячих іграх. На переможця чекає привабливий приз, але ставки тут смертельні."
+                                    FontSize="18" TextColor="White" />
+                                <HorizontalStackLayout Margin="0,40,0,0">
+                                    <acrylic:AcrylicView  BorderThickness="0" CornerRadius="20"
+                                                         WidthRequest="274" TintOpacity="0.1" TintColor="#0044E9"
+                                                         HeightRequest="50">
+                                        <Button Text="Переглянути" x:Name="WatchGlassBgButton" TextColor="White"
+                                                WidthRequest="274" BackgroundColor="Transparent"
+                                                HeightRequest="50" FontAttributes="Bold"
+                                                ImageSource="main_page_play.png"
+                                                ContentLayout="Right, 14"
+                                                CornerRadius="20" Padding="10,12"
+                                                BorderWidth="0" />
+
+                                    </acrylic:AcrylicView>
+                                    <acrylic:AcrylicView CornerRadius="20" BorderThickness="0"
+                                                         Margin="40,0,0,0"
+                                                         WidthRequest="274"  TintOpacity="0.02" TintColor="Black"
+                                                         HeightRequest="50">
+                                        <Button Text="Докладніше" x:Name="DetailsGlassBgButton" BorderWidth="0"
+                                                TextColor="White"
+                                                WidthRequest="274" BackgroundColor="Transparent"
+                                                ImageSource="info.png"
+                                                HeightRequest="50" FontAttributes="Bold"
+                                                ContentLayout="Right, 16"
+                                                CornerRadius="20" Padding="10,12" />
+                                    </acrylic:AcrylicView>
+
+                                </HorizontalStackLayout>
+                            </StackLayout>
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="Transparent" />
+                                    <GradientStop Offset="1" Color="#080808" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                        </Frame>
+                    </Grid>
+                </Grid>
+                <StackLayout Grid.Row="0" Grid.RowSpan="2" x:Name="MainContentLayout" Orientation="Vertical"
+                             HorizontalOptions="Start" Margin="60,800,0,0" ZIndex="2">
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

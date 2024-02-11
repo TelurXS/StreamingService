@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:VideoDemos.Controls"
+             x:Name="VideoPlayer"
+             x:Class="VideoDemos.Views.VideoPlayerPage"
+             Unloaded="OnContentPageUnloaded"
+             Title="Metflix">
+    <Grid RowDefinitions="*,Auto,Auto">
+        <controls:Video x:Name="video"
+                        AreTransportControlsEnabled="False"
+                        Source="{StaticResource ElephantsDream}" />
+        <ActivityIndicator Color="Gray"
+                           IsVisible="False">
+            <ActivityIndicator.Triggers>
+                <DataTrigger TargetType="ActivityIndicator"
+                             Binding="{Binding Source={x:Reference video}, 
+                                               Path=Status}"
+                             Value="{x:Static controls:VideoStatus.NotReady}">
+                    <Setter Property="IsVisible"
+                            Value="True" />
+                    <Setter Property="IsRunning"
+                            Value="True" />
+                </DataTrigger>
+            </ActivityIndicator.Triggers>
+        </ActivityIndicator>
+        <StackLayout VerticalOptions="End">
+            <Grid ColumnDefinitions="*, Auto">
+                <controls:PositionSlider Grid.Column="0"
+                    Margin="10,0,10,10"
+                    BindingContext="{x:Reference video}"
+                    Duration="{Binding Duration}"
+                    Position="{Binding Position}">
+                    <controls:PositionSlider.Triggers>
+                        <DataTrigger TargetType="controls:PositionSlider"
+                                     Binding="{Binding Status}"
+                                     Value="{x:Static controls:VideoStatus.NotReady}">
+                            <Setter Property="IsEnabled"
+                                    Value="False" />
+                        </DataTrigger>
+                    </controls:PositionSlider.Triggers>
+                </controls:PositionSlider>
+                <Label Grid.Column="1"
+                       BindingContext="{x:Reference video}"
+                       Text="{Binding Path=TimeToEnd,
+                                  StringFormat='{0:hh\\:mm\\:ss}'}"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Start" /> 
+            </Grid>
+      
+
+            <Grid
+                Margin="10,0"
+                ColumnDefinitions="0.33*,0.33*,0.33*"
+                HeightRequest="50"
+                BindingContext="{x:Reference video}">
+                <HorizontalStackLayout Grid.Column="0">
+                    <Button Text="-10"
+                            HorizontalOptions="Center"
+                            Clicked="OnMinus10SecondsButtonClicked">
+                    </Button>
+                    <Button Text="&#x25B6;&#xFE0F;"
+                            HorizontalOptions="Center"
+                            Clicked="OnPlayPauseButtonClicked">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button"
+                                         Binding="{Binding Status}"
+                                         Value="{x:Static controls:VideoStatus.Playing}">
+                                <Setter Property="Text"
+                                        Value="&#x23F8;" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button"
+                                         Binding="{Binding Status}"
+                                         Value="{x:Static controls:VideoStatus.NotReady}">
+                                <Setter Property="IsEnabled"
+                                        Value="False" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Text="+10"
+                            HorizontalOptions="Center"
+                            Clicked="OnPlus10SecondsButtonClicked">
+                    </Button>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Label x:Name="TitleNameLabel"></Label>
+                </HorizontalStackLayout>        
+                <HorizontalStackLayout Grid.Column="2" HorizontalOptions="End">
+                    <Button Text="※" Clicked="OnNextEpisodeClicked"/>
+                    <Button Text="Epi" Clicked="OnEpisodesButtonClicked"/>
+                    <Button Text="Subtitle" Clicked="OnSubtitleButtonClicked"/>
+                    <Button Text="PlaySpeed" Clicked="OnPlaySpeedButtonClicked"/>
+                    <Button Text="F11" Clicked="OnFullScreenButtonClicked"/>
+                </HorizontalStackLayout>
+                <Slider x:Name="AudioSlider" WidthRequest="150" Value="{x:Binding Volume}" Maximum="1" Minimum="0"/>
+            </Grid>
+
+        </StackLayout>
+    </Grid>
+</ContentPage>

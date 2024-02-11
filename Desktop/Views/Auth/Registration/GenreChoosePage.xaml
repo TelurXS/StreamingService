@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Auth.Registration.GenreChoosePage"
+             Loaded="GenreChoosePage_OnLoaded">
+    <ContentPage.Content>
+
+        <Grid x:Name="View">
+            <Image 
+                Margin="0"
+                Aspect="AspectFill"
+                Source="login_bg.png"
+                VerticalOptions="Center"
+                HorizontalOptions="Center" />
+            <Border 
+                    HeightRequest="597"
+                    WidthRequest="415"
+                    StrokeShape="RoundRectangle 20,20,20,20"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="2"
+                    Padding="0"
+                    Margin="0">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#0044E9"
+                        Offset="1,3"
+                        Radius="3"
+                    ></Shadow>
+                </Border.Shadow>
+                <Border.Stroke>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                        <GradientStop Color="#0044E9" Offset="0.1"></GradientStop>
+                        <GradientStop Color="Black" Offset="1.0"></GradientStop>
+                    </LinearGradientBrush>
+                </Border.Stroke>
+                <VerticalStackLayout
+                    Spacing="25"
+                    Padding="40"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="597"
+                    WidthRequest="415"
+                    BackgroundColor="Black">
+                    <Label Text="Вибір улюблених жанрів" x:Name="TitleLabel" FontSize="40" TextColor="White" />
+                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="250">
+                        <FlexLayout x:Name="GenreFlexLayout" JustifyContent="Start" Wrap="Wrap">
+                            <FlexLayout.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="CornerRadius" Value="20"></Setter>
+                                    <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                                    <Setter Property="BorderColor" Value="#0042E2"></Setter>
+                                    <Setter Property="TextColor" Value="White"></Setter>
+                                    <Setter Property="FontSize" Value="14"></Setter>
+                                    <Setter Property="Margin" Value="5,5,0,0"></Setter>
+                                    <Setter Property="BorderWidth" Value="1.2"></Setter>
+                                    <Setter Property="HeightRequest" Value="35"></Setter>
+                                    <Setter Property="Padding" Value="5,2"></Setter>
+                                </Style>
+                            </FlexLayout.Resources>
+                        </FlexLayout>
+                    </ScrollView>
+
+                    <Button
+                        Text="Продовжити"
+                        SemanticProperties.Hint="Continue"
+                        Clicked="OnContinueClicked"
+                        CornerRadius="20"
+                        BackgroundColor="#0042E2"
+                        TextColor="White"
+                        WidthRequest="315"
+                        HeightRequest="39"
+                        FontSize="18" />
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

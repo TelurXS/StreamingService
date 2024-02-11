@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Profile.Settings.ChangePlanPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid>
+                <Image Source="bg_profile_1.png" HorizontalOptions="End" VerticalOptions="Start" Margin="19, -400"
+                       WidthRequest="600" HeightRequest="700">
+                </Image>
+                <Image Source="bg_profile_2.png" HorizontalOptions="Start" VerticalOptions="Center"
+                       Margin="100,140,0,0" WidthRequest="190" HeightRequest="190">
+                </Image>
+                <Image Source="bg_profile_3.png" HorizontalOptions="End" VerticalOptions="Center" Margin="0,355,150,0"
+                       WidthRequest="230" HeightRequest="230">
+                </Image>
+                <VerticalStackLayout Margin="112,153,0,0"
+                                     VerticalOptions="Start"
+                                     HorizontalOptions="Start" WidthRequest="634">
+                    <Label Text="Змінити план" x:Name="TitleLabel" FontSize="40" TextColor="White" />
+                    <ScrollView VerticalOptions="Start"
+                                HorizontalOptions="Start">
+                        <VerticalStackLayout x:Name="PlansContenierLayout" WidthRequest="614" />
+                    </ScrollView>
+
+
+                    <HorizontalStackLayout Margin="0,30">
+                        <Button Clicked="OnContinueClicked" Text="Змінити" WidthRequest="297" HeightRequest="50"
+                                CornerRadius="20" FontSize="18" FontAttributes="Bold" BackgroundColor="#0044E9"
+                                Margin="0,0,20,0">
+                        </Button>
+                        <Button Text="Назад" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
+                                FontAttributes="Bold" BackgroundColor="#042678">
+                        </Button>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
