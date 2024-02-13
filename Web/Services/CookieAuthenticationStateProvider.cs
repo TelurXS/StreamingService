@@ -10,12 +10,16 @@ namespace Web.Services;
 
 public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvider
 {
-    public CookieAuthenticationStateProvider(HttpClient client)
+    public CookieAuthenticationStateProvider(
+		HttpClient client, 
+		ILogger<CookieAuthenticationStateProvider> logger)
     {
 		Client = client;
+		Logger = logger;
 	}
 
 	private HttpClient Client { get; }
+	private ILogger<CookieAuthenticationStateProvider> Logger { get; }
 
 	private static ClaimsPrincipal Anonymous => new ClaimsPrincipal(new ClaimsIdentity());
 
@@ -23,12 +27,21 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 	{
 		try
 		{
-			var user = await Client.GetFromJsonAsync<ClaimResponse>(ApiRoutes.User);
+			var response = await Client.GetAsync(ApiRoutes.User);
 
-			if (user is null || user.Count <= 0)
+			if (response.IsSuccessStatusCode is false)
 				return new AuthenticationState(Anonymous);
 
+			var user = await response.Content.ReadFromJsonAsync<List<ClaimResponse>>();
+
+			if (user is null || user.Count <= 0)
+			{
+				return new AuthenticationState(Anonymous);
+			}
+
 			var claims = user.Select(x => new Claim(x.Key, x.Value));
+
+			Console.WriteLine("Authorizing: " + claims.FirstOrDefault()?.Value);
 
 			return new AuthenticationState(
 				new ClaimsPrincipal(
@@ -37,8 +50,9 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 						IdentityConstants.ApplicationScheme
 						)));
 		}
-		catch
+		catch (Exception ex)
 		{
+			Logger.LogError(ex.Message);
 			return new AuthenticationState(Anonymous);
 		}
 	}

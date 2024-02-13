@@ -7,14 +7,18 @@
 <div id="container" class="video-player-container">
 	<div class="series-select-panel">
 		<div class="series-list">
-			@foreach (var series in Series.OrderBy(x => x.Name))
+			@foreach (var series in Series.OrderBy(x => x.Index))
 			{
 				<button @onclick="() => SelectSeriesAsync(series)" class="button-glass series-select-button">@series.Name</button>
 			}
 		</div>
 	</div>
 	<div id="player" class="player">
-		<video id="video" class="video" src="@Selected.Uri">
+		<video id="video" class="video">
+			@if (Selected is not null)
+			{
+				<source src="@Selected.Uri" />
+			}
 		</video>
 	</div>
 	<div class="player-controls">
@@ -47,7 +51,7 @@
 				</div>
 			</div>
 			<div class="d-none d-lg-flex col-lg-4 align-items-center justify-content-center">
-				<span class="font-sm">@Selected.Name</span>
+				<span class="font-sm">@Selected?.Name</span>
 			</div>
 			<div class="col-6 col-lg-4 d-flex align-items-center justify-content-end">
 				<a>
@@ -79,15 +83,16 @@
 
 	protected override void OnInitialized()
 	{
+		Console.WriteLine("Component initializing");
 		var series = Series.FirstOrDefault(x => x.Id == SelectedId);
 
 		if (series is null)
 		{
-			Selected = Series.OrderBy(x => x.Name).First();
-			return;
+			series = Series.OrderBy(x => x.Index).First();
 		}
 
 		Selected = series;
+		Console.WriteLine("Component initialized with series: " + Selected?.Name);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,15 +117,18 @@
 
 	private async Task SelectSeriesAsync(Series value)
 	{
+		Console.WriteLine("Selecting series: " + value.Name);
 		await RaiseOnLeaveSeries();
 		Selected = value;
-		StateHasChanged();
 
 		await JS.InvokeVoidAsync("changePlayerSource", Selected.Uri);
+
+		StateHasChanged();
 	}
 
 	public async Task InitializePlayer()
 	{
+		Console.WriteLine("Initializing player");
 		await JS.InvokeVoidAsync("initializePlayer");
 	}
 

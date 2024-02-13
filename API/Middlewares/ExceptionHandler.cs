@@ -27,7 +27,9 @@ public sealed class ExceptionHandler : IMiddleware
             {
                 Type = e.GetType().Name,
                 Stacktrace = e.StackTrace,
-                Message = e.Message 
+                Message = e.Message,
+                InnerException = e.InnerException?.GetType().Name,
+                InnerMessage = e.InnerException?.Message,
             };
 
             await context.Response.WriteAsJsonAsync(response);

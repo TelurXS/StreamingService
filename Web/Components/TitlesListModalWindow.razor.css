@@ -1,15 +1,4 @@
 ﻿
-.gradient-panel {
-    background: radial-gradient(circle at 100% 100%, var(--dark) 0, var(--dark) 18px, transparent 18px) 0% 0%/20px 20px no-repeat, 
-        radial-gradient(circle at 0 100%, var(--dark) 0, var(--dark) 18px, transparent 18px) 100% 0%/20px 20px no-repeat, 
-        radial-gradient(circle at 100% 0, var(--dark) 0, var(--dark) 18px, transparent 18px) 0% 100%/20px 20px no-repeat, 
-        radial-gradient(circle at 0 0, var(--dark) 0, var(--dark) 18px, transparent 18px) 100% 100%/20px 20px no-repeat, 
-        linear-gradient(var(--dark), var(--dark)) 50% 50%/calc(100% - 4px) calc(100% - 40px) no-repeat, 
-        linear-gradient(var(--dark), var(--dark)) 50% 50%/calc(100% - 40px) calc(100% - 4px) no-repeat, 
-        linear-gradient(45deg, var(--dark) 0%, var(--primary) 100%);
-    border-radius: 20px;
-    padding: 10px;
-}
 
 .gradient-border {
     border: 1px 

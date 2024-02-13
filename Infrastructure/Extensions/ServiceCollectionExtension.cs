@@ -14,7 +14,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var connection = configuration.GetConnectionString("Default")!;
-        var version = new MySqlServerVersion(new Version(5, 7, 35));
+        var version = new MySqlServerVersion(new Version(8, 0, 35));
 
 		services.AddDbContext<DataContext>(options =>
             options.UseMySql(connection, version));

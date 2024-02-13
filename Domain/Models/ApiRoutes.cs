@@ -25,6 +25,8 @@ public static class ApiRoutes
 		public const string Profile = Base + GroupName + "/profile";
 
 		public const string Genres = Base + GroupName + "/genres";
+
+		public const string ProfileImage = Base + GroupName + "/image";
 	}
 
 	public static class Users
@@ -80,5 +82,24 @@ public static class ApiRoutes
 		public const string Route = Base + GroupName;
 
 		public const string CreateForTitle = Base + GroupName + "/{titleId}";
+	}
+
+	public static class Files
+	{
+		public const string UserImages = Base + "/users/images";
+
+		public const string UserImageByName = Base + "/users/images/{name}";
+
+		public const string TitleImages = Base + "/titles/images";
+
+		public const string TitleImageByName = Base + "/titles/images/{name}";
+
+		public const string TitleScreenshots = Base + "/titles/screenshots";
+
+		public const string TitleScreenshotByName = Base + "/titles/screenshots/{name}";
+
+		public const string Series = Base + "/series";
+
+		public const string SeriesByName = Base + "/series/{name}";
 	}
 }

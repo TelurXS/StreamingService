@@ -36,7 +36,13 @@ window.initializePlayer = () => {
 
     let timer;
     let muted = false;
+    let savedProgress = 0;
     let volume = localStorage.getItem(PLAYER_VOLUME);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let progressParam = parseFloat(urlParams.get('progress'));
+
+    let retrievedProgress = isNaN(progressParam) ? null : progressParam;;
 
     const formatTime = (time) => {
         let seconds = Math.floor(time % 60);
@@ -69,6 +75,14 @@ window.initializePlayer = () => {
 
     const setProgress = (value) => {
         video.currentTime = video.duration * value;
+    }
+
+    const setSavedProgress = (value) => {
+        if (value == null || isNaN(value))
+            return;
+
+        savedProgress = value;
+        console.log("Saving progress at: " + savedProgress);
     }
 
     const skipForward = () => {
@@ -134,23 +148,23 @@ window.initializePlayer = () => {
 
     const onVideoTimeUpdate = (e) => {
         let { currentTime, duration } = e.target;
-        let percent = (currentTime / duration) * 100;
-        progressBar.style.width = `${percent}%`;
+        let percent = (currentTime / duration);
+
+        setSavedProgress(percent)
+
+        progressBar.style.width = `${percent * 100}%`;
         currentTimeSpan.innerText = formatTime(currentTime);
     }
 
     const onVideoDataLoaded = () => {
         durationSpan.innerText = formatTime(video.duration);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let progress = parseFloat(urlParams.get('progress'));
-        
-        progress = isNaN(progress) ? 0 : progress;
-
-        console.log("Retrieved Progress from URL Query: " + progress)
-        //
-        //setProgress(progress / 100);
-        //progressBar.style.width = `${progress}%`;
+        if (retrievedProgress !== null) {
+            setProgress(retrievedProgress / 100);
+            setSavedProgress(retrievedProgress / 100);
+            progressBar.style.width = `${retrievedProgress}%`;
+            retrievedProgress = null;
+        }
 
         //history.replaceState(null, '', window.location.href.split('?')[0]);   
     }
@@ -210,9 +224,11 @@ window.initializePlayer = () => {
     container.addEventListener("mousemove", onContainerMouseMove);
 
     window.changePlayerSource = (value) => {
-        //video.setAttribute("src", value);
+        video.setAttribute("src", value);
         video.currentTime = 0;
         progressBar.style.width = `0%`;
+        retrievedProgress = null;
+        setSavedProgress(0);
         changeToPlayButtonIcon();
     }
 
@@ -223,6 +239,7 @@ window.initializePlayer = () => {
 
     window.getProgress = () => {
         console.log("Retrieving progress from window.getProgress");
+        console.log("In that time saved progress is " + savedProgress);
         return getProgress();
     }
 }

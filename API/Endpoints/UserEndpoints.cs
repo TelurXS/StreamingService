@@ -48,6 +48,10 @@ public class UserEndpoints : ICarterModule
 
 		app.MapGet(ApiRoutes.TitlesLists.All, GetTitlesListsFromUserAsync)
 			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.Manage.ProfileImage, UploadProfileImageAsync)
+			.DisableAntiforgery()
+			.RequireAuthorization();
 	}
 
 	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
@@ -267,6 +271,31 @@ public class UserEndpoints : ICarterModule
 		{
 			UserId = claims.GetIdentifier(),
 			TitleId = titleId
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> UploadProfileImageAsync(
+		IFormFile file,
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		var request = new UploadProfileImageToUser.Request
+		{
+			Id = claims.GetIdentifier(),
+			File = file,
 		};
 
 		var result = await mediator.Send(request);

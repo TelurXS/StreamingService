@@ -8,6 +8,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using API.Services;
+using Domain.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,12 +27,17 @@ builder.Services.AddPolicies(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 
 builder.Services.AddCarter();
+builder.Services.AddAntiforgery();
 
 builder.Services.AddSingleton<ExceptionHandler>();
 builder.Services.AddSingleton<ClientRoutesService>();
+builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<IEmailSender<User>, EmailSender>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>,
 		AdditionalUserClaimsPrincipalFactory>();
+
+builder.Services.AddHostedService<RolesSeeder>();
+builder.Services.AddHostedService<GenresSeeder>();
 
 builder.Services
     .AddAuthentication(options =>
@@ -42,11 +48,11 @@ builder.Services
     })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        options.ExpireTimeSpan = TimeSpan.FromHours(3);
         options.Cookie.IsEssential = true;
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        options.Cookie.SameSite = SameSiteMode.Unspecified;
     })
     .AddBearerToken(IdentityConstants.BearerScheme, options =>
     {
@@ -65,12 +71,17 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseAntiforgery();
 
 app.UseHttpsRedirection();
 app.UseCors();
