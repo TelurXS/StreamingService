@@ -13,9 +13,9 @@
 			<div class="d-flex align-items-center justify-content-center">
 				<div class="w-25">
 					<div class="circle-profile-picture"
-						 style="background-image: url('@(SelectedImage is not null
+						 style="background-image: url('@(string.IsNullOrEmpty(User.ProfileImage)
 						? "/img/defaults/blank-profile-picture.webp"
-						: $"/api/users/images/{User.ProfileImage}")');" />
+						: User.ProfileImage)');" />
 				</div>
 			</div>
 
@@ -27,7 +27,7 @@
 
 					@if (SelectedImage is not null)
 					{
-						<button class="button mt-2">Save</button>
+						<button @onclick="SaveProfileImageAsync" class="button mt-2">Save</button>
 					}
 				</div>
 				<a class="mt-3" @onclick="() => EditMode = false">
@@ -42,7 +42,7 @@
 					<div class="circle-profile-picture"
 						 style="background-image: url('@(string.IsNullOrEmpty(User.ProfileImage)
 						? "/img/defaults/blank-profile-picture.webp"
-						: $"/api/users/images/{User.ProfileImage}")');" />
+						: User.ProfileImage)');" />
 				</div>
 			</div>
 
@@ -52,7 +52,7 @@
 				<a class="mt-3" @onclick="() => EditMode = true">
 					<span>Load new</span>
 				</a>
-				<a class="mt-3">
+				<a class="mt-3" @onclick="() => DeleteImageAsync()">
 					<span>Remove</span>
 				</a>
 				<a class="mt-3" @onclick="() => Close()">
@@ -68,6 +68,9 @@
 
 	[Parameter]
 	public User User { get; set; } = default!;
+
+	[Parameter]
+	public Func<Task> OnUpdated { get; set; } = default!;
 
 	private ModalWindow Window { get; set; } = default!;
 
@@ -90,5 +93,28 @@
 
 		StateHasChanged();
 		return Task.CompletedTask;
+	}
+
+	private async Task SaveProfileImageAsync()
+	{
+		var result = await IdentityService.SetProfileImageAsync(SelectedImage);
+
+		if (result.IsUpdated)
+		{
+			OnUpdated?.Invoke();
+			EditMode = false;
+			Window.Close();
+		}
+	}
+
+	private async Task DeleteImageAsync()
+	{
+		var result = await IdentityService.RemoveProfileImageAsync();
+
+		if (result.IsUpdated)
+		{
+			OnUpdated?.Invoke();
+			Window.Close();
+		}
 	}
 }

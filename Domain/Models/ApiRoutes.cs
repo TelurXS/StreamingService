@@ -31,9 +31,13 @@ public static class ApiRoutes
 
 	public static class Users
 	{
-		public const string RegisterViewRecord = Base + "/register-view-record/{seriesId}";
+		public const string RegisterViewRecordRoute = Base + "/register-view-record";
 
-		public const string RegisterViewRecordRoute = Base + "/register-view-record/";
+		public const string RegisterViewRecord = RegisterViewRecordRoute + "/{seriesId}";
+
+		public const string RegisterRateRoute = Base + "/register-rate";
+
+		public const string RegisterRate = RegisterRateRoute + "/{titleId}";
 
 		public const string ViewRecords = Base + "/view-records";
 
@@ -101,5 +105,14 @@ public static class ApiRoutes
 		public const string Series = Base + "/series";
 
 		public const string SeriesByName = Base + "/series/{name}";
+	}
+
+	public class Rates
+	{
+		public const string GroupName = "/rates";
+
+		public const string Route = Base + GroupName;
+
+		public const string ByTitle = Route + "/{titleId}";
 	}
 }

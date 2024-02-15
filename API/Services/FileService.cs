@@ -17,6 +17,8 @@ public sealed class FileService : IFileService
 	private const string TITLES_SCREENSHOTS_DIRECTORY = "/titles/screenshots";
 	private const string SERIES_DIRECTORY = "/series";
 
+	private const string SEPARATOR = "/";
+
 	public FileService(IConfiguration configuration)
 	{
 		var section = configuration.GetSection(SECTION_NAME);
@@ -68,6 +70,22 @@ public sealed class FileService : IFileService
 		return bytes;
 	}
 
+	public bool Delete(string path)
+	{
+		using var client = new FtpClient(Host, Credentials);
+		client.Connect();
+
+		try
+		{
+			client.DeleteFile(path);
+			return true;
+		}
+		catch
+		{
+			return false;
+		}
+	}
+
 	public string UploadSeries(IFormFile file)
 	{
 		var name = Upload(SERIES_DIRECTORY, file);
@@ -94,26 +112,31 @@ public sealed class FileService : IFileService
 
 	public byte[]? DownloadUserImage(string name)
 	{
-		return Download(USERS_IMAGES_DIRECTORY + "/" + name);
+		return Download(USERS_IMAGES_DIRECTORY + SEPARATOR + name);
+	}
+
+	public bool DeleteUserImage(string name)
+	{
+		return Delete(USERS_IMAGES_DIRECTORY + SEPARATOR + name);
 	}
 
 	public byte[]? DownloadTitleImage(string name)
 	{
-		return Download(TITLES_IMAGES_DIRECTORY + "/" + name);
+		return Download(TITLES_IMAGES_DIRECTORY + SEPARATOR + name);
 	}
 
 	public byte[]? DownloadTitleScreenshot(string name)
 	{
-		return Download(TITLES_SCREENSHOTS_DIRECTORY + "/" + name);
+		return Download(TITLES_SCREENSHOTS_DIRECTORY + SEPARATOR + name);
 	}
 
 	public byte[]? DownloadSeries(string name)
 	{
-		return Download(SERIES_DIRECTORY + "/" + name);
+		return Download(SERIES_DIRECTORY + SEPARATOR + name);
 	}
 
 	private string ToServerUrl(string serverRoute, string fileName)
 	{
-		return $"{serverRoute}/{fileName}";
+		return $"{serverRoute}{SEPARATOR}{fileName}";
 	}
 }

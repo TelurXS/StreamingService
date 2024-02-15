@@ -55,7 +55,7 @@ public static class RegisterViewRecordToUser
 
 			var series = seriesResult.AsFound;
 
-			var viewRecordResult = ViewRecordService.FindBySeries(request.SeriesId);
+			var viewRecordResult = ViewRecordService.FindBySeriesAndAuthor(request.SeriesId, user);
 
 			if (viewRecordResult.IsFound)
 			{

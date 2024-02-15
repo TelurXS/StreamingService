@@ -6,7 +6,7 @@ public interface IViewRecordRepository : IRepository<ViewRecord>
 {
 	List<ViewRecord> FindAllFromUser(Guid userId);
 
-	ViewRecord? FindBySeries(Guid seriesId);
+	ViewRecord? FindBySeriesAndAuthor(Guid seriesId, User author);
 
 	ViewRecord? FindBySeriesWithTracking(Guid seriesId);
 }

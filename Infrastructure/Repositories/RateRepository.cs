@@ -28,6 +28,23 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
+	public Rate? FindByTitleAndAuthor(Title title, User author)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Title.Id == title.Id && x.Author.Id == author.Id);
+	}
+
+	public Rate? FindByTitleAndAuthorWithTracking(Title title, User author)
+	{
+		return Entities
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Id == title.Id && x.Author.Id == author.Id);
+	}
+
 	public List<Rate> FindAll()
     {
         return Entities

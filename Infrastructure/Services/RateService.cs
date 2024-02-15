@@ -35,6 +35,26 @@ public sealed class RateService : IRateService
 		return result;
 	}
 
+	public GetResult<Rate> FindByTitleAndAuthor(Title title, User author)
+	{
+		var result = Repository.FindByTitleAndAuthor(title, author);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetResult<Rate> FindByTitleAndAuthorWithTracking(Title title, User author)
+	{
+		var result = Repository.FindByTitleAndAuthorWithTracking(title, author);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
 	public GetAllResult<Rate> FindAll()
     {
         return Repository.FindAll();

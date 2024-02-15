@@ -5,6 +5,7 @@
 
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject CookieAuthenticationStateProvider StateProvider
 
 <RequireAuthorization />
 <Background />
@@ -113,6 +114,8 @@
 			Messages = failures.ToList();
 			return;
 		}
+
+		StateProvider.NotifyAuthenticationStateChanged();
 
 		if (ReturnUrl is not null)
 			NavigationManager.NavigateTo(ReturnUrl);

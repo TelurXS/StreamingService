@@ -9,6 +9,7 @@ using Domain.Models;
 using Domain.Models.Responses;
 using Domain.Models.Results;
 using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -37,6 +38,9 @@ public class UserEndpoints : ICarterModule
 		app.MapPost(ApiRoutes.Users.RegisterViewRecord, AddViewRecordAsync)
 			.RequireAuthorization();
 
+		app.MapPost(ApiRoutes.Users.RegisterRate, AddRateAsync)
+			.RequireAuthorization();
+
 		app.MapGet(ApiRoutes.Users.FavouriteTitles.Route, GetFavouriteTitlesAsync)
 			.RequireAuthorization();
 		
@@ -51,6 +55,9 @@ public class UserEndpoints : ICarterModule
 
 		app.MapPost(ApiRoutes.Manage.ProfileImage, UploadProfileImageAsync)
 			.DisableAntiforgery()
+			.RequireAuthorization();
+
+		app.MapDelete(ApiRoutes.Manage.ProfileImage, DeleteProfileImageAsync)
 			.RequireAuthorization();
 	}
 
@@ -184,6 +191,28 @@ public class UserEndpoints : ICarterModule
 			);
 	}
 
+	[Consumes(MediaTypeNames.Application.Json)]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> AddRateAsync(
+		[FromRoute] Guid titleId,
+		[FromBody] RegisterRateToTitleFromUser.Request request,
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		request.UserId = claims.GetIdentifier();
+		request.TitleId = titleId;
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			success => Results.Ok(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -296,6 +325,30 @@ public class UserEndpoints : ICarterModule
 		{
 			Id = claims.GetIdentifier(),
 			File = file,
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+
+	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> DeleteProfileImageAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		var request = new RemoveProfileImageToUser.Request
+		{
+			Id = claims.GetIdentifier(),
 		};
 
 		var result = await mediator.Send(request);

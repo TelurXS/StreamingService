@@ -7,7 +7,7 @@ public interface IViewRecordService : IEntityService<ViewRecord>
 {
 	GetAllResult<ViewRecord> FindAllByUser(Guid userId);
 
-	GetResult<ViewRecord> FindBySeries(Guid seriesId);
+	GetResult<ViewRecord> FindBySeriesAndAuthor(Guid seriesId, User author);
 
 	GetResult<ViewRecord> FindBySeriesWithTracking(Guid seriesId);
 }

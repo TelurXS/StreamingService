@@ -74,5 +74,10 @@ public sealed class CookieAuthenticationStateProvider : AuthenticationStateProvi
 		NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 		return response.IsSuccessStatusCode;
 	}
+
+	public void NotifyAuthenticationStateChanged()
+	{
+		NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+	}
 }
 

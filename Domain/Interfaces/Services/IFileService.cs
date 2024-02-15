@@ -8,6 +8,8 @@ public interface IFileService
 
 	byte[]? Download(string path);
 
+	bool Delete(string path);
+
 	string UploadUserImage(IFormFile file);
 
 	string UploadTitleImage(IFormFile file);
@@ -17,6 +19,8 @@ public interface IFileService
 	string UploadSeries(IFormFile file);
 
 	byte[]? DownloadUserImage(string name);
+
+	bool DeleteUserImage(string name);
 
 	byte[]? DownloadTitleImage(string name);
 

@@ -19,6 +19,23 @@ public class FilesEndpoints : ICarterModule
 
 		app.MapGet(ApiRoutes.Files.TitleScreenshotByName, DownloadTitleScreenshot)
 			.DisableAntiforgery();
+
+		app.MapDelete(ApiRoutes.Files.UserImageByName, DeleteUserImage)
+			.DisableAntiforgery();
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	private IResult DeleteUserImage(
+		[FromRoute] string name,
+		[FromServices] IFileService fileService)
+	{
+		var result = fileService.DeleteUserImage(name);
+
+		if (result is false)
+			return Results.BadRequest();
+
+		return Results.Ok();
 	}
 
 	[ProducesResponseType(StatusCodes.Status200OK)]

@@ -3,10 +3,9 @@ using Application.Features.Users;
 using Domain.Entities;
 using Domain.Models;
 using Domain.Models.Requests;
-using Domain.Models.Responses;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Components.Forms;
 using System.Net.Http.Json;
 using Web.Interfaces;
 
@@ -156,7 +155,7 @@ public sealed class IdentityService : IIdentityService
 		try
 		{
 			var response = await Client
-				.PostAsJsonAsync(ApiRoutes.Users.RegisterViewRecordRoute + $"{seriesId}", request);
+				.PostAsJsonAsync(ApiRoutes.Users.RegisterViewRecordRoute + $"/{seriesId}", request);
 
 			if (response.IsSuccessStatusCode)
 				return new Success();
@@ -286,6 +285,65 @@ public sealed class IdentityService : IIdentityService
 
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<TitlesList>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<CreateResult<Success>> RegisterRateAsync(Guid titleId, RegisterRateToTitleFromUser.Request request)
+	{
+		try
+		{
+			var response = await Client
+				.PostAsJsonAsync(ApiRoutes.Users.RegisterRateRoute + $"/{titleId}", request);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> SetProfileImageAsync(IBrowserFile file)
+	{
+		try
+		{
+			var data = new MultipartFormDataContent
+			{
+				{ new StreamContent(file.OpenReadStream()), "file", file.Name }
+			};
+
+			var response = await Client
+				.PostAsync(ApiRoutes.Manage.ProfileImage, data);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> RemoveProfileImageAsync()
+	{
+		try
+		{
+			var response = await Client
+				.DeleteAsync(ApiRoutes.Manage.ProfileImage);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
 
 			return new Failed();
 		}

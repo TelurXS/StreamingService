@@ -18,13 +18,26 @@
 		<div class="row">
 
 			<div class="col-sm-5 col-md-3">
-				<div class="circle-profile-picture"
-					 style="background-image: url('@(string.IsNullOrEmpty(User.ProfileImage) 
-						? "/img/defaults/blank-profile-picture.webp" 
-						: User.ProfileImage)');" />
-				<a class="button button-fit mx-2 p-1" @onclick="() => ProfileWindow.Open()">
-					<img style="width: 15px" src="/img/pencil.svg" />
-				</a>
+
+				@if (string.IsNullOrEmpty(User.ProfileImage))
+				{
+					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
+						 style="background-image: url('/img/defaults/blank-profile-picture.webp');">
+						<a class="button button-fit mx-2 p-1" @onclick="() => ProfileWindow.Open()">
+							<img style="width: 15px" src="/img/pencil.svg" />
+						</a>
+					</div>
+				}
+				else
+				{
+					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
+						 style="background-image: url('@User.ProfileImage');">
+						<a class="button button-fit mx-2 p-1" @onclick="() => ProfileWindow.Open()">
+							<img style="width: 15px" src="/img/pencil.svg" />
+						</a>
+					</div>
+				}
+				
 			</div>
 
 			<div class="col-sm-7 col-md-9 d-flex flex-column">
@@ -54,11 +67,11 @@
 
 			<div class="col-md-8 d-flex mt-2 mt-md-0">
 				<div class="info-card">
-					<span class="font-md">5</span>
+					<span class="font-md">0</span>
 					<span class="font-sm font-gray">Readers</span>
 				</div>
 				<div class="info-card">
-					<span class="font-md">10</span>
+					<span class="font-md">0</span>
 					<span class="font-sm font-gray">Folowers</span>
 				</div>
 				<div class="info-card">
@@ -83,7 +96,7 @@
 
 						@if (LastWatched is not null)
 						{
-							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@((int)(LastWatched.Progress * 100))">
+							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@(LastWatched.PercentProgress)">
 								<div style="pointer-events: none;">
 									<MiniTitleCard Title="LastWatched.Title" />
 								</div>
@@ -92,7 +105,7 @@
 									<span class="font-xs font-gray">Latest Watched:</span>
 									<span class="font-md">@LastWatched.Title.Name</span>
 									<span class="font-sm">@LastWatched.Series.Name</span>
-									<progress class="mt-2" min="0" max="100" value="@((int)(LastWatched.Progress * 100))"></progress>
+									<progress class="mt-2" min="0" max="100" value="@(LastWatched.PercentProgress)"></progress>
 								</div>
 							</a>
 						}
@@ -127,13 +140,20 @@
 	<div class="col-lg-6 mt-2 mt-md-0">
 		<h4>Lists</h4>
 
-		<div class="row row-cols-4 p-3 profile-content-background">
-
+		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+			@foreach (var list in Lists)
+			{
+				<div class="col mt-2 p-2">
+					<a href="/lists/@list.Id">
+						<MiniTitlesListCard List="list" />
+					</a>
+				</div>
+			}
 		</div>
 	</div>
 </div>
 
-<ProfileImageModalWindow @ref="ProfileWindow" User="User" />
+<ProfileImageModalWindow @ref="ProfileWindow" User="User" OnUpdated="OnUpdatedAsync" />
 
 @code {
 
@@ -146,6 +166,8 @@
 	private List<Title> FavouriteTitles { get; set; } = new();
 
 	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	private List<TitlesList> Lists { get; set; } = new();
 
 	private ViewRecord? LastWatched { get; set; } = default;
 
@@ -178,11 +200,30 @@
 
 		if (viewRecordsResult.IsFound)
 		{
-			LastWatched = viewRecordsResult.AsFound.LastOrDefault();
+			LastWatched = viewRecordsResult.AsFound.OrderBy(x => x.Time).LastOrDefault();
 			ViewRecords = viewRecordsResult.AsFound.DistinctBy(x => x.Title.Id).ToList();
 		}
 
+		var titlesListsResult = await IdentityService.GetTitlesListsAsync();
+
+		if (titlesListsResult.IsFound)
+		{
+			Lists = titlesListsResult.AsFound;
+		}
+
 		Loaded = true;
+		StateHasChanged();
+	}
+
+	private async Task OnUpdatedAsync()
+	{
+		var userResult = await IdentityService.GetProfileAsync();
+
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
+
 		StateHasChanged();
 	}
 }

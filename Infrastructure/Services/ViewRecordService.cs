@@ -35,9 +35,9 @@ public class ViewRecordService : IViewRecordService
 		return result;
 	}
 
-	public GetResult<ViewRecord> FindBySeries(Guid seriesId)
+	public GetResult<ViewRecord> FindBySeriesAndAuthor(Guid seriesId, User author)
 	{
-		var result = Repository.FindBySeries(seriesId);
+		var result = Repository.FindBySeriesAndAuthor(seriesId, author);
 
 		if (result is null)
 			return new NotFound();

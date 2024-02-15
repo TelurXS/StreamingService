@@ -8,7 +8,7 @@
 	</div>
 	@if (ShowName)
 	{
-		<span>Name</span>
+		<span class="mt-2 font-@FontSize">@List.Name</span>
 	}
 </div>
 
@@ -20,5 +20,8 @@
 
 	[Parameter]
 	public bool ShowName { get; set; } = true;
+
+	[Parameter]
+	public string FontSize { get; set; } = "sm";
 }
 

@@ -4,6 +4,7 @@
 @using Domain.Entities
 
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <RequireAuthorization/>
 
@@ -15,7 +16,7 @@
 		var title = ViewRecords.Select(x => x.Title).First(x => x.Id == group.Key);
 		var record = group.OrderBy(x => x.Time).Last();
 
-		<a href="@WebRoutes.Titles.Base/@title.Slug?seriesId=@record.Series.Id&progress=@((int)(record.Progress * 100))">
+		<a href="@WebRoutes.Titles.Base/@record.Title.Slug?seriesId=@record.Series.Id&progress=@(record.PercentProgress)">
 			<div class="col d-flex flex-column justify-content-center align-items-center mt-2">
 				<div class="w-100" style="pointer-events: none;">
 					<ResponsiveTitleCard Title="title" />
@@ -23,7 +24,7 @@
 
 				<span class="font-sm font-gray">@record.Series.Name</span>
 
-				<progress class="mt-1 w-100" value="@((int)(record.Progress * 100))" min="0" max="100" />
+				<progress class="mt-1 w-100" value="@(record.PercentProgress)" min="0" max="100" />
 			</div>
 		</a>
 	}

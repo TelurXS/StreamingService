@@ -40,7 +40,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public ViewRecord? FindBySeries(Guid seriesId)
+	public ViewRecord? FindBySeriesAndAuthor(Guid seriesId, User author)
 	{
 		return Entities
 			.AsNoTracking()
@@ -52,7 +52,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Title)
 				.ThenInclude(x => x.Image)
-			.FirstOrDefault(x => x.Series.Id == seriesId);
+			.FirstOrDefault(x => x.Series.Id == seriesId && x.Author.Id == author.Id);
 	}
 
 	public ViewRecord? FindBySeriesWithTracking(Guid seriesId)

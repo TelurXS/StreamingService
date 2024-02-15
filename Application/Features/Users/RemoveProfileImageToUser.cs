@@ -3,25 +3,22 @@ using Domain.Interfaces.Services;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
 namespace Application.Features.Users;
 
-public static class UploadProfileImageToUser
+public static class RemoveProfileImageToUser
 {
 	public class Request : IRequest<UpdateResult<Success>>
 	{
-		public IFormFile File { get; set; } = default!;
-
 		[JsonIgnore]
 		public Guid Id { get; set; }
 	}
 
 	public class Handler : SyncRequestHandler<Request, UpdateResult<Success>>
 	{
-        public Handler(IUserService userService, IFileService fileService)
-        {
+		public Handler(IUserService userService, IFileService fileService)
+		{
 			UserService = userService;
 			FileService = fileService;
 		}
@@ -43,12 +40,7 @@ public static class UploadProfileImageToUser
 			if (currentImage is not null)
 				FileService.DeleteUserImage(currentImage);
 
-			var fileName = FileService.UploadUserImage(request.File);
-
-			if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out var _) is false)
-				return new Failed();
-
-			user.ProfileImage = fileName;
+			user.ProfileImage = string.Empty;
 
 			var result = UserService.Update(request.Id, user);
 
@@ -58,4 +50,5 @@ public static class UploadProfileImageToUser
 			return new Failed();
 		}
 	}
+	
 }
