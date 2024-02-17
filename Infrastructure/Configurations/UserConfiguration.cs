@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -48,7 +49,18 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 			.WithOne(x => x.Author);
 
 		builder.HasMany(x => x.Followers)
-			.WithMany();
+			.WithMany()
+			.UsingEntity<Dictionary<string, object>>(
+			nameof(User.Followers),
+			e => e.HasOne<User>().WithMany().HasForeignKey("UserId"),
+			e => e.HasOne<User>().WithMany().HasForeignKey("FollowerId"));
+
+		builder.HasMany(x => x.Readers)
+			.WithMany()
+			.UsingEntity<Dictionary<string, object>>(
+			nameof(User.Readers),
+			e => e.HasOne<User>().WithMany().HasForeignKey("ReaderId"),
+			e => e.HasOne<User>().WithMany().HasForeignKey("UserId"));
 
 		builder.HasMany(x => x.Lists)
 			.WithOne(x => x.Author);

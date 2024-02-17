@@ -16,7 +16,7 @@ using System.Security.Claims;
 
 namespace API.Endpoints;
 
-public class UserEndpoints : ICarterModule
+public class IdentityUserEndpoints : ICarterModule
 {
 	public void AddRoutes(IEndpointRouteBuilder app)
 	{
@@ -32,22 +32,22 @@ public class UserEndpoints : ICarterModule
 		app.MapPost(ApiRoutes.Manage.Genres, SetGenresToUserAsync)
 			.RequireAuthorization();
 
-		app.MapGet(ApiRoutes.Users.ViewRecords, GetViewRecordsAsync)
+		app.MapGet(ApiRoutes.IdentityUsers.ViewRecords, GetViewRecordsAsync)
 			.RequireAuthorization();
 
-		app.MapPost(ApiRoutes.Users.RegisterViewRecord, AddViewRecordAsync)
+		app.MapPost(ApiRoutes.IdentityUsers.RegisterViewRecord, AddViewRecordAsync)
 			.RequireAuthorization();
 
-		app.MapPost(ApiRoutes.Users.RegisterRate, AddRateAsync)
+		app.MapPost(ApiRoutes.IdentityUsers.RegisterRate, AddRateAsync)
 			.RequireAuthorization();
 
-		app.MapGet(ApiRoutes.Users.FavouriteTitles.Route, GetFavouriteTitlesAsync)
+		app.MapGet(ApiRoutes.IdentityUsers.FavouriteTitles.Route, GetFavouriteTitlesAsync)
 			.RequireAuthorization();
 		
-		app.MapPost(ApiRoutes.Users.FavouriteTitles.RouteWithId, AddTitleToFavouriteAsync)
+		app.MapPost(ApiRoutes.IdentityUsers.FavouriteTitles.RouteWithId, AddTitleToFavouriteAsync)
 			.RequireAuthorization();
 
-		app.MapDelete(ApiRoutes.Users.FavouriteTitles.RouteWithId, RemoveTitleFromFavouriteAsync)
+		app.MapDelete(ApiRoutes.IdentityUsers.FavouriteTitles.RouteWithId, RemoveTitleFromFavouriteAsync)
 			.RequireAuthorization();
 
 		app.MapGet(ApiRoutes.TitlesLists.All, GetTitlesListsFromUserAsync)
@@ -58,6 +58,18 @@ public class UserEndpoints : ICarterModule
 			.RequireAuthorization();
 
 		app.MapDelete(ApiRoutes.Manage.ProfileImage, DeleteProfileImageAsync)
+			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.IdentityUsers.Readers, GetReadersFromUserAsync)
+			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.IdentityUsers.Followers, GetFollowersFromUserAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.IdentityUsers.FollowersById, AddUserToFollowersAsync)
+			.RequireAuthorization();
+
+		app.MapDelete(ApiRoutes.IdentityUsers.FollowersById, RemoveUserToFollowersAsync)
 			.RequireAuthorization();
 	}
 
@@ -355,6 +367,104 @@ public class UserEndpoints : ICarterModule
 
 		return result.Match(
 			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<List<UserResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> GetFollowersFromUserAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new GetFollowersFromUser.Request
+		{
+			Id = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			users => Results.Ok(users.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<List<UserResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> GetReadersFromUserAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new GetReadersFromUser.Request
+		{
+			Id = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			users => Results.Ok(users.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> AddUserToFollowersAsync(
+		[FromRoute] Guid userId,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new AddUserToFollowers.Request
+		{
+			UserId = userId,
+			FollowerId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			users => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> RemoveUserToFollowersAsync(
+		[FromRoute] Guid userId,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new RemoveUserFromFollowers.Request
+		{
+			UserId = userId,
+			FollowerId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			users => Results.Ok(),
 			notFound => Results.NotFound(),
 			invalid => Results.BadRequest(),
 			failed => Results.BadRequest()

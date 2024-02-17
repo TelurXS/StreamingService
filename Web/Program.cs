@@ -22,6 +22,7 @@ builder.Services.AddTransient<ITitleService, TitleService>();
 builder.Services.AddTransient<ITitlesListService, TitlesListService>();
 builder.Services.AddTransient<ICommentsService, CommentService>();
 builder.Services.AddTransient<IRateService, RateService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

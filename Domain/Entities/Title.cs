@@ -24,6 +24,8 @@ public sealed class Title
 
     public required string Cast { get; set; }
 
+    public required int Views { get; set; }
+
     public ICollection<Name> Names { get; set; } = default!;
 
     public ICollection<Description> Descriptions { get; set; } = default!;

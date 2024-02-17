@@ -22,6 +22,8 @@ public class TitleResponse
 
 	public string Cast { get; set; } = string.Empty;
 
+	public int Views { get; set; } = default;
+
 	public ICollection<NameResponse> Names { get; set; } = default!;
 
 	public ICollection<DescriptionResponse> Descriptions { get; set; } = default!;

@@ -201,6 +201,10 @@ input::placeholder {
     background-color: var(--dark);
 }
 
+.back-primary {
+    background-color: var(--primary);
+}
+
 .bg-none {
     background-color: transparent !important;
 }
@@ -262,7 +266,7 @@ main {
 }
 
 .info-card {
-    width: inherit;
+    width: 33%;
     height: inherit;
     margin: 5px;
     padding: 2px 20px;

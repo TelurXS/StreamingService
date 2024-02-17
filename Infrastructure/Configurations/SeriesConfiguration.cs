@@ -9,6 +9,7 @@ public class SeriesConfiguration : IEntityTypeConfiguration<Series>
     public const int NAME_MAX_LENGTH = 128;
     public const int URI_MAX_LENGTH = 256;
     public const int DUBBING_MAX_LENGTH = 128;
+    public const int LANGUAGE_MAX_LENGTH = 32;
     
     public void Configure(EntityTypeBuilder<Series> builder)
     {
@@ -20,14 +21,18 @@ public class SeriesConfiguration : IEntityTypeConfiguration<Series>
         builder.Property(x => x.Name)
             .HasMaxLength(NAME_MAX_LENGTH)
             .IsRequired();
-        
-        builder.Property(x => x.Dubbing)
-            .HasMaxLength(NAME_MAX_LENGTH)
+
+		builder.Property(x => x.Uri)
+			.HasMaxLength(URI_MAX_LENGTH)
+			.IsRequired();
+
+		builder.Property(x => x.Dubbing)
+            .HasMaxLength(DUBBING_MAX_LENGTH)
             .IsRequired();
-        
-        builder.Property(x => x.Uri)
-            .HasMaxLength(URI_MAX_LENGTH)
-            .IsRequired();
+
+		builder.Property(x => x.Language)
+			.HasMaxLength(LANGUAGE_MAX_LENGTH)
+			.IsRequired();
 
         builder.Property(x => x.Index)
             .IsRequired();

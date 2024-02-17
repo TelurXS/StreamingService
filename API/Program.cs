@@ -31,6 +31,7 @@ builder.Services.AddAntiforgery();
 
 builder.Services.AddSingleton<ExceptionHandler>();
 builder.Services.AddSingleton<ClientRoutesService>();
+builder.Services.AddSingleton<IPayPalService, PayPalService>();
 builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<IEmailSender<User>, EmailSender>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>,

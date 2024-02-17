@@ -29,7 +29,7 @@ public static class ApiRoutes
 		public const string ProfileImage = Base + GroupName + "/image";
 	}
 
-	public static class Users
+	public static class IdentityUsers
 	{
 		public const string RegisterViewRecordRoute = Base + "/register-view-record";
 
@@ -41,6 +41,14 @@ public static class ApiRoutes
 
 		public const string ViewRecords = Base + "/view-records";
 
+		public const string Followers = Base + "/followers";
+
+		public const string FollowersById = Base + "/followers/{userId}";
+
+		public const string Readers = Base + "/readers";
+
+		public const string ReadersById = Base + "/readers/{userId}";
+
 		public static class FavouriteTitles 
 		{
 			public const string GroupName = "/favourites";
@@ -49,6 +57,27 @@ public static class ApiRoutes
 
 			public const string RouteWithId = Base + GroupName + "/{titleId}";
 		}
+	}
+
+	public class Users
+	{
+		public const string GroupName = "/users";
+
+		public const string GroupNameWithId = GroupName + "/{id}";
+
+		public const string Profile = Base + GroupNameWithId + "/profile";
+
+		public const string Genres = Base + GroupNameWithId + "/genres";
+
+		public const string ViewRecords = Base + GroupNameWithId + "/view-records";
+
+		public const string Followers = Base + GroupNameWithId + "/followers";
+
+		public const string Readers = Base + GroupNameWithId + "/readers";
+
+		public const string FavouriteTitles = Base + GroupNameWithId + "/favourites";
+
+		public const string TitlesLists = Base + GroupNameWithId + "/lists";
 	}
 
     public static class Titles

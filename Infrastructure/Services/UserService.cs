@@ -50,6 +50,36 @@ public sealed class UserService : IUserService
 		return Repository.FindFavouriteTitlesById(id);
 	}
 
+	public GetAllResult<User> FindFollowersFromUser(Guid id)
+	{
+		return Repository.FindFollowersFromUser(id);
+	}
+
+	public GetAllResult<User> FindReadersFromUser(Guid id)
+	{
+		return Repository.FindReadersFromUser(id);
+	}
+
+	public UpdateResult<Success> AddUserToFollowers(User follower, User user)
+	{
+		var result = Repository.AddUserToFollowers(follower.Id, user.Id);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
+	public UpdateResult<Success> RemoveUserFromFollowers(User follower, User user)
+	{
+		var result = Repository.RemoveUserFromFollowers(follower.Id, user.Id);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
 	public UpdateResult<Success> SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
 	{
 		var user = Repository.FindById(id);

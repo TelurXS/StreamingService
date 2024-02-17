@@ -20,7 +20,6 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
@@ -34,7 +33,6 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
@@ -49,7 +47,6 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.ToList();
@@ -63,7 +60,6 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.ToList();
@@ -84,6 +80,72 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			return new();
 
 		return user.FavouriteTitles.ToList();
+	}
+
+	public List<User> FindFollowersFromUser(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.Followers.ToList();
+	}
+
+	public List<User> FindReadersFromUser(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.Readers.ToList();
+	}
+
+	public bool AddUserToFollowers(Guid followerId, Guid userId)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == userId);
+
+		if (user is null)
+			return false;
+
+		var follower = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == followerId);
+
+		if (follower is null)
+			return false;
+
+		user.Followers.Add(follower);
+		follower.Readers.Add(user);
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool RemoveUserFromFollowers(Guid followerId, Guid userId)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == userId);
+
+		if (user is null)
+			return false;
+
+		var follower = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == followerId);
+
+		if (follower is null)
+			return false;
+
+		user.Followers.Remove(follower);
+		follower.Readers.Remove(user);
+		return Context.SaveChanges() > 0;
 	}
 
 	public bool SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)

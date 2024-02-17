@@ -122,7 +122,8 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
                 .SetProperty(x => x.Country, x => value.Country)
                 .SetProperty(x => x.AgeRestriction, x => value.AgeRestriction)
                 .SetProperty(x => x.Director, x => value.Director)
-                .SetProperty(x => x.Cast, x => value.Cast));
+                .SetProperty(x => x.Cast, x => value.Cast)
+                .SetProperty(x => x.Views, x => value.Views));
 
         return result > 0;
     }

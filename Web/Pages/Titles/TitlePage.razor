@@ -170,7 +170,14 @@
 		@foreach (var comment in Title.Comments.OrderByDescending(x => x.CreationDate))
 		{
 			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
-				<img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+				@if (string.IsNullOrEmpty(comment.Author.ProfileImage))
+				{
+					<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+				}
+				else
+				{
+					<img class="profile-picture" src="@comment.Author.ProfileImage" />
+				}
 
 				<div class="w-100">
 					<div class="d-flex justify-content-between">

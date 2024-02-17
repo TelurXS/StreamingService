@@ -1,4 +1,5 @@
-﻿@attribute [Route(WebRoutes.Manage.Subscription)]
+﻿@using Domain.Entities
+@attribute [Route(WebRoutes.Manage.Subscription)]
 @layout MinimalisticLayout
 
 @inject IIdentityService IdentityService
@@ -7,50 +8,53 @@
 <RequireAuthorization />
 <Background />
 
-<div class="row g-3 align-items-center justify-content-center">
-	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
-		<div class="card-body">
+<div class="gradient-panel card-form form-shadow-primary p-4">
 
-			<h2 class="mb-2">Manage Subscription</h2>
+	<h2 class="mb-2">Manage Subscription</h2>
 
-			@if (Message is not null)
-			{
-				<div>@Message</div>
-			}
+	@if (Message is not null)
+	{
+		<div>@Message</div>
+	}
 
-			<div class="subscription-select-panel">
-				<div class="subscription-card">
-					<h4>Trial</h4>
-					<span class="font-body">7 days free </span>
-				</div>
+	<div class="subscription-select-panel">
+		<div @onclick="() => Select(Subscription.Trial.Name)"
+			 class="subscription-card @(Selected.Equals(Subscription.Trial.Name) ? "back-primary" : "")">
+			<h4>Trial</h4>
+			<span class="font-body">7 days free </span>
+		</div>
 
-				<div class="subscription-card">
-					<h4>Base Plan</h4>
-					<span class="font-body">6.99$ / month</span>
-				</div>
+		<div @onclick="() => Select(Subscription.Standart.Name)"
+			 class="subscription-card @(Selected.Equals(Subscription.Standart.Name) ? "back-primary" : "")">
+			<h4>Standart Plan</h4>
+			<span class="font-body">@Subscription.Standart.Price$ / month</span>
+		</div>
 
-				<div class="subscription-card">
-					<h4>Premium Plan</h4>
-					<span class="font-body">14.99$ / month</span>
-					<ul class="font-sm mt-1">
-						<li>Необмежений доступ до обраного контенту. Ексклюзивні акції та знижки для абонентів.</li>
-						<li>Спільний перегляд в реальному часі з однією особою, використовуючи відео та аудіо дзвінки.</li>
-						<li>Ексклюзивні акції та знижки для абонентів.</li>
-					</ul>
-				</div>
-			</div>
-
-			<button @onclick="OnSubmit" class="button font-btn mt-3">Continue</button>
+		<div @onclick="() => Select(Subscription.Premium.Name)"
+			 class="subscription-card @(Selected.Equals(Subscription.Premium.Name) ? "back-primary" : "")">
+			<h4>Premium Plan</h4>
+			<span class="font-body">@Subscription.Premium.Price$ / month</span>
+			<ul class="font-sm mt-1">
+				<li>Необмежений доступ до обраного контенту. Ексклюзивні акції та знижки для абонентів.</li>
+				<li>Спільний перегляд в реальному часі з однією особою, використовуючи відео та аудіо дзвінки.</li>
+				<li>Ексклюзивні акції та знижки для абонентів.</li>
+			</ul>
 		</div>
 	</div>
+
+	<button @onclick="OnSubmit" class="button font-btn mt-3">Continue</button>
+
 </div>
 
 @code {
 
-	private string? Message { get; set; }
 
 	[SupplyParameterFromQuery]
 	private string? ReturnUrl { get; set; }
+
+	private string? Message { get; set; }
+
+	private string Selected { get; set; } = string.Empty;
 
 	private async Task OnSubmit()
 	{
@@ -58,5 +62,11 @@
 			NavigationManager.NavigateTo(ReturnUrl);
 
 		else NavigationManager.NavigateTo(WebRoutes.RegistrationSuccess);
+	}
+
+	private void Select(string value)
+	{
+		Selected = value;
+		StateHasChanged();
 	}
 }

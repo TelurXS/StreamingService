@@ -1,5 +1,4 @@
-﻿using Application.Features.TitleLists;
-using Application.Features.Users;
+﻿using Application.Features.Users;
 using Domain.Entities;
 using Domain.Models.Requests;
 using Domain.Models.Results;
@@ -39,4 +38,12 @@ public interface IIdentityService
 	Task<UpdateResult<Success>> SetProfileImageAsync(IBrowserFile file);
 
 	Task<UpdateResult<Success>> RemoveProfileImageAsync();
+
+	Task<GetAllResult<User>> GetFollowersAsync();
+
+	Task<GetAllResult<User>> GetReadersAsync();
+
+	Task<UpdateResult<Success>> FollowAsync(Guid userId);
+
+	Task<UpdateResult<Success>> UnfollowAsync(Guid userId);
 }

@@ -28,5 +28,7 @@ public static class UpdateTitle
         public required string Director { get; set; }
 
         public required string Cast { get; set; }
+
+        public required int Views { get; set; }
     }
 }

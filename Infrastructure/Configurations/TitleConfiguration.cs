@@ -51,6 +51,9 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
             .HasMaxLength(CAST_MAX_LENGTH)
             .IsRequired();
 
+        builder.Property(x => x.Views)
+            .IsRequired();
+
         builder.HasOne(x => x.Image);
 
         builder.HasMany(x => x.Screenshots);

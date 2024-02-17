@@ -54,10 +54,10 @@ public static class WebRoutes
 
 	public static class Users
 	{
+		public const string Base = "/users";
+
 		public static class Profile
 		{
-			public const string Base = "/profile";
-
 			public const string ById = Base + "/{id}";
 		}
 	}

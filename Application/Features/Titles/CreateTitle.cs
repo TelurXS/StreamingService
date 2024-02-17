@@ -26,5 +26,7 @@ public static class CreateTitle
         public required string Director { get; set; }
 
         public required string Cast { get; set; }
+
+        public required int Views { get; set; }
     }
 }

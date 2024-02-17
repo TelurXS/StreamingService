@@ -15,4 +15,12 @@ public interface IUserRepository : IRepository<User>
 	bool AddTitleToFavourite(Guid id, Title title);
 
 	bool RemoveTitleFromFavourite(Guid id, Title title);
+
+	bool AddUserToFollowers(Guid followerId, Guid userId);
+
+	bool RemoveUserFromFollowers(Guid followerId, Guid userId);
+
+	List<User> FindFollowersFromUser(Guid id);
+
+	List<User> FindReadersFromUser(Guid id);
 }

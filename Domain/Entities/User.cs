@@ -30,6 +30,8 @@ public sealed class User : IdentityUser<Guid>
 
     public ICollection<ViewRecord> ViewRecords { get; set; } = default!;
 
+    public ICollection<User> Readers { get; set; } = default!;
+
     public ICollection<User> Followers { get; set; } = default!;
 
     public ICollection<TitlesList> Lists { get; set; } = default!;

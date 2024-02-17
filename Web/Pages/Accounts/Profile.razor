@@ -65,13 +65,13 @@
 	<div class="col-md-6">
 		<div class="row">
 
-			<div class="col-md-8 d-flex mt-2 mt-md-0">
-				<div class="info-card">
-					<span class="font-md">0</span>
+			<div class="col-md-10 d-flex mt-2 mt-md-0">
+				<div class="info-card" @onclick="() => ReadersWindow.Open()">
+					<span class="font-md">@Readers.Count</span>
 					<span class="font-sm font-gray">Readers</span>
 				</div>
-				<div class="info-card">
-					<span class="font-md">0</span>
+				<div class="info-card" @onclick="() => FollowersWindow.Open()">
+					<span class="font-md">@Followers.Count</span>
 					<span class="font-sm font-gray">Folowers</span>
 				</div>
 				<div class="info-card">
@@ -80,7 +80,7 @@
 				</div>
 			</div>
 
-			<div class="col-md-4"></div>
+			<div class="col-md-2"></div>
 
 			<div class="col-md-12 mt-2">
 				<div class="row">
@@ -154,6 +154,8 @@
 </div>
 
 <ProfileImageModalWindow @ref="ProfileWindow" User="User" OnUpdated="OnUpdatedAsync" />
+<ReadersModalWindow @ref="ReadersWindow" Readers="Readers" />
+<FollowersModalWindow @ref="FollowersWindow" Followers="Followers" />
 
 @code {
 
@@ -161,17 +163,25 @@
 
 	private List<string> Genres { get; set; } = [];
 
-	private bool Loaded { get; set; } = false;
-
 	private List<Title> FavouriteTitles { get; set; } = new();
 
 	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	private List<User> Followers { get; set; } = new();
+
+	private List<User> Readers { get; set; } = new();
 
 	private List<TitlesList> Lists { get; set; } = new();
 
 	private ViewRecord? LastWatched { get; set; } = default;
 
-	private ProfileImageModalWindow ProfileWindow { get; set; }
+	private bool Loaded { get; set; } = false;
+
+	private ProfileImageModalWindow ProfileWindow { get; set; } = default!;
+
+	private ReadersModalWindow ReadersWindow { get; set; } = default!;
+
+	private FollowersModalWindow FollowersWindow { get; set; } = default!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -209,6 +219,20 @@
 		if (titlesListsResult.IsFound)
 		{
 			Lists = titlesListsResult.AsFound;
+		}
+
+		var followersResult = await IdentityService.GetFollowersAsync();
+
+		if (followersResult.IsFound)
+		{
+			Followers = followersResult.AsFound;
+		}
+
+		var readersResult = await IdentityService.GetReadersAsync();
+
+		if (readersResult.IsFound)
+		{
+			Readers = readersResult.AsFound;
 		}
 
 		Loaded = true;

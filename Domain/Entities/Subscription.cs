@@ -2,13 +2,25 @@
 
 public sealed class Subscription
 {
-    public static readonly string Trial = nameof(Trial);
+	public static readonly Subscription Trial = new Subscription 
+    {
+        Name = nameof(Trial),
+        Price = 0f,
+    };
 
-    public static readonly string Base = nameof(Base);
+	public static readonly Subscription Standart = new Subscription
+	{
+		Name = nameof(Standart),
+		Price = 9.99f,
+	};
 
-    public static readonly string Premium = nameof(Premium);
+	public static readonly Subscription Premium = new Subscription
+	{
+		Name = nameof(Premium),
+		Price = 14.99f,
+	};
 
-    public Guid Id { get; set; }
+	public Guid Id { get; set; }
 
     public required string Name { get; set; }
 
