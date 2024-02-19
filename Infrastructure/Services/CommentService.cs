@@ -35,14 +35,14 @@ public sealed class CommentService : ICommentService
 		return result;
 	}
 
-	public GetAllResult<Comment> FindAll()
+	public GetAllResult<Comment> FindAll(int count = 10, int page = 0)
 	{
-		return Repository.FindAll();
+		return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Comment> FindAllWithTracking()
+	public GetAllResult<Comment> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Comment> Create(Comment value)
@@ -89,5 +89,10 @@ public sealed class CommentService : ICommentService
 			return new Failed();
 
 		return new Success();
+	}
+
+	public int Count()
+	{
+		return Repository.Count();
 	}
 }

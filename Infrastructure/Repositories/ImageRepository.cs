@@ -24,16 +24,20 @@ public sealed class ImageRepository : EntityRepository<Image>, IImageRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Image> FindAll()
+	public List<Image> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
-            .ToList();
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
 	}
 
-	public List<Image> FindAllWithTracking()
+	public List<Image> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -44,7 +48,7 @@ public sealed class ImageRepository : EntityRepository<Image>, IImageRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -67,4 +71,9 @@ public sealed class ImageRepository : EntityRepository<Image>, IImageRepository
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

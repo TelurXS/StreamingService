@@ -1,4 +1,6 @@
-﻿namespace Domain.Models.Responses;
+﻿using Domain.Entities;
+
+namespace Domain.Models.Responses;
 
 public sealed class UserResponse
 {
@@ -19,4 +21,10 @@ public sealed class UserResponse
 	public string ProfileImage { get; set; } = string.Empty;
 
 	public DateTime BirthDate { get; set; } = default;
+
+    public bool IsTrialSubscriptionUsed { get; set; } = default;
+
+    public DateTime? SubscriptionExpiresIn { get; set; } = default;
+
+    public SubscriptionResponse? Subscription { get; set; } = default;
 }

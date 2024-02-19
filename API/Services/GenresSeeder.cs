@@ -6,8 +6,8 @@ namespace API.Services;
 
 public sealed class GenresSeeder : BackgroundService
 {
-    public GenresSeeder(IServiceScopeFactory serviceScopeFactory)
-    {
+	public GenresSeeder(IServiceScopeFactory serviceScopeFactory)
+	{
 		ServiceScopeFactory = serviceScopeFactory;
 
 		Genres = [
@@ -46,8 +46,17 @@ public sealed class GenresSeeder : BackgroundService
 			"Harem",
 			"Mecha",
 			"Romantic Comedy",
-			"Supernatural"
-			];
+			"Supernatural",
+			"TV Movie",
+			"Action & Adventure",
+			"Kids",
+			"News",
+			"Reality",
+			"Sci-Fi & Fantasy",
+			"Soap",
+			"Talk",
+			"War & Politics",
+		];
 	}
 
 	private IServiceScopeFactory ServiceScopeFactory { get; }
@@ -59,7 +68,7 @@ public sealed class GenresSeeder : BackgroundService
 		using var scope = ServiceScopeFactory.CreateScope();
 		var genresService = scope.ServiceProvider.GetRequiredService<IGenreService>();
 
-		foreach (var name in Genres) 
+		foreach (var name in Genres)
 		{
 			if (genresService.FindByName(name).IsFound)
 				continue;

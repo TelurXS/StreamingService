@@ -2,7 +2,7 @@
 @using Domain.Entities
 
 <PageTitle>Home</PageTitle>
-<Background Blur="0" Url="@Title.Image.Uri" />
+<Background Blur="0" Url="@Title.Image?.Uri" />
 
 <div class="mt-5 mb-5"></div>
 
@@ -49,11 +49,13 @@
 	public Title Title { get; set; } = new()
 		{
 			Id = Guid.NewGuid(),
+			Trailer = "https://images.adsttc.com/media/images/615b/95a6/1248/3401/6477/b911/newsletter/https-hypebeasom-image-2021-10-squid-game-director-decade-to-pitch-bizarre-series-interview-korea-times-1.jpg?1633392045",
 			Name = "Гра в кальмара",
 			Description = "47-річний Сон Гі-Хун, залежний від азартних ігор, живе на доходи своєї хворої матері. Через його пристрасть до азартних ігор і невимушене ставлення до грошей він опинився у фінансовій ямі, і не може отримати опіку над своєю донькою Га-Єн. Коли кредитори погрожують Сону фізичною розправою, якщо чоловік не поверне гроші до кінця місяця, загадковий незнайомець пропонує йому взяти участь у секретній грі на виживання. 456 учасникам доведеться вести боротьбу за солідний грошовий приз, граючи в дитячі ігри...",
 			Slug = "squid-game",
 			ReleaseDate = DateTime.Now,
 			Director = "Хван Дон-хьок",
+			Type = TitleType.Film,
 			Country = Country.KR,
 			Cast = "Ли Джон-джэ, Пак Хэ-су, О Ён-су, Чон Хо-ён, Хо Сон-тхэ, Анупам Трипати, Ким Джу Рён, Ви Ха-джун, Ю Сон-джу, Ли Ю-мия та інші",
 			Views = 1000,

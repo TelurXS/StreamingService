@@ -7,4 +7,6 @@ public class SubscriptionResponse
 	public string Name { get; set; } = string.Empty;
 
 	public float Price { get; set; } = default;
+
+	public int Level { get; set; } = default;
 }

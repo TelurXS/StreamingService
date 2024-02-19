@@ -104,8 +104,7 @@ public class PayPalService : IPayPalService
 		var response = await client.PostAsJsonAsync($"{BaseUrl}/v2/checkout/orders", request);
 
 		var json = await response.Content.ReadAsStringAsync();
-		//Console.WriteLine(JsonSerializer.Serialize(request));
-		//Console.WriteLine(json);
+		Console.WriteLine( json );
 		var result = JsonSerializer.Deserialize<CreateOrderResponse>(json);
 
 		return result!;
@@ -124,7 +123,6 @@ public class PayPalService : IPayPalService
 		var response = await client.PostAsync($"{BaseUrl}/v2/checkout/orders/{orderId}/capture", content);
 
 		var json = await response.Content.ReadAsStringAsync();
-		Console.WriteLine(json);
 		var result = JsonSerializer.Deserialize<CaptureOrderResponse>(json);
 
 		return result!;

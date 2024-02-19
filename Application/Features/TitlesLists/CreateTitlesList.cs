@@ -69,17 +69,7 @@ public static class CreateTitlesList
 
 			titlesList.Author = authorResult.AsFound;
 
-			var createResult = TitlesListService.Create(titlesList);
-
-			if (createResult.IsCreated is false)
-				return new Failed();
-
-			var result = TitlesListService.FindById(createResult.AsCreated.Id);
-
-			if (result.IsFound is false)
-				return new Failed();
-
-			return result.AsFound;
+			return TitlesListService.Create(titlesList);
 		}
 	}
 }

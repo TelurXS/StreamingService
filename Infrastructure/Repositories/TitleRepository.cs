@@ -1,5 +1,7 @@
-﻿using Domain.Entities;
+﻿using Azure;
+using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Domain.Models.PayPal;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +20,7 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
             .Include(x => x.Names)
             .Include(x => x.Descriptions)
             .Include(x => x.Image)
+            .Include(x => x.RequiredSubscription)
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
@@ -32,7 +35,8 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.Include(x => x.Names)
 			.Include(x => x.Descriptions)
 			.Include(x => x.Image)
-			.Include(x => x.Screenshots)
+            .Include(x => x.RequiredSubscription)
+            .Include(x => x.Screenshots)
 			.Include(x => x.Genres)
 			.Include(x => x.Series)
 			.Include(x => x.Comments)
@@ -47,7 +51,8 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.Include(x => x.Names)
 			.Include(x => x.Descriptions)
 			.Include(x => x.Image)
-			.Include(x => x.Screenshots)
+            .Include(x => x.RequiredSubscription)
+            .Include(x => x.Screenshots)
 			.Include(x => x.Genres)
 			.Include(x => x.Series)
 			.Include(x => x.Comments)
@@ -61,7 +66,8 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.Include(x => x.Names)
 			.Include(x => x.Descriptions)
 			.Include(x => x.Image)
-			.Include(x => x.Screenshots)
+            .Include(x => x.RequiredSubscription)
+            .Include(x => x.Screenshots)
 			.Include(x => x.Genres)
 			.Include(x => x.Series)
 			.Include(x => x.Comments)
@@ -69,43 +75,160 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.FirstOrDefault(x => x.Slug == slug);
 	}
 
-	public List<Title> FindAll()
+	public List<Title> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Names)
             .Include(x => x.Descriptions)
             .Include(x => x.Image)
+            .Include(x => x.RequiredSubscription)
             .Include(x => x.Screenshots)
             .Include(x => x.Genres)
             .Include(x => x.Series)
             .Include (x => x.Comments)
 			.ThenInclude(x => x.Author)
+			.OrderBy(x => x.Views)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<Title> FindAllWithTracking()
+	public List<Title> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Names)
 			.Include(x => x.Descriptions)
 			.Include(x => x.Image)
+			.Include(x => x.RequiredSubscription)
 			.Include(x => x.Screenshots)
 			.Include(x => x.Genres)
 			.Include(x => x.Series)
 			.Include(x => x.Comments)
-			.ThenInclude(x => x.Author)
+			.OrderByDescending(x => x.Views)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public Title? Insert(Title value)
+	public List<Title> FindAllPopular(int count = 10, int page = 0)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.RequiredSubscription)
+			.Include(x => x.Genres)
+			.OrderByDescending(x => x.Views)
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
+	}
+
+	public List<Title> FindAllByName(string name, int count = 10, int page = 0)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.RequiredSubscription)
+			.Include(x => x.Genres)
+			.OrderByDescending(x => x.Views)
+			.Where(x => x.Name.Contains(name) || x.Names.Any(x => x.Value.Contains(name)))
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
+	}
+
+	public List<Title> FindAllByGenre(string genre, int count = 10, int page = 0)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.RequiredSubscription)
+			.Include(x => x.Genres)
+			.OrderByDescending(x => x.Views)
+			.Where(x => x.Genres.Any(x => x.Name.Equals(genre)))
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
+	}
+
+	public List<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.RequiredSubscription)
+			.Include(x => x.Genres)
+			.OrderBy(x => x.Views)
+			.Where(title => title.Genres.Any(genre => genres.Contains(genre.Name)))
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
+	}
+
+	public bool SetImage(Guid id, Image image)
+	{
+		var title = FindByIdWithTracking(id);
+
+		if (title is null)
+			return false;
+
+		title.Image = image;
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool AddScreenshot(Guid id, Image screenshot)
+	{
+		var title = FindByIdWithTracking(id);
+
+		if (title is null)
+			return false;
+
+		title.Screenshots.Add(screenshot);
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool RemoveScreenshot(Guid id, Image screenshot)
+	{
+		var title = FindByIdWithTracking(id);
+
+		if (title is null)
+			return false;
+
+		title.Screenshots.Remove(screenshot);
+		return Context.SaveChanges() > 0;
+    }
+
+    public bool AddView(Guid id, int count = 1)
+    {
+        var result = Entities
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(setters => setters
+                .SetProperty(x => x.Views, x => x.Views + count));
+
+        return result > 0;
+    }
+
+    public Title? Insert(Title value)
     {
 		var entity = Entities.Add(value).Entity;
 
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -136,4 +259,39 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
+
+	public int CountByName(string name)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Where(x => x.Name.Contains(name) || x.Names.Any(x => x.Value.Contains(name)))
+			.Count();
+	}
+
+	public int CountByGenre(string genre)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Genres)
+			.Where(x => x.Genres.Any(x => x.Name.Equals(genre)))
+			.Count();
+	}
+
+	public int CountByGenres(List<string> genres)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Genres)
+			.Where(title => title.Genres.Any(genre => genres.Contains(genre.Name)))
+			.Count();
+	}
 }

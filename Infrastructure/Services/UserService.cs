@@ -35,14 +35,14 @@ public sealed class UserService : IUserService
 		return result;
 	}
 
-	public GetAllResult<User> FindAll()
+	public GetAllResult<User> FindAll(int count = 10, int page = 0)
 	{
-		return Repository.FindAll();
+		return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<User> FindAllWithTracking()
+	public GetAllResult<User> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<Title> FindFavouriteTitlesById(Guid id)
@@ -171,12 +171,12 @@ public sealed class UserService : IUserService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(User value)
@@ -187,5 +187,10 @@ public sealed class UserService : IUserService
 			return new Failed();
 
 		return new Success();
+	}
+
+	public int Count()
+	{
+		return Repository.Count();
 	}
 }

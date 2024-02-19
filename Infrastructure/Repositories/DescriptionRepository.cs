@@ -26,18 +26,22 @@ public sealed class DescriptionRepository : EntityRepository<Description>, IDesc
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Description> FindAll()
+	public List<Description> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Title)
-            .ToList();
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
     }
 
-	public List<Description> FindAllWithTracking()
+	public List<Description> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Title)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -48,7 +52,7 @@ public sealed class DescriptionRepository : EntityRepository<Description>, IDesc
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -72,4 +76,9 @@ public sealed class DescriptionRepository : EntityRepository<Description>, IDesc
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

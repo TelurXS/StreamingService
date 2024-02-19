@@ -88,7 +88,25 @@ public static class ApiRoutes
 
 		public const string All = Base + GroupName;
 
-        public const string ById = Base + GroupName + "/{id}";
+		public const string AllPopular = All + "/popular";
+
+		public const string AllByName = All + "/by-name";
+
+		public const string AllByGenre = All + "/by-genre";
+
+		public const string AllByGenres = All + "/by-genres";
+
+		public const string CountAll = All + "/count";
+
+		public const string CountByName = AllByName + "/count";
+
+		public const string CountByGenre = AllByGenre + "/count";
+
+		public const string CountByGenres = AllByGenres + "/count";
+
+		public const string ById = Base + GroupName + "/{id}";
+
+        public const string ByIdImage = ById + "/image";
 
         public const string BySlug = Base + GroupName + "/{slug}";
 	}

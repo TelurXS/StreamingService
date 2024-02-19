@@ -32,7 +32,7 @@ public class CommentRepository : EntityRepository<Comment>, ICommentRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Comment> FindAll()
+	public List<Comment> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
@@ -40,16 +40,20 @@ public class CommentRepository : EntityRepository<Comment>, ICommentRepository
 			.Include(x => x.Title)
 			.Include(x => x.Parent)
 			.Include(x => x.Childs)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<Comment> FindAllWithTracking()
+	public List<Comment> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Author)
 			.Include(x => x.Title)
 			.Include(x => x.Parent)
 			.Include(x => x.Childs)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -60,7 +64,7 @@ public class CommentRepository : EntityRepository<Comment>, ICommentRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -84,5 +88,10 @@ public class CommentRepository : EntityRepository<Comment>, ICommentRepository
 			.ExecuteDelete();
 
 		return result > 0;
+	}
+
+	public int Count()
+	{
+		return Entities.Count();
 	}
 }

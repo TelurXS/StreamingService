@@ -14,7 +14,9 @@ public class TitleResponse
 
 	public DateTime ReleaseDate { get; set; } = default;
 
-	public Country Country { get; set; } = default;
+    public TitleType Type { get; set; } = default;
+
+    public Country Country { get; set; } = default;
 
 	public AgeRestriction AgeRestriction { get; set; } = default;
 
@@ -24,13 +26,17 @@ public class TitleResponse
 
 	public int Views { get; set; } = default;
 
-	public ICollection<NameResponse> Names { get; set; } = default!;
+    public string Trailer { get; set; } = string.Empty;
+
+    public ICollection<NameResponse> Names { get; set; } = default!;
 
 	public ICollection<DescriptionResponse> Descriptions { get; set; } = default!;
 
 	public ImageResponse Image { get; set; } = default!;
 
-	public ICollection<ImageResponse> Screenshots { get; set; } = default!;
+    public SubscriptionResponse? RequiredSubscription { get; set; } = default;
+
+    public ICollection<ImageResponse> Screenshots { get; set; } = default!;
 
 	public ICollection<GenreResponse> Genres { get; set; } = default!;
 

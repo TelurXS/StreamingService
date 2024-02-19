@@ -1,8 +1,14 @@
-﻿using API.Services;
+﻿using API.Extensions;
+using API.Services;
+using Application.Features.Subscriptions;
 using Carter;
+using Domain.Entities;
 using Domain.Interfaces.Services;
 using MailKit.Search;
+using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Endpoints;
 
@@ -13,39 +19,48 @@ public sealed class PaymentEndpoints : ICarterModule
 		app.MapGet("/api/payment", CaptureOrderAsync)
 			.RequireAuthorization();
 
-		app.MapPost("/api/payment", CreateOrderAsync)
+		app.MapPost("/api/payment/{subscription}", CreateOrderAsync)
 			.RequireAuthorization();
 	}
 
 	private static async Task<IResult> CaptureOrderAsync(
 		[FromQuery] string orderId,
-		[FromServices] IPayPalService payPalService
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims
 		)
 	{
-		var response = await payPalService.CaptureOrderAsync(orderId);
+		var request = new CaptureSubscriptionOrder.Request
+		{
+			OrderId = orderId,
+			UserId = claims.GetIdentifier(),
+        };
 
-		var reference = response.PurchaseUnits.FirstOrDefault()?.ReferenceId;
+        var result = await mediator.Send(request);
 
-		Console.WriteLine("REFERENCE: " + reference);
-
-		// Put your logic to save the transaction here
-		// You can use the "reference" variable as a transaction key
-
-		return Results.Ok(response);
+        return result.Match(
+			response => Results.Ok(response),
+            notFound => Results.NotFound(),
+            invalid => Results.BadRequest(),
+            failed => Results.BadRequest(failed.Errors)
+            );
 	}
 
 	private static async Task<IResult> CreateOrderAsync(
-		[FromServices] IPayPalService payPalService
+		[FromRoute] string subscription,
+		[FromServices] IMediator mediator
 		)
 	{
-		var price = "100.00";
-		var currency = "USD";
+		var request = new CreateSubscriptionOrder.Request
+		{
+			SubscriptionName = subscription,
+		};
 
-		// "reference" is the transaction key
-		var reference = "INV001";
+		var result = await mediator.Send(request);
 
-		var response = await payPalService.CreateOrderAsync(price, currency, reference);
-
-		return Results.Ok(response);
-	}
+        return result.Match(
+            order => Results.Ok(order),
+            notFound => Results.NotFound(),
+            failed => Results.BadRequest()
+            );
+    }
 }

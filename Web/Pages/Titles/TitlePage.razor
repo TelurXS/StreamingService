@@ -18,7 +18,7 @@
 	return;
 }
 
-<Background Blur="15" Url="@Title.Image.Uri" />
+<Background Blur="15" Url="@Title.Image?.Uri" />
 
 <div class="d-flex align-items-center">
 	<a href="@WebRoutes.Home" class="font-sm font-gray page-link">Home</a>
@@ -29,7 +29,7 @@
 <div class="row mt-3 mb-5">
 	<div class="col-md-4">
 		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
-		<div class="poster p-3" style="background-image: url('@Title.Image.Uri')">
+		<div class="poster p-3" style="background-image: url('@Title.Image?.Uri')">
 			<AuthorizeView>
 				<Authorized>
 					<div class="d-flex flex-column align-items-end">
@@ -39,11 +39,11 @@
 				</Authorized>
 			</AuthorizeView>
 		</div>
-		<a href="@Title.Image.Uri" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
 	</div>
 
 	<div class="col-md-8">
-		<span class="font-lg font-gray">Series</span>
+		<span class="font-lg font-gray">@Title.Type.ToString()</span>
 		<h1>@Title.Name</h1>
 
 		<div class="row mt-3">

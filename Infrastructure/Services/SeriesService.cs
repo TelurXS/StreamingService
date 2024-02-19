@@ -35,14 +35,14 @@ public sealed class SeriesService : ISeriesService
 		return result;
 	}
 
-	public GetAllResult<Series> FindAll()
+	public GetAllResult<Series> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Series> FindAllWithTracking()
+	public GetAllResult<Series> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<Series> FindAllByTitle(Title title)
@@ -83,12 +83,12 @@ public sealed class SeriesService : ISeriesService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Series value)
@@ -100,4 +100,9 @@ public sealed class SeriesService : ISeriesService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

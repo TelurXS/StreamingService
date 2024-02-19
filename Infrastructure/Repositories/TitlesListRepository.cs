@@ -38,7 +38,7 @@ public sealed class TitlesListRepository : EntityRepository<TitlesList>, ITitles
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<TitlesList> FindAll()
+	public List<TitlesList> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
@@ -49,10 +49,12 @@ public sealed class TitlesListRepository : EntityRepository<TitlesList>, ITitles
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Titles)
 				.ThenInclude(x => x.Image)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<TitlesList> FindAllWithTracking()
+	public List<TitlesList> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Author)
@@ -62,6 +64,8 @@ public sealed class TitlesListRepository : EntityRepository<TitlesList>, ITitles
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Titles)
 				.ThenInclude(x => x.Image)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -109,7 +113,7 @@ public sealed class TitlesListRepository : EntityRepository<TitlesList>, ITitles
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -133,5 +137,10 @@ public sealed class TitlesListRepository : EntityRepository<TitlesList>, ITitles
 			.ExecuteDelete();
 
 		return result > 0;
+	}
+
+	public int Count()
+	{
+		return Entities.Count();
 	}
 }

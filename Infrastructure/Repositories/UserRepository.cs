@@ -38,7 +38,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<User> FindAll()
+	public List<User> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
@@ -49,10 +49,12 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.FavouriteTitles)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<User> FindAllWithTracking()
+	public List<User> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Subscription)
@@ -62,6 +64,8 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.FavouriteTitles)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -219,7 +223,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -234,6 +238,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 				.SetProperty(x => x.SecondName, x => value.SecondName)
 				.SetProperty(x => x.ProfileImage, x => value.ProfileImage)
 				.SetProperty(x => x.BirthDate, x => value.BirthDate)
+				.SetProperty(x => x.IsTrialSubscriptionUsed, x => value.IsTrialSubscriptionUsed)
 				.SetProperty(x => x.SubscriptionExpiresIn, x => value.SubscriptionExpiresIn));
 
 		return result > 0;
@@ -246,5 +251,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.ExecuteDelete();
 
 		return result > 0;
+	}
+
+	public int Count()
+	{
+		return Entities.Count();
 	}
 }

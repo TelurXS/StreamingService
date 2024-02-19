@@ -1,16 +1,19 @@
 
+const SUBSCRIPTIONS = ["Standart", "Premium"]
+
 window.initializePayPal = () => {
 
     let selected = document.getElementById("selected-subscription").value;
 
-    if (selected == "")
+    if (selected == "" || SUBSCRIPTIONS.includes(selected) == false)
         return;
 
     paypal.Buttons({
         style: {
             layout: 'vertical',
             color: 'silver',
-            tagline: 'false'
+            tagline: 'false',
+            shape: 'pill',
         },
         createOrder: (data, actions) => {
             return fetch(`/api/payment/${selected}`, { method: "post", })
@@ -20,7 +23,7 @@ window.initializePayPal = () => {
         onApprove: (data, actions) => {
             return fetch(`/api/payment?orderId=${data.orderID}`, { method: "get", })
                 .then((response) => response.json())
-                .then((data) => window.alert("Success " + JSON.stringify(data)));
+                .then((data) => window.location.href = "/registration-success");
         }
     }).render('#paypal-button-container');
 }
