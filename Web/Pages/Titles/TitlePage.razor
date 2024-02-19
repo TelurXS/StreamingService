@@ -6,6 +6,7 @@
 @inject IRateService RateService
 
 @using Application.Features.Comments
+@using Application.Features.Titles
 @using Application.Features.Users
 @using Domain.Entities
 @using Domain.Extensions
@@ -48,7 +49,7 @@
 
 		<div class="row mt-3">
 			<div class="col-sm-3">Raiting:</div>
-			<div class="col-sm-9 font-gray">@Title.AvarageRate</div>
+			<div class="col-sm-9 font-gray">@Title.AvarageRate.ToString("0.0")</div>
 		</div>
 
 		<div class="row mt-3">
@@ -232,8 +233,6 @@
 		Title = result.AsFound;
 		Loaded = true;
 
-		Recomendations = [Title, Title, Title, Title];
-
 		var favouriteResult = await IdentityService.GetFavouriteTitlesAsync();
 
 		if (favouriteResult.IsFound)
@@ -246,6 +245,15 @@
 		if (rateResult.IsFound)
 		{
 			Rate = rateResult.AsFound;
+		}
+
+		var genres = Title.Genres.Select(x => x.Name).ToList();
+
+		var recomedationsResult = await TitleService.FindAllByGenresAsync(genres);
+
+		if (recomedationsResult.IsFound)
+		{
+			Recomendations = recomedationsResult.AsFound;
 		}
 
 		StateHasChanged();
@@ -268,15 +276,9 @@
 
 	private async Task OnLeaveSeries(Series series, float progress)
 	{
-		Console.WriteLine("Starting to save the progress");
 		if (progress <= 0 || progress > 1)
 		{
-			Console.WriteLine($"Progress for {series?.Name} {progress} is not valid");
 			return;
-		}
-		else
-		{
-			Console.WriteLine($"Progress for {series?.Name} {progress} is saving...");
 		}
 
 		var request = new RegisterViewRecordToUser.Request

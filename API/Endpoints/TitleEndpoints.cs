@@ -24,32 +24,23 @@ public class TitleEndpoints : ICarterModule
             .DisableAntiforgery()
             .RequireAuthorization();
 
-        app.MapGet(ApiRoutes.Titles.BySlug, GetTitleBySlugAsync)
-			.RequireAuthorization();
+        app.MapGet(ApiRoutes.Titles.BySlug, GetTitleBySlugAsync);
 
-		app.MapGet(ApiRoutes.Titles.AllPopular, GetPopularTitlesAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.AllPopular, GetPopularTitlesAsync);
 
-		app.MapGet(ApiRoutes.Titles.AllByName, GetTitlesByNameAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.AllByName, GetTitlesByNameAsync);
 
-		app.MapGet(ApiRoutes.Titles.AllByGenre, GetTitlesByGenreAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.AllByGenre, GetTitlesByGenreAsync);
 
-		app.MapGet(ApiRoutes.Titles.AllByGenres, GetTitlesByGenresAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.AllByGenres, GetTitlesByGenresAsync);
 
-		app.MapGet(ApiRoutes.Titles.CountAll, GetTitlesCountAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.CountAll, GetTitlesCountAsync);
 
-		app.MapGet(ApiRoutes.Titles.CountByName, GetTitlesCountByNameAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.CountByName, GetTitlesCountByNameAsync);
 
-		app.MapGet(ApiRoutes.Titles.CountByGenre, GetTitlesCountByGenreAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.CountByGenre, GetTitlesCountByGenreAsync);
 
-		app.MapGet(ApiRoutes.Titles.CountByGenres, GetTitlesCountByGenresAsync)
-			.RequireAuthorization();
+		app.MapGet(ApiRoutes.Titles.CountByGenres, GetTitlesCountByGenresAsync);
 	}
 
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -175,13 +166,20 @@ public class TitleEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetTitlesByGenresAsync(
-		[FromBody] GetTitlesByGenres.Request request,
+		[FromQuery] string[] genres,
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper,
 		[FromQuery] int count = 10,
 		[FromQuery] int page = 0
 		)
 	{
+		var request = new GetTitlesByGenres.Request
+		{
+			Genres = genres.ToList(),
+			Count = count,
+			Page = page,
+		};
+
 		var result = await mediator.Send(request);
 
 		return result.Match(
@@ -275,10 +273,15 @@ public class TitleEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetTitlesCountByGenresAsync(
-		[FromBody] GetTitlesCountByGenres.Request request,
+		[FromQuery] string[] genres,
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper)
 	{
+		var request = new GetTitlesCountByGenres.Request
+		{
+			Genres = genres.ToList(),
+		};
+
 		var result = await mediator.Send(request);
 
 		return Results.Ok(result);
