@@ -162,4 +162,9 @@ public static class ApiRoutes
 
 		public const string ByTitle = Route + "/{titleId}";
 	}
+
+	public class Hubs
+	{
+		public const string Sessions = Base + "/sessions";
+	}
 }

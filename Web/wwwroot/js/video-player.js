@@ -60,7 +60,33 @@ window.initializePlayer = (dotnet) => {
     }
 
     const toggleVideo = () => {
-        video.paused ? video.play() : video.pause();
+
+        if (video.paused) {
+            play();
+        }
+        else {
+            stop();
+        }
+    }
+
+    const play = (notifyChanged = true) => {
+        if (video.paused == false)
+            return;
+
+        video.play();
+
+        if (notifyChanged)
+            window.notifyPlaybackStarted();
+    }
+
+    const stop = (notifyChanged = true) => {
+        if (video.paused == true)
+            return;
+
+        video.pause();
+
+        if (notifyChanged)
+            window.notifyPlaybackStoped();
     }
 
     const getProgress = () => {
@@ -76,15 +102,17 @@ window.initializePlayer = (dotnet) => {
         if (value == null || isNaN(value))
             return;
 
-        dotnet.invokeMethodAsync("SetProgress", value);
+        window.invokeSaveProgress(value);
     }
 
     const skipForward = () => {
         video.currentTime += SKIP_SECONDS;
+        window.notifyProgressChanged(getProgress());
     }
 
     const skipBack = () => {
         video.currentTime -= SKIP_SECONDS;
+        window.notifyProgressChanged(getProgress());
     }
 
     const changeToPlayButtonIcon = () => {
@@ -173,14 +201,20 @@ window.initializePlayer = (dotnet) => {
 
     const onTimelineMouseClick = (e) => {
         let timelineWidth = videoTimeline.clientWidth;
-        video.currentTime = (e.offsetX / timelineWidth) * video.duration;
+        var progress = (e.offsetX / timelineWidth);
+        video.currentTime = progress * video.duration;
+
+        window.notifyProgressChanged(progress);
     }
 
     const onTimelineDrag = (e) => {
         let timelineWidth = videoTimeline.clientWidth;
         progressBar.style.width = `${e.offsetX}px`;
-        video.currentTime = (e.offsetX / timelineWidth) * video.duration;
+        var progress = (e.offsetX / timelineWidth);
+        video.currentTime = progress * video.duration;
         currentTimeSpan.innerText = formatTime(video.currentTime);
+
+        window.notifyProgressChanged(progress);
     }
 
     const hideControls = () => {
@@ -216,18 +250,47 @@ window.initializePlayer = (dotnet) => {
 
     container.addEventListener("mousemove", onContainerMouseMove);
 
-    window.changePlayerSource = (value) => {
-        video.setAttribute("src", value);
+    window.changePlayerSource = (url) => {
+        video.setAttribute("src", url);
         video.currentTime = 0;
         progressBar.style.width = `0%`;
         changeToPlayButtonIcon();
     }
 
-    window.setProgress = (value) => {
+    window.setRetrievedProgress = (value) => {
         retrievedProgress = value;
     }
 
     window.getProgress = () => {
         return getProgress();
+    }
+
+    window.setProgress = (value) => {
+        setProgress(value);
+        setSavedProgress(value);
+    }
+
+    window.play = (notifyChanged = true) => {
+        play(notifyChanged);
+    }
+
+    window.stop = (notifyChanged = true) => {
+        stop(notifyChanged);
+    }
+
+    window.invokeSaveProgress = (value) => {
+        dotnet.invokeMethodAsync("SaveProgress", value);
+    } 
+
+    window.notifyPlaybackStarted = () => {
+        dotnet.invokeMethodAsync("NotifyPlaybackStarted");
+    }
+
+    window.notifyPlaybackStoped = () => {
+        dotnet.invokeMethodAsync("NotifyPlaybackStoped");
+    }
+
+    window.notifyProgressChanged = (value) => {
+        dotnet.invokeMethodAsync("NotifyProgressChanged", value);
     }
 }

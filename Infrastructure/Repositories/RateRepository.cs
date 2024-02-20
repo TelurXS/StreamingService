@@ -32,6 +32,7 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 	{
 		return Entities
 			.AsNoTracking()
+			.AsSplitQuery()
 			.Include(x => x.Author)
 			.Include(x => x.Title)
 			.FirstOrDefault(x => x.Title.Id == title.Id && x.Author.Id == author.Id);
@@ -40,6 +41,7 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 	public Rate? FindByTitleAndAuthorWithTracking(Title title, User author)
 	{
 		return Entities
+			.AsSplitQuery()
 			.Include(x => x.Author)
 			.Include(x => x.Title)
 			.FirstOrDefault(x => x.Id == title.Id && x.Author.Id == author.Id);

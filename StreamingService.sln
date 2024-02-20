@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfrastructureBenchmarks", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{D7E71513-FB87-49DF-A5D3-CF1F98850266}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiParser", "ApiParser\ApiParser.csproj", "{8877DAA2-274B-462C-878B-920FB6864F05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiParser", "ApiParser\ApiParser.csproj", "{8877DAA2-274B-462C-878B-920FB6864F05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -46,8 +46,7 @@ public static class ServiceCollectionExtension
 				corsBuilder
 					.AllowAnyMethod()
 					.AllowAnyHeader()
-					.WithOrigins("http://telurxs-001-site1.ftempurl.com/")
-					.AllowCredentials());
+					.AllowAnyOrigin());
 		});
 
 		return services;

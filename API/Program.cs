@@ -28,6 +28,7 @@ builder.Services.AddIdentity(builder.Configuration);
 
 builder.Services.AddCarter();
 builder.Services.AddAntiforgery();
+builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<ExceptionHandler>();
 builder.Services.AddSingleton<ClientRoutesService>();

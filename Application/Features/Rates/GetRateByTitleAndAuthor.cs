@@ -37,14 +37,14 @@ public static class GetRateByTitleAndAuthor
 
 		protected override GetResult<Rate> Handle(Request request)
 		{
-			var userResult = UserService.FindByIdWithTracking(request.UserId);
+			var userResult = UserService.FindById(request.UserId);
 
 			if (userResult.IsFound is false)
 				return new Failed();
 
 			var user = userResult.AsFound;
 
-			var titleResult = TitleService.FindByIdWithTracking(request.TitleId);
+			var titleResult = TitleService.FindById(request.TitleId);
 
 			if (titleResult.IsFound is false)
 				return new Failed();

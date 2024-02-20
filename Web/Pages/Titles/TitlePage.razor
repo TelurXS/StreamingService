@@ -277,9 +277,7 @@
 	private async Task OnLeaveSeries(Series series, float progress)
 	{
 		if (progress <= 0 || progress > 1)
-		{
 			return;
-		}
 
 		var request = new RegisterViewRecordToUser.Request
 			{
