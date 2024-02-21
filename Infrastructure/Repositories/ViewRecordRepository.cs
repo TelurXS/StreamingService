@@ -40,7 +40,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public ViewRecord? FindBySeries(Guid seriesId)
+	public ViewRecord? FindBySeriesAndAuthor(Guid seriesId, User author)
 	{
 		return Entities
 			.AsNoTracking()
@@ -52,7 +52,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Title)
 				.ThenInclude(x => x.Image)
-			.FirstOrDefault(x => x.Series.Id == seriesId);
+			.FirstOrDefault(x => x.Series.Id == seriesId && x.Author.Id == author.Id);
 	}
 
 	public ViewRecord? FindBySeriesWithTracking(Guid seriesId)
@@ -69,7 +69,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 			.FirstOrDefault(x => x.Series.Id == seriesId);
 	}
 
-	public List<ViewRecord> FindAll()
+	public List<ViewRecord> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
@@ -81,10 +81,12 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Title)
 				.ThenInclude(x => x.Image)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<ViewRecord> FindAllWithTracking()
+	public List<ViewRecord> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Author)
@@ -95,6 +97,8 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 				.ThenInclude(x => x.Descriptions)
 			.Include(x => x.Title)
 				.ThenInclude(x => x.Image)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -121,7 +125,7 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -144,5 +148,10 @@ public class ViewRecordRepository : EntityRepository<ViewRecord>, IViewRecordRep
 			.ExecuteDelete();
 
 		return result > 0;
+	}
+
+	public int Count()
+	{
+		return Entities.Count();
 	}
 }

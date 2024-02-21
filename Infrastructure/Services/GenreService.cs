@@ -55,14 +55,14 @@ public sealed class GenreService : IGenreService
 		return result;
 	}
 
-	public GetAllResult<Genre> FindAll()
+	public GetAllResult<Genre> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Genre> FindAllWithTracking()
+	public GetAllResult<Genre> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Genre> Create(Genre value)
@@ -110,4 +110,9 @@ public sealed class GenreService : IGenreService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

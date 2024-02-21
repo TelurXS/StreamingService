@@ -55,14 +55,14 @@ public sealed class AccountService : IAccountService
 		return result;
 	}
 
-	public GetAllResult<Account> FindAll()
+	public GetAllResult<Account> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Account> FindAllWithTracking()
+	public GetAllResult<Account> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Account> Create(Account value)
@@ -110,4 +110,9 @@ public sealed class AccountService : IAccountService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

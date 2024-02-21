@@ -4,13 +4,57 @@
 @using Domain.Entities
 
 @inject IIdentityService IdentityService
+@inject ITitlesListService TitlesListService
 
 <RequireAuthorization />
 
-<h2 class="mb-3">Favourites</h2>
+@if (Loading)
+{
+	<span>Loading...</span>
+	return;
+}
+
+<div class="mb-3 d-flex align-items-center">
+
+	<class class="font-xl">Saved</class>
+
+	@if (IsAuthorView)
+	{
+		@if (List.Availability is Availability.Public)
+		{
+			<img @onclick="() => Window.Open()" height="30" src="/img/unlock.svg" class="mx-2" style="opacity: 0.3" />
+		}
+		else
+		{
+			<img @onclick="() => Window.Open()" height="30" src="/img/lock.svg" class="mx-2" style="opacity: 0.3" />
+		}
+	}
+	else
+	{
+		@if (List.Availability is Availability.Public)
+		{
+			<img height="30" src="/img/unlock.svg" class="mx-2" style="opacity: 0.3" />
+		}
+		else
+		{
+			<img height="30" src="/img/lock.svg" class="mx-2" style="opacity: 0.3" />
+		}
+	}
+
+	<span class="font-md font-gray">@List.Name</span>
+</div>
+
+@if (IsAuthorView is false && List.Availability is Availability.Private)
+{
+	<div class="d-flex flex-column justify-content-center align-items-center">
+		<img class="w-25" src="/img/lock.svg" />
+		<span class="font-lg font-gray">You don't have access to this list</span>
+	</div>
+	return;
+}
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
-	@foreach (var title in Titles)
+	@foreach (var title in List.Titles)
 	{
 		<div class="col d-flex justify-content-center mt-2">
 			<TitleCard Title="title" />
@@ -18,20 +62,45 @@
 	}
 </div>
 
+<TitlesListSettingsModalWindow @ref="Window" List="List" OnSettingsChanged="OnSettingsChanged" />
+
 @code {
 
 	[Parameter]
-	public Guid Id { get; set; }
+	public string Id { get; set; } = string.Empty;
 
-	private List<Title> Titles { get; set; } = new();
+	private TitlesList List { get; set; } = default!;
+
+	private bool Loading { get; set; } = true;
+
+	private bool IsAuthorView { get; set; } = false;
+
+	private TitlesListSettingsModalWindow Window { get; set; } = default!;
 
 	protected override async Task OnInitializedAsync()
 	{
-		var favouriteTitlesResult = await IdentityService.GetFavouriteTitlesAsync();
+		if (Guid.TryParse(Id, out var id) is false)
+			return;
 
-		if (favouriteTitlesResult.IsFound)
+		var titlesListResult = await TitlesListService.GetById(id);
+
+		if (titlesListResult.IsFound)
 		{
-			Titles = favouriteTitlesResult.AsFound;
+			List = titlesListResult.AsFound;
 		}
+
+		var titlesListsResult = await IdentityService.GetTitlesListsAsync();
+
+		if (titlesListsResult.IsFound)
+		{
+			IsAuthorView = titlesListsResult.AsFound.Any(x => x.Id == List.Id);
+		}
+
+		Loading = false;
+	}
+
+	private void OnSettingsChanged(TitlesList list)
+	{
+		StateHasChanged();
 	}
 }

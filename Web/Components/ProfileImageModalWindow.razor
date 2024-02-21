@@ -1,0 +1,120 @@
+﻿@using Application.Features.TitleLists
+@using Application.Features.TitlesLists
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+@inject ITitlesListService TitlesListService
+
+<ModalWindow @ref="Window">
+
+	<div class="gradient-panel card-form" @onclick:stopPropagation="true">
+		@if (EditMode)
+		{
+			<div class="d-flex align-items-center justify-content-center">
+				<div class="w-25">
+					<div class="circle-profile-picture"
+						 style="background-image: url('@(string.IsNullOrEmpty(User.ProfileImage)
+						? "/img/defaults/blank-profile-picture.webp"
+						: User.ProfileImage)');" />
+				</div>
+			</div>
+
+			<div class="gradient-divider mt-3"></div>
+
+			<div class="d-flex flex-column align-items-center justify-content-center mb-2">
+				<div class="mt-3">
+					<InputFile OnChange="OnFileInputChange" />
+
+					@if (SelectedImage is not null)
+					{
+						<button @onclick="SaveProfileImageAsync" class="button mt-2">Save</button>
+					}
+				</div>
+				<a class="mt-3" @onclick="() => EditMode = false">
+					<span>Cancel</span>
+				</a>
+			</div>
+		}
+		else
+		{
+			<div class="d-flex align-items-center justify-content-center">
+				<div class="w-25">
+					<div class="circle-profile-picture"
+						 style="background-image: url('@(string.IsNullOrEmpty(User.ProfileImage)
+						? "/img/defaults/blank-profile-picture.webp"
+						: User.ProfileImage)');" />
+				</div>
+			</div>
+
+			<div class="gradient-divider mt-3"></div>
+
+			<div class="d-flex flex-column align-items-center justify-content-center mb-2">
+				<a class="mt-3" @onclick="() => EditMode = true">
+					<span>Load new</span>
+				</a>
+				<a class="mt-3" @onclick="() => DeleteImageAsync()">
+					<span>Remove</span>
+				</a>
+				<a class="mt-3" @onclick="() => Close()">
+					<span>Cancel</span>
+				</a>
+			</div>
+		}
+	</div>
+
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public User User { get; set; } = default!;
+
+	[Parameter]
+	public Func<Task> OnUpdated { get; set; } = default!;
+
+	private ModalWindow Window { get; set; } = default!;
+
+	private bool EditMode { get; set; } = false;
+
+	private IBrowserFile SelectedImage { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+	}
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+
+	private Task OnFileInputChange(InputFileChangeEventArgs args)
+	{
+		SelectedImage = args.File;
+
+		StateHasChanged();
+		return Task.CompletedTask;
+	}
+
+	private async Task SaveProfileImageAsync()
+	{
+		var result = await IdentityService.SetProfileImageAsync(SelectedImage);
+
+		if (result.IsUpdated)
+		{
+			OnUpdated?.Invoke();
+			EditMode = false;
+			Window.Close();
+		}
+	}
+
+	private async Task DeleteImageAsync()
+	{
+		var result = await IdentityService.RemoveProfileImageAsync();
+
+		if (result.IsUpdated)
+		{
+			OnUpdated?.Invoke();
+			Window.Close();
+		}
+	}
+}

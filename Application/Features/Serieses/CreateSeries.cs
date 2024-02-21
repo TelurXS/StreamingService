@@ -14,6 +14,8 @@ public static class CreateSeries
 
         public string Dubbing { get; set; } = string.Empty;
 
+        public string Language { get; set; } = string.Empty;
+
         public int Index { get; set; } = default;
     }
 }

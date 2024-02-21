@@ -38,16 +38,20 @@ public sealed class AccountRepository : EntityRepository<Account>, IAccountRepos
 			.FirstOrDefault(x => x.Email == email);
 	}
 
-	public List<Account> FindAll()
+	public List<Account> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
+			.Skip(page * count)
+			.Take(count)
             .ToList();
 	}
 
-	public List<Account> FindAllWithTracking()
+	public List<Account> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -83,4 +87,9 @@ public sealed class AccountRepository : EntityRepository<Account>, IAccountRepos
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

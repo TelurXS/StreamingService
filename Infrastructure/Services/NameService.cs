@@ -35,14 +35,14 @@ public sealed class NameService : INameService
 		return result;
 	}
 
-	public GetAllResult<Name> FindAll()
+	public GetAllResult<Name> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Name> FindAllWithTracking()
+	public GetAllResult<Name> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Name> Create(Name value)
@@ -73,12 +73,12 @@ public sealed class NameService : INameService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Name value)
@@ -90,4 +90,9 @@ public sealed class NameService : INameService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

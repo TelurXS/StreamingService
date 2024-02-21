@@ -35,14 +35,34 @@ public sealed class RateService : IRateService
 		return result;
 	}
 
-	public GetAllResult<Rate> FindAll()
-    {
-        return Repository.FindAll();
+	public GetResult<Rate> FindByTitleAndAuthor(Title title, User author)
+	{
+		var result = Repository.FindByTitleAndAuthor(title, author);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
 	}
 
-	public GetAllResult<Rate> FindAllWithTracking()
+	public GetResult<Rate> FindByTitleAndAuthorWithTracking(Title title, User author)
 	{
-		return Repository.FindAllWithTracking();
+		var result = Repository.FindByTitleAndAuthorWithTracking(title, author);
+
+		if (result is null)
+			return new NotFound();
+
+		return result;
+	}
+
+	public GetAllResult<Rate> FindAll(int count = 10, int page = 0)
+    {
+        return Repository.FindAll(count, page);
+	}
+
+	public GetAllResult<Rate> FindAllWithTracking(int count = 10, int page = 0)
+	{
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<Rate> FindAllByAuthor(Account account)
@@ -93,12 +113,12 @@ public sealed class RateService : IRateService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Rate value)
@@ -110,4 +130,9 @@ public sealed class RateService : IRateService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

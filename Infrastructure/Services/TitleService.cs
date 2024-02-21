@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
+using Domain.Models.PayPal;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 
@@ -55,14 +56,44 @@ public sealed class TitleService : ITitleService
 		return result;
 	}
 
-	public GetAllResult<Title> FindAll()
+	public GetAllResult<Title> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Title> FindAllWithTracking()
+	public GetAllResult<Title> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
+	}
+
+	public GetAllResult<Title> FindAllPopular(int count = 10, int page = 0)
+	{
+		return Repository.FindAllPopular(count, page);
+	}
+
+	public GetAllResult<Title> FindAllByName(string name, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByName(name, count, page);
+	}
+
+	public GetAllResult<Title> FindAllByGenre(string genre, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByGenre(genre, count, page);
+	}
+
+	public GetAllResult<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByGenres(genres, count, page);
+	}
+
+	public UpdateResult<Success> AddView(Guid id, int count = 1)
+	{
+		var result = Repository.AddView(id, count);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
 	}
 
 	public CreateResult<Title> Create(Title value)
@@ -93,12 +124,12 @@ public sealed class TitleService : ITitleService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Title value)
@@ -110,4 +141,54 @@ public sealed class TitleService : ITitleService
 
         return new Success();
     }
+
+    public UpdateResult<Success> SetImage(Guid id, Image image)
+    {
+        var result = Repository.SetImage(id, image);
+
+        if (result is false)
+            return new Failed();
+
+        return new Success();
+    }
+
+    public UpdateResult<Success> AddScreenshot(Guid id, Image screenshot)
+    {
+        var result = Repository.AddScreenshot(id, screenshot);
+
+        if (result is false)
+            return new Failed();
+
+        return new Success();
+    }
+
+    public UpdateResult<Success> RemoveScreenshot(Guid id, Image screenshot)
+    {
+        var result = Repository.RemoveScreenshot(id, screenshot);
+
+        if (result is false)
+            return new Failed();
+
+        return new Success();
+    }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
+
+	public int CountByName(string name)
+	{
+		return Repository.CountByName(name);
+	}
+
+	public int CountByGenre(string genre)
+	{
+		return Repository.CountByGenre(genre);
+	}
+
+	public int CountByGenres(List<string> genres)
+	{
+		return Repository.CountByGenres(genres);
+	}
 }

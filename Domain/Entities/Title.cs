@@ -16,6 +16,8 @@ public sealed class Title
     
     public required DateTime ReleaseDate { get; set; }
 
+    public required TitleType Type { get; set; }
+
     public required Country Country { get; set; }
 
     public required AgeRestriction AgeRestriction { get; set; }
@@ -24,11 +26,17 @@ public sealed class Title
 
     public required string Cast { get; set; }
 
+    public required int Views { get; set; }
+
+    public required string Trailer { get; set; }
+
     public ICollection<Name> Names { get; set; } = default!;
 
     public ICollection<Description> Descriptions { get; set; } = default!;
 
-    public Image Image { get; set; } = default!;
+    public Image? Image { get; set; } = default!;
+
+    public Subscription? RequiredSubscription { get; set; } = default!;
 
     public ICollection<Image> Screenshots { get; set; } = default!;
 

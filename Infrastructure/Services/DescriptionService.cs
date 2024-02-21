@@ -35,14 +35,14 @@ public sealed class DescriptionService : IDescriptionService
 		return result;
 	}
 
-	public GetAllResult<Description> FindAll()
+	public GetAllResult<Description> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Description> FindAllWithTracking()
+	public GetAllResult<Description> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Description> Create(Description value)
@@ -73,12 +73,12 @@ public sealed class DescriptionService : IDescriptionService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Description value)
@@ -90,4 +90,9 @@ public sealed class DescriptionService : IDescriptionService
 
         return new Success();
     }
+
+    public int Count() 
+    {
+        return Repository.Count(); 
+    }   
 }

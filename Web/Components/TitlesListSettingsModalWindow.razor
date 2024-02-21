@@ -1,0 +1,102 @@
+﻿@using Application.Features.TitleLists
+@using Application.Features.TitlesLists
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+@inject ITitlesListService TitlesListService
+
+<ModalWindow @ref="Window">
+
+	<div class="gradient-panel card-form" @onclick:stopPropagation="true">
+
+		<div class="d-flex flex-column align-items-center">
+
+			@if (List.Availability is Availability.Public)
+			{
+				<img class="w-25" src="/img/unlock.svg" />
+			}
+			else
+			{
+				<img class="w-25" src="/img/lock.svg" />
+			}
+
+			<span class="font-xl mb-1">Save</span>
+		</div>
+
+		<div class="gradient-divider"></div>
+
+		<div class="mt-2 p-3 d-flex justify-content-between align-items-center">
+			<label class="font-lg">Private:</label>
+
+			<div class="form-check form-switch">
+
+				@if (IsPrivate)
+				{
+					<input type="checkbox" @onchange="e => OnAvailabilityChanged(false)" class="form-check-input" checked />
+				}
+				else
+				{
+					<input type="checkbox" @onchange="e => OnAvailabilityChanged(true)" class="form-check-input" />
+				}
+				
+			</div>
+		</div>
+
+		<div class="mt-2 p-3">
+
+			@if (List.Availability is Availability.Public)
+			{
+				<span class="font-sm font-gray">Saved in this folder will be publicly available. You can always change the privacy in the settings</span>
+				
+			}
+			else
+			{
+				<span class="font-sm font-gray">Other users will not be able to view your saved titles in this folder. You can always change the privacy in the settings</span>
+			}
+		</div>
+	</div>
+
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public TitlesList List { get; set; } = default!;
+
+	[Parameter]
+	public Action<TitlesList> OnSettingsChanged { get; set; } = default!;
+
+	private ModalWindow Window { get; set; } = default!;
+
+	private bool IsPrivate { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsPrivate = List.Availability is Availability.Private;
+	}
+
+	private async Task OnAvailabilityChanged(bool value)
+	{
+		var availability = value ? Availability.Private : Availability.Public;
+
+		var request = new UpdateTitlesList.Request
+		{
+			Availability = availability,
+			Name = List.Name,
+		};
+
+		var updateResult = await TitlesListService.Update(List.Id, request);
+
+		if (updateResult.IsUpdated)
+		{
+			List.Availability = availability;
+			IsPrivate = value;
+			StateHasChanged();
+			OnSettingsChanged?.Invoke(List);
+		}
+	}
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+}

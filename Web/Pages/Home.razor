@@ -1,8 +1,17 @@
 ﻿@page "/"
 @using Domain.Entities
 
+@inject ITitleService TitleService;
+
 <PageTitle>Home</PageTitle>
-<Background Blur="0" Url="@Title.Image.Uri" />
+<Background Blur="0" Url="@Title.Image?.Uri" />
+
+@if (Loaded is false)
+{
+	<span>Loading...</span>
+	<div class="page-container"></div>
+	return;
+}
 
 <div class="mt-5 mb-5"></div>
 
@@ -25,79 +34,62 @@
 	<Slider Header="Recomendations" Titles="Recomendations"/>
 </div>
 
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations" />
-</div>
-
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations" />
-</div>
-
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations"/>
-</div>
-
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations" />
-</div>
-
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations" />
-</div>
+@foreach (var byGenreRecomedations in GenresRecomedations)
+{
+	<div class="mt-3">
+		<Slider Header="@byGenreRecomedations.Key" Titles="@byGenreRecomedations.Value" />
+	</div>
+}
 
 @code {
 	public Title Title { get; set; } = new()
 		{
 			Id = Guid.NewGuid(),
+			Trailer = string.Empty,
 			Name = "Гра в кальмара",
 			Description = "47-річний Сон Гі-Хун, залежний від азартних ігор, живе на доходи своєї хворої матері. Через його пристрасть до азартних ігор і невимушене ставлення до грошей він опинився у фінансовій ямі, і не може отримати опіку над своєю донькою Га-Єн. Коли кредитори погрожують Сону фізичною розправою, якщо чоловік не поверне гроші до кінця місяця, загадковий незнайомець пропонує йому взяти участь у секретній грі на виживання. 456 учасникам доведеться вести боротьбу за солідний грошовий приз, граючи в дитячі ігри...",
 			Slug = "squid-game",
 			ReleaseDate = DateTime.Now,
-			Director = "Хван Дон-хьок",
+			Director = string.Empty,
+			Type = TitleType.Film,
 			Country = Country.KR,
-			Cast = "Ли Джон-джэ, Пак Хэ-су, О Ён-су, Чон Хо-ён, Хо Сон-тхэ, Анупам Трипати, Ким Джу Рён, Ви Ха-джун, Ю Сон-джу, Ли Ю-мия та інші",
+			Cast = string.Empty,
+			Views = 1000,
 			AvarageRate = 9.9f,
 			AgeRestriction = AgeRestriction.AdultsOnly,
-			Genres = [new Genre { Name = "Thriller" }, new Genre { Name = "Drama" }, new Genre { Name = "Detective" },],
-			Image = new Image { Uri = "https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg" },
-			Screenshots = [
-				new Image { Uri = "https://images.adsttc.com/media/images/615b/95a6/1248/3401/6477/b911/newsletter/https-hypebeasom-image-2021-10-squid-game-director-decade-to-pitch-bizarre-series-interview-korea-times-1.jpg?1633392045" },
-				new Image { Uri = "https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg" },
-				new Image { Uri = "https://themidult.com/wp-content/uploads/2021/11/Squid-Game-_-Date-Announcement-_-Netflix-0-19-screenshot-1155x770-1.png" },
-				new Image { Uri = "https://hips.hearstapps.com/hmg-prod/images/squid-game-1632309278.jpg?crop=1.00xw:0.755xh;0,0&resize=1200:*" },
-				new Image { Uri = "https://www.nme.com/wp-content/uploads/2021/09/squid-game-netflix-stills-2021.jpeg" },
-				new Image { Uri = "https://im.indiatimes.in/content/2021/Oct/Screenshot_20210925-130133-1_615d8895654c9.jpg?w=725&h=360" },
-			],
-			Comments = [
-						new Comment
-						{
-							Id = Guid.NewGuid(),
-							Author = new()
-							{
-								Id = Guid.NewGuid(),
-								UserName = "Kriko",
-							},
-							Content = "Wow! That was pretty cool!",
-							CreationDate = DateTime.Now
-						},
-				new Comment
-				{
-					Id = Guid.NewGuid(),
-					Author = new()
-					{
-						Id = Guid.NewGuid(),
-						UserName = "Kawasaki",
-					},
-					Content = "Wow! That was pretty cool!",
-					CreationDate = DateTime.Now
-				},
-			],
+			Image = new Image { Uri = "" },
+
 		};
 
 	public List<Title> Recomendations { get; set; } = new();
 
+	public List<string> GenresForRecomendation { get; set; } = ["Family", "Comedy", "Action", "Fantasy", "Adventure"];
+
+	public Dictionary<string, List<Title>> GenresRecomedations { get; set; } = new();
+
+	private bool Loaded { get; set; } = false;
+
 	protected override async Task OnInitializedAsync()
 	{
-		Recomendations = [Title, Title, Title, Title, Title, Title, Title, Title, Title, Title];
+		var recomendationsResult = await TitleService.FindAllPopularAsync();
+
+		if (recomendationsResult.IsFound)
+		{
+			Recomendations = recomendationsResult.AsFound;
+			Title = Recomendations.First();
+		}
+
+		foreach (var genre in GenresForRecomendation)
+		{
+			var recomendationsByGenreResult = await TitleService.FindAllByGenreAsync(genre);
+
+			if (recomendationsByGenreResult.IsFound)
+			{
+				GenresRecomedations.Add(genre, recomendationsByGenreResult.AsFound);
+			}
+		}
+
+		Loaded = true;
+		StateHasChanged();
 	}
 }

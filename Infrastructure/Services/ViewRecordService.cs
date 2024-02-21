@@ -35,9 +35,9 @@ public class ViewRecordService : IViewRecordService
 		return result;
 	}
 
-	public GetResult<ViewRecord> FindBySeries(Guid seriesId)
+	public GetResult<ViewRecord> FindBySeriesAndAuthor(Guid seriesId, User author)
 	{
-		var result = Repository.FindBySeries(seriesId);
+		var result = Repository.FindBySeriesAndAuthor(seriesId, author);
 
 		if (result is null)
 			return new NotFound();
@@ -55,14 +55,14 @@ public class ViewRecordService : IViewRecordService
 		return result;
 	}
 
-	public GetAllResult<ViewRecord> FindAll()
+	public GetAllResult<ViewRecord> FindAll(int count = 10, int page = 0)
 	{
-		return Repository.FindAll();
+		return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<ViewRecord> FindAllWithTracking()
+	public GetAllResult<ViewRecord> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<ViewRecord> FindAllByUser(Guid userId)
@@ -98,12 +98,12 @@ public class ViewRecordService : IViewRecordService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(ViewRecord value)
@@ -114,5 +114,10 @@ public class ViewRecordService : IViewRecordService
 			return new Failed();
 
 		return new Success();
+	}
+
+	public int Count()
+	{
+		return Repository.Count();
 	}
 }

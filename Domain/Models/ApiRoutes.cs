@@ -25,15 +25,29 @@ public static class ApiRoutes
 		public const string Profile = Base + GroupName + "/profile";
 
 		public const string Genres = Base + GroupName + "/genres";
+
+		public const string ProfileImage = Base + GroupName + "/image";
 	}
 
-	public static class Users
+	public static class IdentityUsers
 	{
-		public const string RegisterViewRecord = Base + "/register-view-record/{seriesId}";
+		public const string RegisterViewRecordRoute = Base + "/register-view-record";
 
-		public const string RegisterViewRecordRoute = Base + "/register-view-record/";
+		public const string RegisterViewRecord = RegisterViewRecordRoute + "/{seriesId}";
+
+		public const string RegisterRateRoute = Base + "/register-rate";
+
+		public const string RegisterRate = RegisterRateRoute + "/{titleId}";
 
 		public const string ViewRecords = Base + "/view-records";
+
+		public const string Followers = Base + "/followers";
+
+		public const string FollowersById = Base + "/followers/{userId}";
+
+		public const string Readers = Base + "/readers";
+
+		public const string ReadersById = Base + "/readers/{userId}";
 
 		public static class FavouriteTitles 
 		{
@@ -45,6 +59,27 @@ public static class ApiRoutes
 		}
 	}
 
+	public class Users
+	{
+		public const string GroupName = "/users";
+
+		public const string GroupNameWithId = GroupName + "/{id}";
+
+		public const string Profile = Base + GroupNameWithId + "/profile";
+
+		public const string Genres = Base + GroupNameWithId + "/genres";
+
+		public const string ViewRecords = Base + GroupNameWithId + "/view-records";
+
+		public const string Followers = Base + GroupNameWithId + "/followers";
+
+		public const string Readers = Base + GroupNameWithId + "/readers";
+
+		public const string FavouriteTitles = Base + GroupNameWithId + "/favourites";
+
+		public const string TitlesLists = Base + GroupNameWithId + "/lists";
+	}
+
     public static class Titles
     {
 		public const string GroupName = "/titles";
@@ -53,7 +88,25 @@ public static class ApiRoutes
 
 		public const string All = Base + GroupName;
 
-        public const string ById = Base + GroupName + "/{id}";
+		public const string AllPopular = All + "/popular";
+
+		public const string AllByName = All + "/by-name";
+
+		public const string AllByGenre = All + "/by-genre";
+
+		public const string AllByGenres = All + "/by-genres";
+
+		public const string CountAll = All + "/count";
+
+		public const string CountByName = AllByName + "/count";
+
+		public const string CountByGenre = AllByGenre + "/count";
+
+		public const string CountByGenres = AllByGenres + "/count";
+
+		public const string ById = Base + GroupName + "/{id}";
+
+        public const string ByIdImage = ById + "/image";
 
         public const string BySlug = Base + GroupName + "/{slug}";
 	}
@@ -80,5 +133,38 @@ public static class ApiRoutes
 		public const string Route = Base + GroupName;
 
 		public const string CreateForTitle = Base + GroupName + "/{titleId}";
+	}
+
+	public static class Files
+	{
+		public const string UserImages = Base + "/users/images";
+
+		public const string UserImageByName = Base + "/users/images/{name}";
+
+		public const string TitleImages = Base + "/titles/images";
+
+		public const string TitleImageByName = Base + "/titles/images/{name}";
+
+		public const string TitleScreenshots = Base + "/titles/screenshots";
+
+		public const string TitleScreenshotByName = Base + "/titles/screenshots/{name}";
+
+		public const string Series = Base + "/series";
+
+		public const string SeriesByName = Base + "/series/{name}";
+	}
+
+	public class Rates
+	{
+		public const string GroupName = "/rates";
+
+		public const string Route = Base + GroupName;
+
+		public const string ByTitle = Route + "/{titleId}";
+	}
+
+	public class Hubs
+	{
+		public const string Sessions = Base + "/sessions";
 	}
 }

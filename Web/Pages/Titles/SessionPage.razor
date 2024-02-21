@@ -1,0 +1,150 @@
+﻿@page "/session"
+@implements IAsyncDisposable
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Interfaces.Hubs
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject IWebAssemblyHostEnvironment Enviroment
+@inject IIdentityService IdentityService
+
+<div class="page-container align-items-start">
+	<div class="row w-100 mh-100">
+
+		<div class="col-lg-9 h-100">
+			<VideoPlayer 
+				@ref="Player"
+				Series="Series" 
+				OnPlaybackStarted="OnPlayerPlaybackStarted"
+				OnPlaybackStoped="OnPlayerPlaybackStopped"
+				OnProgressChanged="OnPlayerProgressChanged"
+				OnSeriesChanged="OnPlayerSeriesChanged"
+				OnLeaveSeries="OnPlayerLeaveSeries"
+				/>
+		</div>
+
+		<div class="col-lg-3 h-auto">
+			<h3>Chat:</h3>
+
+			<div class="mh-100 overflow-auto">
+				@foreach (var message in Messages)
+				{
+					<div class="gradient-panel mb-1 p-3">@message</div>
+				}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@code {
+
+	private VideoPlayer Player { get; set; } = default!;
+
+	private List<Series> Series { get; set; } = [
+		new Series { Id = Guid.Parse("36562b22-1c20-44b5-9547-237ee198803f"), Name = "Ep1", Uri = "/series/eb2aa1a2-ff3e-4b4e-a9a4-702cd7ae51cc.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 0, },
+		new Series { Id = Guid.Parse("ac10ed07-848c-4eb8-9ea2-659c755e69d6"), Name = "Ep2", Uri = "/series/ca80ff3a-7d78-4ce1-b969-b85d38c54605.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 1, },
+		new Series { Id = Guid.Parse("d4af58e0-0c4a-40b4-9965-d0c66d2616f6"), Name = "Ep3", Uri = "/series/520d2021-86d9-412a-a747-313b187d7012.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 2, },
+	];
+
+	private List<string> Messages { get; set; } = new();
+
+	private HubConnection? Connection { get; set; } = default;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Connection = new HubConnectionBuilder()
+			.WithUrl($"{Enviroment.BaseAddress}api/sessions")
+			.Build();
+
+		Connection.On<string>(nameof(ISessionClient.ReceiveMessage), OnRecieveMessage);
+
+		Connection.On(nameof(ISessionClient.StartPlayback), OnStartPlayback);
+
+		Connection.On(nameof(ISessionClient.StopPlayback), OnStopPlayback);
+
+		Connection.On<float>(nameof(ISessionClient.ChangeProgress), OnChangeProgress);
+
+		Connection.On<Guid>(nameof(ISessionClient.ChangeSeries), OnChangeSeries);
+
+		await Connection.StartAsync();
+	}
+
+	private async Task OnRecieveMessage(string message)
+	{
+		Messages.Add(message);
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task OnStartPlayback()
+	{
+		await Player.Play(false);
+		Console.WriteLine("Received StartPlayback message");
+	}
+
+	private async Task OnStopPlayback()
+	{
+		await Player.Stop(false);
+		Console.WriteLine("Received StopPlayback message");
+	}
+
+	private async Task OnChangeProgress(float value)
+	{
+		await Player.SetProgress(value);
+		Console.WriteLine($"Received ChangeProgress ({value}) message");
+	}
+
+	private async Task OnChangeSeries(Guid value)
+	{
+		await Player.ChangeSeries(value, false);
+		Console.WriteLine($"Received ChangeSeries ({value}) message");
+	}
+
+	private async Task OnPlayerPlaybackStarted()
+	{
+		await Connection.SendAsync("PlaybackStarted");
+		Console.WriteLine($"Sending PlaybackStarted message");
+	}
+
+	private async Task OnPlayerPlaybackStopped()
+	{
+		await Connection.SendAsync("PlaybackStoped");
+		Console.WriteLine($"Sending PlaybackStoped message");
+	}
+
+	private async Task OnPlayerProgressChanged(float value)
+	{
+		await Connection.SendAsync("ProgressChanged", value);
+		Console.WriteLine($"Sending ProgressChanged ({value}) message");
+	}
+
+	private async Task OnPlayerSeriesChanged(Series series)
+	{
+		await Connection.SendAsync("SeriesChanged", series.Id);
+		Console.WriteLine($"Sending SeriesChanged ({series.Id}) message");
+	}
+
+	private async Task OnPlayerLeaveSeries(Series series, float progress)
+	{
+		if (progress <= 0 || progress > 1)
+			return;
+		
+
+		var request = new RegisterViewRecordToUser.Request
+			{
+				Progress = progress,
+			};
+
+		await IdentityService.RegisterViewRecordAsync(series!.Id, request);
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (Connection is null)
+			return;
+
+		await Connection.DisposeAsync();
+	}
+}

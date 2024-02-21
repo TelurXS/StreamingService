@@ -10,6 +10,8 @@ public sealed class Series
     
     public required string Dubbing { get; set; }
     
+    public required string Language { get; set; }
+
     public required int Index { get; set; }
 
 	public Title Title { get; set; } = default!;

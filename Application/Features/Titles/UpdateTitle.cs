@@ -21,6 +21,8 @@ public static class UpdateTitle
 
         public required DateTime ReleaseDate { get; set; }
 
+        public required TitleType Type { get; set; }
+
         public required Country Country { get; set; }
 
         public required AgeRestriction AgeRestriction { get; set; }
@@ -28,5 +30,9 @@ public static class UpdateTitle
         public required string Director { get; set; }
 
         public required string Cast { get; set; }
+
+        public required int Views { get; set; }
+
+        public required string Trailer { get; set; } = string.Empty;
     }
 }

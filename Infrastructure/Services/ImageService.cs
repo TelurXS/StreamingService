@@ -35,14 +35,14 @@ public sealed class ImageService : IImageService
 		return result;
 	}
 
-	public GetAllResult<Image> FindAll()
+	public GetAllResult<Image> FindAll(int count = 10, int page = 0)
     {
-        return Repository.FindAll();
+        return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<Image> FindAllWithTracking()
+	public GetAllResult<Image> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public CreateResult<Image> Create(Image value)
@@ -73,12 +73,12 @@ public sealed class ImageService : IImageService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(Image value)
@@ -90,4 +90,9 @@ public sealed class ImageService : IImageService
 
         return new Success();
     }
+
+	public int Count()
+	{
+		return Repository.Count();
+	}
 }

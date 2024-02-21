@@ -3,8 +3,10 @@
 @inject ITitleService TitleService
 @inject IIdentityService IdentityService
 @inject ICommentsService CommentsService
+@inject IRateService RateService
 
 @using Application.Features.Comments
+@using Application.Features.Titles
 @using Application.Features.Users
 @using Domain.Entities
 @using Domain.Extensions
@@ -17,7 +19,7 @@
 	return;
 }
 
-<Background Blur="15" Url="@Title.Image.Uri" />
+<Background Blur="15" Url="@Title.Image?.Uri" />
 
 <div class="d-flex align-items-center">
 	<a href="@WebRoutes.Home" class="font-sm font-gray page-link">Home</a>
@@ -28,7 +30,7 @@
 <div class="row mt-3 mb-5">
 	<div class="col-md-4">
 		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
-		<div class="poster p-3" style="background-image: url('@Title.Image.Uri')">
+		<div class="poster p-3" style="background-image: url('@Title.Image?.Uri')">
 			<AuthorizeView>
 				<Authorized>
 					<div class="d-flex flex-column align-items-end">
@@ -38,16 +40,16 @@
 				</Authorized>
 			</AuthorizeView>
 		</div>
-		<a href="@Title.Image.Uri" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
 	</div>
 
 	<div class="col-md-8">
-		<span class="font-lg font-gray">Series</span>
+		<span class="font-lg font-gray">@Title.Type.ToString()</span>
 		<h1>@Title.Name</h1>
 
 		<div class="row mt-3">
 			<div class="col-sm-3">Raiting:</div>
-			<div class="col-sm-9 font-gray">@Title.AvarageRate</div>
+			<div class="col-sm-9 font-gray">@Title.AvarageRate.ToString("0.0")</div>
 		</div>
 
 		<div class="row mt-3">
@@ -97,7 +99,7 @@
 <div class="mt-5">
 	<h4 class="mb-3">Watch:</h4>
 
-	<VideoPlayer Series="Title.Series.ToList()" SelectedId="SeriesId" OnLeaveSeries="OnLeaveSeries" />
+	<VideoPlayer Series="Title.Series.ToList()" OnLeaveSeries="OnLeaveSeries" />
 </div>
 
 <div class="mt-3 row align-items-center">
@@ -169,7 +171,14 @@
 		@foreach (var comment in Title.Comments.OrderByDescending(x => x.CreationDate))
 		{
 			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
-				<img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+				@if (string.IsNullOrEmpty(comment.Author.ProfileImage))
+				{
+					<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+				}
+				else
+				{
+					<img class="profile-picture" src="@comment.Author.ProfileImage" />
+				}
 
 				<div class="w-100">
 					<div class="d-flex justify-content-between">
@@ -198,16 +207,13 @@
 	[Parameter]
 	public string Slug { get; set; } = default!;
 
-	[SupplyParameterFromQuery]
-	public Guid SeriesId { get; set; } = default;
-
 	private InputModel Input { get; set; } = new();
 
 	public Title Title { get; set; } = default!;
 
 	public List<Title> Recomendations { get; set; } = new();
 
-	public Rate Rate = new Rate { Value = 8 };
+	public Rate Rate { get; set; } = new Rate { Value = 0 };
 
 	private bool Loaded { get; set; } = false;
 
@@ -227,8 +233,6 @@
 		Title = result.AsFound;
 		Loaded = true;
 
-		Recomendations = [Title, Title, Title, Title];
-
 		var favouriteResult = await IdentityService.GetFavouriteTitlesAsync();
 
 		if (favouriteResult.IsFound)
@@ -236,26 +240,44 @@
 			InFavourite = favouriteResult.AsFound.Any(x => x.Id == Title?.Id);
 		}
 
+		var rateResult = await RateService.GetRateByTitleAsync(Title);
+
+		if (rateResult.IsFound)
+		{
+			Rate = rateResult.AsFound;
+		}
+
+		var genres = Title.Genres.Select(x => x.Name).ToList();
+
+		var recomedationsResult = await TitleService.FindAllByGenresAsync(genres);
+
+		if (recomedationsResult.IsFound)
+		{
+			Recomendations = recomedationsResult.AsFound;
+		}
+
 		StateHasChanged();
 	}
 
-	private void SetRate(int value)
+	private async Task SetRate(int value)
 	{
-		Rate.Value = value;
+		var request = new RegisterRateToTitleFromUser.Request
+			{
+				Value = value,
+			};
+
+		var result = await IdentityService.RegisterRateAsync(Title.Id, request);
+
+		if (result.IsCreated)
+		{
+			Rate.Value = value;
+		}
 	}
 
 	private async Task OnLeaveSeries(Series series, float progress)
 	{
-		Console.WriteLine("Starting to save the progress");
 		if (progress <= 0 || progress > 1)
-		{
-			Console.WriteLine($"Progress for {series?.Name} {progress} is not valid");
 			return;
-		}
-		else
-		{
-			Console.WriteLine($"Progress for {series?.Name} {progress} is saving...");
-		}
 
 		var request = new RegisterViewRecordToUser.Request
 			{

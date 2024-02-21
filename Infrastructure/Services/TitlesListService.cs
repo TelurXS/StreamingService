@@ -35,14 +35,14 @@ public sealed class TitlesListService : ITitlesListService
 		return result;
 	}
 
-	public GetAllResult<TitlesList> FindAll()
+	public GetAllResult<TitlesList> FindAll(int count = 10, int page = 0)
 	{
-		return Repository.FindAll();
+		return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<TitlesList> FindAllWithTracking()
+	public GetAllResult<TitlesList> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<TitlesList> FindAllByAuthor(User author)
@@ -98,12 +98,12 @@ public sealed class TitlesListService : ITitlesListService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(TitlesList value)
@@ -114,5 +114,10 @@ public sealed class TitlesListService : ITitlesListService
 			return new Failed();
 
 		return new Success();
+	}
+
+	public int Count()
+	{
+		return Repository.Count();
 	}
 }

@@ -1,4 +1,7 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using Domain.Entities
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
 
 <nav class="navbar navbar-expand-lg dark-bg-on-mobile">
     <div class="container">
@@ -43,8 +46,10 @@
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         <li class="nav-item dropdown mx-3">
                             <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="mx-2">@context.User.Identity?.Name</span>
-                                <img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+                                <span class="mx-2">@(User?.Name)</span>
+                                <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage) 
+                                    ? "/img/blank-poster.png" 
+                                    : User.ProfileImage)" />
                             </a>
                             <ul class="dropdown-menu dropdown-menu-lg-end back-dark">
                                 <li><a class="dropdown-item" href="">Account</a></li>
@@ -63,3 +68,17 @@
         </div>
     </div>
 </nav>
+
+@code {
+    private User? User { get; set; } = default;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userResult = await IdentityService.GetProfileAsync();
+
+        if (userResult.IsFound)
+        {
+            User = userResult.AsFound;
+        }
+    }
+}

@@ -35,19 +35,49 @@ public sealed class UserService : IUserService
 		return result;
 	}
 
-	public GetAllResult<User> FindAll()
+	public GetAllResult<User> FindAll(int count = 10, int page = 0)
 	{
-		return Repository.FindAll();
+		return Repository.FindAll(count, page);
 	}
 
-	public GetAllResult<User> FindAllWithTracking()
+	public GetAllResult<User> FindAllWithTracking(int count = 10, int page = 0)
 	{
-		return Repository.FindAllWithTracking();
+		return Repository.FindAllWithTracking(count, page);
 	}
 
 	public GetAllResult<Title> FindFavouriteTitlesById(Guid id)
 	{
 		return Repository.FindFavouriteTitlesById(id);
+	}
+
+	public GetAllResult<User> FindFollowersFromUser(Guid id)
+	{
+		return Repository.FindFollowersFromUser(id);
+	}
+
+	public GetAllResult<User> FindReadersFromUser(Guid id)
+	{
+		return Repository.FindReadersFromUser(id);
+	}
+
+	public UpdateResult<Success> AddUserToFollowers(User follower, User user)
+	{
+		var result = Repository.AddUserToFollowers(follower.Id, user.Id);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
+	}
+
+	public UpdateResult<Success> RemoveUserFromFollowers(User follower, User user)
+	{
+		var result = Repository.RemoveUserFromFollowers(follower.Id, user.Id);
+
+		if (result is false)
+			return new Failed();
+
+		return new Success();
 	}
 
 	public UpdateResult<Success> SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
@@ -141,12 +171,12 @@ public sealed class UserService : IUserService
 
 	public DeleteResult DeleteById(Guid id)
 	{
-		var account = Repository.FindById(id);
+		var result = Repository.FindById(id);
 
-		if (account is null)
+		if (result is null)
 			return new NotFound();
 
-		return Delete(account);
+		return Delete(result);
 	}
 
 	public DeleteResult Delete(User value)
@@ -157,5 +187,10 @@ public sealed class UserService : IUserService
 			return new Failed();
 
 		return new Success();
+	}
+
+	public int Count()
+	{
+		return Repository.Count();
 	}
 }

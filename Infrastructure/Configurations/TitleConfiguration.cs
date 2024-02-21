@@ -11,6 +11,10 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
     public const int DESCRIPTION_MAX_LENGTH = 1024;
     public const int DIRECTOR_MAX_LENGTH = 64;
     public const int CAST_MAX_LENGTH = 512;
+    public const int TRAILER_MAX_LENGTH = 256;
+
+    public const float AVARAGE_RATE_MAX = 10;
+    public const float AVARAGE_RATE_MIN = 0;
     
     public void Configure(EntityTypeBuilder<Title> builder)
     {
@@ -34,6 +38,9 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
             .HasMaxLength(DESCRIPTION_MAX_LENGTH)
             .IsRequired();
 
+        builder.Property(x => x.Type)
+            .IsRequired();
+
         builder.Property(x => x.Country)
             .IsRequired();
 
@@ -51,7 +58,16 @@ public class TitleConfiguration: IEntityTypeConfiguration<Title>
             .HasMaxLength(CAST_MAX_LENGTH)
             .IsRequired();
 
+        builder.Property(x => x.Trailer)
+            .HasMaxLength(TRAILER_MAX_LENGTH)
+            .IsRequired();
+
+        builder.Property(x => x.Views)
+            .IsRequired();
+
         builder.HasOne(x => x.Image);
+
+        builder.HasOne(x => x.RequiredSubscription);
 
         builder.HasMany(x => x.Screenshots);
 

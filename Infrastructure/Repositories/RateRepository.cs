@@ -28,20 +28,43 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Rate> FindAll()
+	public Rate? FindByTitleAndAuthor(Title title, User author)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Title.Id == title.Id && x.Author.Id == author.Id);
+	}
+
+	public Rate? FindByTitleAndAuthorWithTracking(Title title, User author)
+	{
+		return Entities
+			.AsSplitQuery()
+			.Include(x => x.Author)
+			.Include(x => x.Title)
+			.FirstOrDefault(x => x.Id == title.Id && x.Author.Id == author.Id);
+	}
+
+	public List<Rate> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Author)
             .Include(x => x.Title)
-            .ToList();
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
 	}
 
-	public List<Rate> FindAllWithTracking()
+	public List<Rate> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Author)
 			.Include(x => x.Title)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -72,7 +95,7 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -95,4 +118,9 @@ public sealed class RateRepository : EntityRepository<Rate>, IRateRepository
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

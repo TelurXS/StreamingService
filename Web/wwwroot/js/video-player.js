@@ -8,10 +8,11 @@ const VOLUME_LOW_ICON_PATH = "/img/player-sound-low.svg";
 
 const PLAYER_VOLUME = "player_volume";
 
+const DEFAULT_VOLUME = 0.5;
 const SKIP_SECONDS = 10;
 const HIDE_CONTROLS_TIME = 3 * 1000;
 
-window.initializePlayer = () => {
+window.initializePlayer = (dotnet) => {
     const container = document.getElementById("container");
     const player = document.getElementById("player");
     const video = document.getElementById("video");
@@ -36,7 +37,9 @@ window.initializePlayer = () => {
 
     let timer;
     let muted = false;
-    let volume = localStorage.getItem(PLAYER_VOLUME);
+    let volume = localStorage.getItem(PLAYER_VOLUME) ?? DEFAULT_VOLUME;
+
+    let retrievedProgress = 0;
 
     const formatTime = (time) => {
         let seconds = Math.floor(time % 60);
@@ -57,13 +60,37 @@ window.initializePlayer = () => {
     }
 
     const toggleVideo = () => {
-        video.paused ? video.play() : video.pause();
+
+        if (video.paused) {
+            play();
+        }
+        else {
+            stop();
+        }
+    }
+
+    const play = (notifyChanged = true) => {
+        if (video.paused == false)
+            return;
+
+        video.play();
+
+        if (notifyChanged)
+            window.notifyPlaybackStarted();
+    }
+
+    const stop = (notifyChanged = true) => {
+        if (video.paused == true)
+            return;
+
+        video.pause();
+
+        if (notifyChanged)
+            window.notifyPlaybackStoped();
     }
 
     const getProgress = () => {
         var result = (video.currentTime / video.duration);
-        console.log(`Retrieving progress from js getProgress (${result})`);
-        console.log(`Current Time: ${video.currentTime} Duration: ${video.duration} Src: ${video.src}`);
         return isNaN(result) ? 0 : result;
     }
 
@@ -71,12 +98,21 @@ window.initializePlayer = () => {
         video.currentTime = video.duration * value;
     }
 
+    const setSavedProgress = (value) => {
+        if (value == null || isNaN(value))
+            return;
+
+        window.invokeSaveProgress(value);
+    }
+
     const skipForward = () => {
         video.currentTime += SKIP_SECONDS;
+        window.notifyProgressChanged(getProgress());
     }
 
     const skipBack = () => {
         video.currentTime -= SKIP_SECONDS;
+        window.notifyProgressChanged(getProgress());
     }
 
     const changeToPlayButtonIcon = () => {
@@ -134,25 +170,24 @@ window.initializePlayer = () => {
 
     const onVideoTimeUpdate = (e) => {
         let { currentTime, duration } = e.target;
-        let percent = (currentTime / duration) * 100;
-        progressBar.style.width = `${percent}%`;
+        let percent = (currentTime / duration);
+
+        setSavedProgress(percent);
+
+        progressBar.style.width = `${percent * 100}%`;
         currentTimeSpan.innerText = formatTime(currentTime);
     }
 
     const onVideoDataLoaded = () => {
         durationSpan.innerText = formatTime(video.duration);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let progress = parseFloat(urlParams.get('progress'));
-        
-        progress = isNaN(progress) ? 0 : progress;
+        if (retrievedProgress > 0) {
+            setProgress(retrievedProgress)
+            progressBar.style.width = `${retrievedProgress * 100}%`;
+            retrievedProgress = 0;
+        }
 
-        console.log("Retrieved Progress from URL Query: " + progress)
-        //
-        //setProgress(progress / 100);
-        //progressBar.style.width = `${progress}%`;
-
-        //history.replaceState(null, '', window.location.href.split('?')[0]);   
+        history.replaceState(null, '', window.location.href.split('?')[0]);   
     }
 
     const onTimelineMouseMove = (e) => {
@@ -166,14 +201,20 @@ window.initializePlayer = () => {
 
     const onTimelineMouseClick = (e) => {
         let timelineWidth = videoTimeline.clientWidth;
-        video.currentTime = (e.offsetX / timelineWidth) * video.duration;
+        var progress = (e.offsetX / timelineWidth);
+        video.currentTime = progress * video.duration;
+
+        window.notifyProgressChanged(progress);
     }
 
     const onTimelineDrag = (e) => {
         let timelineWidth = videoTimeline.clientWidth;
         progressBar.style.width = `${e.offsetX}px`;
-        video.currentTime = (e.offsetX / timelineWidth) * video.duration;
+        var progress = (e.offsetX / timelineWidth);
+        video.currentTime = progress * video.duration;
         currentTimeSpan.innerText = formatTime(video.currentTime);
+
+        window.notifyProgressChanged(progress);
     }
 
     const hideControls = () => {
@@ -209,20 +250,47 @@ window.initializePlayer = () => {
 
     container.addEventListener("mousemove", onContainerMouseMove);
 
-    window.changePlayerSource = (value) => {
-        //video.setAttribute("src", value);
+    window.changePlayerSource = (url) => {
+        video.setAttribute("src", url);
         video.currentTime = 0;
         progressBar.style.width = `0%`;
         changeToPlayButtonIcon();
     }
 
-    window.setProgress = (value) => {
-        setProgress(value)
-        progressBar.style.width = `${value * 100}%`;
+    window.setRetrievedProgress = (value) => {
+        retrievedProgress = value;
     }
 
     window.getProgress = () => {
-        console.log("Retrieving progress from window.getProgress");
         return getProgress();
+    }
+
+    window.setProgress = (value) => {
+        setProgress(value);
+        setSavedProgress(value);
+    }
+
+    window.play = (notifyChanged = true) => {
+        play(notifyChanged);
+    }
+
+    window.stop = (notifyChanged = true) => {
+        stop(notifyChanged);
+    }
+
+    window.invokeSaveProgress = (value) => {
+        dotnet.invokeMethodAsync("SaveProgress", value);
+    } 
+
+    window.notifyPlaybackStarted = () => {
+        dotnet.invokeMethodAsync("NotifyPlaybackStarted");
+    }
+
+    window.notifyPlaybackStoped = () => {
+        dotnet.invokeMethodAsync("NotifyPlaybackStoped");
+    }
+
+    window.notifyProgressChanged = (value) => {
+        dotnet.invokeMethodAsync("NotifyProgressChanged", value);
     }
 }

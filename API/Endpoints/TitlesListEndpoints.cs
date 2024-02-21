@@ -35,7 +35,7 @@ public class TitlesListEndpoints : ICarterModule
 			.RequireAuthorization();
 	}
 
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType<TitlesListResponse>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]

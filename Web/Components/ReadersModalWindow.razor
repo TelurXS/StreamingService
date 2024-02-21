@@ -1,0 +1,57 @@
+﻿@using Domain.Entities
+
+@inject IIdentityService IdentityService
+@inject ITitlesListService TitlesListService
+
+<ModalWindow @ref="Window">
+
+	<div class="gradient-panel card-form p-3" @onclick:stopPropagation="true">
+
+		<span class="font-xl mb-2">Readers</span>
+
+		<div class="gradient-divider mt-3"></div>
+
+		<div class="overflow-auto" style="height: 300px;">
+			@foreach (var user in Readers)
+			{
+				<a href="@WebRoutes.Users.Base/@user.Id">
+					<div class="gradient-panel my-2">
+						<div class="row mw-100">
+
+							<div class="col-3">
+								@if (string.IsNullOrEmpty(user.ProfileImage))
+								{
+									<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+								}
+								else
+								{
+									<img class="profile-picture" src="@user.ProfileImage" />
+								}
+							</div>
+
+							<div class="col-9">
+								<div class="h-100 d-flex flex-column justify-content-center">
+									<span class="font-md font-white">@user.Name</span>
+									<span class="font-sm font-gray">@user.FullName</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			}
+		</div>
+
+	</div>
+
+</ModalWindow>
+
+@code {
+	[Parameter]
+	public List<User> Readers { get; set; } = default!;
+
+	private ModalWindow Window { get; set; } = default!;
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+}

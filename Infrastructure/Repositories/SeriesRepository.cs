@@ -26,29 +26,42 @@ public sealed class SeriesRepository : EntityRepository<Series>, ISeriesReposito
 			 .FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Series> FindAll()
+	public List<Series> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
 			.Include(x => x.Title)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<Series> FindAllWithTracking()
+	public List<Series> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Title)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
-	}
+    }
 
-	public Series? Insert(Series value)
+    public List<Series> FindAllByTitle(Title title)
+    {
+        return Entities
+            .AsNoTracking()
+            .Include(x => x.Title)
+            .Where(x => x.Title.Id == title.Id)
+            .ToList();
+    }
+
+    public Series? Insert(Series value)
 	{
 		var entity = Entities.Add(value).Entity;
 
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -75,12 +88,8 @@ public sealed class SeriesRepository : EntityRepository<Series>, ISeriesReposito
 		return result > 0;
 	}
 
-	public List<Series> FindAllByTitle(Title title)
+	public int Count()
 	{
-		return Entities
-			.AsNoTracking()
-			.Include(x => x.Title)
-			.Where(x => x.Title.Id == title.Id)
-			.ToList();
+		return Entities.Count();
 	}
 }

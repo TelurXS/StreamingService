@@ -18,6 +18,8 @@ public sealed class User : IdentityUser<Guid>
 
     public DateTime? SubscriptionExpiresIn { get; set; } = default;
 
+    public bool IsTrialSubscriptionUsed { get; set; } = default;
+
 	public Subscription? Subscription { get; set; } = default;
 
 	public ICollection<Rate> Rates { get; set; } = default!;
@@ -29,6 +31,8 @@ public sealed class User : IdentityUser<Guid>
     public ICollection<Title> FavouriteTitles { get; set; } = default!;
 
     public ICollection<ViewRecord> ViewRecords { get; set; } = default!;
+
+    public ICollection<User> Readers { get; set; } = default!;
 
     public ICollection<User> Followers { get; set; } = default!;
 

@@ -20,7 +20,6 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
@@ -34,13 +33,12 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<User> FindAll()
+	public List<User> FindAll(int count = 10, int page = 0)
 	{
 		return Entities
 			.AsNoTracking()
@@ -49,13 +47,14 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
-	public List<User> FindAllWithTracking()
+	public List<User> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Subscription)
@@ -63,9 +62,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.Include(x => x.Comments)
 			.Include(x => x.FavouriteGenres)
 			.Include(x => x.FavouriteTitles)
-			.Include(x => x.Followers)
 			.Include(x => x.ViewRecords)
 			.Include(x => x.Lists)
+			.Skip(page * count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -84,6 +84,72 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			return new();
 
 		return user.FavouriteTitles.ToList();
+	}
+
+	public List<User> FindFollowersFromUser(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.Followers.ToList();
+	}
+
+	public List<User> FindReadersFromUser(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.Readers.ToList();
+	}
+
+	public bool AddUserToFollowers(Guid followerId, Guid userId)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == userId);
+
+		if (user is null)
+			return false;
+
+		var follower = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == followerId);
+
+		if (follower is null)
+			return false;
+
+		user.Followers.Add(follower);
+		follower.Readers.Add(user);
+		return Context.SaveChanges() > 0;
+	}
+
+	public bool RemoveUserFromFollowers(Guid followerId, Guid userId)
+	{
+		var user = Entities
+			.Include(x => x.Followers)
+			.FirstOrDefault(x => x.Id == userId);
+
+		if (user is null)
+			return false;
+
+		var follower = Entities
+			.Include(x => x.Readers)
+			.FirstOrDefault(x => x.Id == followerId);
+
+		if (follower is null)
+			return false;
+
+		user.Followers.Remove(follower);
+		follower.Readers.Remove(user);
+		return Context.SaveChanges() > 0;
 	}
 
 	public bool SetFavouriteGenres(Guid id, IEnumerable<Genre> genres)
@@ -157,7 +223,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -170,7 +236,9 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 				.SetProperty(x => x.Name, x => value.Name)
 				.SetProperty(x => x.FirstName, x => value.FirstName)
 				.SetProperty(x => x.SecondName, x => value.SecondName)
+				.SetProperty(x => x.ProfileImage, x => value.ProfileImage)
 				.SetProperty(x => x.BirthDate, x => value.BirthDate)
+				.SetProperty(x => x.IsTrialSubscriptionUsed, x => value.IsTrialSubscriptionUsed)
 				.SetProperty(x => x.SubscriptionExpiresIn, x => value.SubscriptionExpiresIn));
 
 		return result > 0;
@@ -183,5 +251,10 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.ExecuteDelete();
 
 		return result > 0;
+	}
+
+	public int Count()
+	{
+		return Entities.Count();
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Azure;
+using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -26,18 +27,22 @@ public sealed class NameRepository : EntityRepository<Name>, INameRepository
 			.FirstOrDefault(x => x.Id == id);
 	}
 
-	public List<Name> FindAll()
+	public List<Name> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Title)
-            .ToList();
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
 	}
 
-	public List<Name> FindAllWithTracking()
+	public List<Name> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 			.Include(x => x.Title)
+            .Skip(page* count)
+			.Take(count)
 			.ToList();
 	}
 
@@ -48,7 +53,7 @@ public sealed class NameRepository : EntityRepository<Name>, INameRepository
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -72,4 +77,9 @@ public sealed class NameRepository : EntityRepository<Name>, INameRepository
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

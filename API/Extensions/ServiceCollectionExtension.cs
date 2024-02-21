@@ -46,8 +46,7 @@ public static class ServiceCollectionExtension
 				corsBuilder
 					.AllowAnyMethod()
 					.AllowAnyHeader()
-					.WithOrigins("https://localhost:7283/")
-					.AllowCredentials());
+					.AllowAnyOrigin());
 		});
 
 		return services;

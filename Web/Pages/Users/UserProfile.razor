@@ -1,0 +1,290 @@
+﻿@attribute [Route(WebRoutes.Users.Profile.ById)]
+@layout ProfileLayout
+
+@using Domain.Entities
+
+@inject IUserService UserService
+@inject IIdentityService IdentityService
+
+<RequireAuthorization />
+
+@if (Loaded is false)
+{
+	<div>Loading...</div>
+	return;
+}
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+
+			<div class="col-sm-5 col-md-3">
+
+				@if (string.IsNullOrEmpty(User.ProfileImage))
+				{
+					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
+						 style="background-image: url('/img/defaults/blank-profile-picture.webp');">
+					</div>
+				}
+				else
+				{
+					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
+						 style="background-image: url('@User.ProfileImage');">
+					</div>
+				}
+
+			</div>
+
+			<div class="col-sm-7 col-md-9 d-flex flex-column">
+				<span class="font-xl d-flex align-items-center">
+					@User.Name
+				</span>
+				<span class="font-md mt-1">@User.FirstName @User.SecondName</span>
+				<span class="font-sm mt-2 font-gray">Favourite Genres:</span>
+				<div class="d-flex flex-wrap align-items-center">
+					@foreach (var genre in Genres)
+					{
+						<span class="button button-fit font-xs m-1 px-2 py-1">@genre</span>
+					}
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+
+			<div class="col-md-10 d-flex mt-2 mt-md-0 d-flex justify-content-center">
+				<div class="info-card" @onclick="() => ReadersWindow.Open()">
+					<span class="font-md">@Readers.Count</span>
+					<span class="font-sm font-gray">Readers</span>
+				</div>
+				<div class="info-card" @onclick="() => FollowersWindow.Open()">
+					<span class="font-md">@Followers.Count</span>
+					<span class="font-sm font-gray">Folowers</span>
+				</div>
+				<div class="info-card">
+					<span class="font-md">@FavouriteTitles.Count</span>
+					<span class="font-sm font-gray">Favourite</span>
+				</div>
+			</div>
+
+			<div class="col-md-2 d-flex mt-2 mt-md-0">
+				<a class="d-flex align-items-center">
+					@if (IsFollowing)
+					{
+						<img class="h-50 m-2 m-md-0" src="/img/followed.svg" @onclick="() => UnfollowAsync()" />
+					}
+					else
+					{
+						<img class="h-50 m-2 m-md-0" src="/img/follow.svg" @onclick="() => FollowAsync()" />
+					}
+				</a>
+			</div>
+
+		</div>
+		<div class="row">
+
+			<div class="col-md-12 mt-2">
+				<div class="row">
+
+					<div class="col-md-6 d-flex overflow-hidden mt-2 mt-md-0">
+						@foreach (var i in Enumerable.Range(0, ViewRecords.Count))
+						{
+							<MiniTitleCard Title="ViewRecords[i].Title" Shift="@(i * -10)" Index="@(5 - i)" />
+						}
+					</div>
+
+					<div class="col-md-6 mt-2 mt-md-0">
+
+						@if (LastWatched is not null)
+						{
+							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@(LastWatched.PercentProgress)">
+								<div style="pointer-events: none;">
+									<MiniTitleCard Title="LastWatched.Title" />
+								</div>
+
+								<div class="d-flex w-100 px-3 flex-column">
+									<span class="font-xs font-gray">Latest Watched:</span>
+									<span class="font-md">@LastWatched.Title.Name</span>
+									<span class="font-sm">@LastWatched.Series.Name</span>
+									<progress class="mt-2" min="0" max="100" value="@(LastWatched.PercentProgress)"></progress>
+								</div>
+							</a>
+						}
+
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="gradient-divider mt-1"></div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-lg-6 mt-2 mt-md-0 h-100">
+		<a href="@WebRoutes.My.Profile.Favourites">
+			<h4>Favourite</h4>
+
+			<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+				@foreach (var title in FavouriteTitles)
+				{
+					<div class="col mt-2 px-1">
+						<ResponsiveTitleCard Title="title" />
+					</div>
+				}
+			</div>
+		</a>
+	</div>
+
+	<div class="col-lg-6 mt-2 mt-md-0">
+		<h4>Lists</h4>
+
+		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+			@foreach (var list in Lists.Where(x => x.Availability is Availability.Public))
+			{
+				<div class="col mt-2 p-2">
+					<a href="/lists/@list.Id">
+						<MiniTitlesListCard List="list" />
+					</a>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<ReadersModalWindow @ref="ReadersWindow" Readers="Readers" />
+<FollowersModalWindow @ref="FollowersWindow" Followers="Followers" />
+
+@code {
+	[Parameter]
+	public string Id { get; set; } = string.Empty;
+
+	private Guid UserId { get; set; } = default;
+
+	private User User { get; set; } = default!;
+
+	private List<string> Genres { get; set; } = new();
+
+	private List<Title> FavouriteTitles { get; set; } = new();
+
+	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	private List<User> Followers { get; set; } = new();
+
+	private List<User> Readers { get; set; } = new();
+
+	private List<TitlesList> Lists { get; set; } = new();
+
+	private ViewRecord? LastWatched { get; set; } = default;
+
+	private bool Loaded { get; set; } = false;
+
+	private bool IsFollowing { get; set; } = false;
+
+	private ReadersModalWindow ReadersWindow { get; set; } = default!;
+
+	private FollowersModalWindow FollowersWindow { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Guid.TryParse(Id, out var userId) is false)
+		{
+			return;
+		}
+
+		UserId = userId;
+
+		var userResult = await UserService.GetProfileAsync(UserId);
+
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
+
+		var genresResult = await UserService.GetFavouriteGenresAsync(UserId);
+
+		if (genresResult.IsFound)
+		{
+			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+		}
+
+		var favouriteTitlesResult = await UserService.GetFavouriteTitlesAsync(UserId);
+
+		if (favouriteTitlesResult.IsFound)
+		{
+			FavouriteTitles = favouriteTitlesResult.AsFound;
+		}
+
+		var viewRecordsResult = await UserService.GetViewRecordsAsync(UserId);
+
+		if (viewRecordsResult.IsFound)
+		{
+			LastWatched = viewRecordsResult.AsFound.OrderBy(x => x.Time).LastOrDefault();
+			ViewRecords = viewRecordsResult.AsFound.DistinctBy(x => x.Title.Id).ToList();
+		}
+
+		var titlesListsResult = await UserService.GetTitlesListsAsync(UserId);
+
+		if (titlesListsResult.IsFound)
+		{
+			Lists = titlesListsResult.AsFound;
+		}
+
+		var followersResult = await UserService.GetFollowersAsync(UserId);
+
+		if (followersResult.IsFound)
+		{
+			Followers = followersResult.AsFound;
+		}
+
+		var readersResult = await UserService.GetReadersAsync(UserId);
+
+		if (readersResult.IsFound)
+		{
+			Readers = readersResult.AsFound;
+		}
+
+		var identityProfileResult = await IdentityService.GetProfileAsync();
+
+		if (identityProfileResult.IsFound)
+		{
+			var user = identityProfileResult.AsFound;
+
+			var identityFollowersResult = await IdentityService.GetReadersAsync();
+
+			if (identityFollowersResult.IsFound)
+			{
+				IsFollowing = identityFollowersResult.AsFound.Any(x => x.Id == User.Id);
+			}
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private async Task FollowAsync()
+	{
+		var result = await IdentityService.FollowAsync(User.Id);
+
+		if (result.IsUpdated)
+		{
+			IsFollowing = true;
+			StateHasChanged();
+		}
+	}
+
+	private async Task UnfollowAsync()
+	{
+		var result = await IdentityService.UnfollowAsync(User.Id);
+
+		if (result.IsUpdated)
+		{
+			IsFollowing = false;
+			StateHasChanged();
+		}
+	}
+}

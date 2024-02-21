@@ -3,13 +3,20 @@
 @using Domain.Entities
 
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+@if (Selected is null)
+{
+	<span class="font-md">No series to watch :(</span>
+	return;
+}
 
 <div id="container" class="video-player-container">
 	<div class="series-select-panel">
 		<div class="series-list">
-			@foreach (var series in Series.OrderBy(x => x.Name))
+			@foreach (var series in Series.OrderBy(x => x.Index))
 			{
-				<button @onclick="() => SelectSeriesAsync(series)" class="button-glass series-select-button">@series.Name</button>
+				<button @onclick='() => SelectSeriesAsync(series)' class="button-glass series-select-button">@series.Name</button>
 			}
 		</div>
 	</div>
@@ -47,7 +54,7 @@
 				</div>
 			</div>
 			<div class="d-none d-lg-flex col-lg-4 align-items-center justify-content-center">
-				<span class="font-sm">@Selected.Name</span>
+				<span class="font-sm">@Selected?.Name</span>
 			</div>
 			<div class="col-6 col-lg-4 d-flex align-items-center justify-content-end">
 				<a>
@@ -68,8 +75,11 @@
 
 	private Series Selected { get; set; } = default!;
 
-	[Parameter]
-	public Guid SelectedId { get; set; } = default;
+	[SupplyParameterFromQuery]
+	public Guid SeriesId { get; set; } = default;
+
+	[SupplyParameterFromQuery]
+	public float Progress { get; set; } = 0;
 
 	[Parameter]
 	public List<Series> Series { get; set; } = new();
@@ -77,15 +87,25 @@
 	[Parameter]
 	public Func<Series, float, Task> OnLeaveSeries { get; set; } = default!;
 
+	[Parameter]
+	public Func<Task> OnPlaybackStarted { get; set; } = default!;
+
+	[Parameter]
+	public Func<Task> OnPlaybackStoped { get; set; } = default!;
+
+	[Parameter]
+	public Func<float, Task> OnProgressChanged { get; set; } = default!;
+
+	[Parameter]
+	public Func<Series, Task> OnSeriesChanged { get; set; } = default!;
+
+
 	protected override void OnInitialized()
 	{
-		var series = Series.FirstOrDefault(x => x.Id == SelectedId);
+		var series = Series.FirstOrDefault(x => x.Id == SeriesId);
 
 		if (series is null)
-		{
-			Selected = Series.OrderBy(x => x.Name).First();
-			return;
-		}
+			series = Series.OrderBy(x => x.Index).FirstOrDefault();
 
 		Selected = series;
 	}
@@ -94,7 +114,15 @@
 	{
 		if (firstRender)
 		{
+			if (Selected is null)
+				return;
+
 			await InitializePlayer();
+
+			if (Progress > 1)
+				Progress /= 100;
+
+			await SetPlayerRetrievedProgress();
 		}
 	}
 
@@ -105,23 +133,37 @@
 
 	private async Task RaiseOnLeaveSeries()
 	{
-		var progress = await GetProgress();
-		Console.WriteLine($"Revieved progress {progress} from player");
-		OnLeaveSeries?.Invoke(Selected, progress);
+		OnLeaveSeries?.Invoke(Selected, Progress);
 	}
 
-	private async Task SelectSeriesAsync(Series value)
+	private async Task SelectSeriesAsync(Series value, bool notifyChanged = true)
 	{
 		await RaiseOnLeaveSeries();
 		Selected = value;
-		StateHasChanged();
 
-		await JS.InvokeVoidAsync("changePlayerSource", Selected.Uri);
+		if (notifyChanged)
+			OnSeriesChanged?.Invoke(Selected);
+
+		await SaveProgress(0);
+
+		await ChangePlayerSource(Selected.Uri);
+
+		StateHasChanged();
 	}
 
 	public async Task InitializePlayer()
 	{
-		await JS.InvokeVoidAsync("initializePlayer");
+		await JS.InvokeVoidAsync("initializePlayer", DotNetObjectReference.Create(this));
+	}
+
+	public async Task ChangePlayerSource(string url)
+	{
+		await JS.InvokeVoidAsync("changePlayerSource", url);
+	}
+
+	public async Task SetPlayerRetrievedProgress()
+	{
+		await JS.InvokeVoidAsync("setRetrievedProgress", Progress);
 	}
 
 	public async Task SetProgress(float value)
@@ -129,8 +171,55 @@
 		await JS.InvokeVoidAsync("setProgress", value);
 	}
 
-	public async Task<float> GetProgress()
+	public async Task Play(bool notifyChanged = true)
 	{
-		return await JS.InvokeAsync<float>("getProgress");
+		await JS.InvokeVoidAsync("play", notifyChanged);
 	}
+
+	public async Task Stop(bool notifyChanged = true)
+	{
+		await JS.InvokeVoidAsync("stop", notifyChanged);
+	}
+
+	public async Task ChangeSeries(Guid id, bool notifyChanged = true)
+	{
+		if (Selected.Id == id)
+			return;
+
+		var series = Series.FirstOrDefault(x => x.Id == id);
+
+		if (series is null)
+			return;
+
+		await SelectSeriesAsync(series, notifyChanged);
+	}
+
+	[JSInvokableAttribute(nameof(SaveProgress))]
+	public Task SaveProgress(float value)
+	{
+		Progress = value;
+		return Task.CompletedTask;
+	}
+
+	[JSInvokableAttribute(nameof(NotifyPlaybackStarted))]
+	public Task NotifyPlaybackStarted()
+	{
+		OnPlaybackStarted?.Invoke();
+		return Task.CompletedTask;
+	}
+
+	[JSInvokableAttribute(nameof(NotifyPlaybackStoped))]
+	public Task NotifyPlaybackStoped()
+	{
+		OnPlaybackStoped?.Invoke();
+		return Task.CompletedTask;
+	}
+
+	[JSInvokableAttribute(nameof(NotifyProgressChanged))]
+	public Task NotifyProgressChanged(float value)
+	{
+		OnProgressChanged?.Invoke(value);
+		return Task.CompletedTask;
+	}
+
 }

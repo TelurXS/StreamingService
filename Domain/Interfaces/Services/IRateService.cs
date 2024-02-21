@@ -8,4 +8,8 @@ public interface IRateService : IEntityService<Rate>
     GetAllResult<Rate> FindAllByAuthor(Account account);
     
     GetAllResult<Rate> FindAllByTitle(Title title);
+
+	GetResult<Rate> FindByTitleAndAuthor(Title title, User author);
+
+	GetResult<Rate> FindByTitleAndAuthorWithTracking(Title title, User author);
 }

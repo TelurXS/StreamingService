@@ -28,16 +28,19 @@ public static class RegisterViewRecordToUser
         public Handler(
 			IUserService userService, 
 			ISeriesService seriesService, 
-			IViewRecordService viewRecordService)
+			IViewRecordService viewRecordService,
+			ITitleService titleService)
         {
 			UserService = userService;
 			SeriesService = seriesService;
 			ViewRecordService = viewRecordService;
+			TitleService = titleService;
 		}
 
 		private IUserService UserService { get; }
 		private ISeriesService SeriesService { get; }
 		private IViewRecordService ViewRecordService { get; }
+		private ITitleService TitleService { get; }
 
 		protected override CreateResult<Success> Handle(Request request)
 		{
@@ -55,7 +58,7 @@ public static class RegisterViewRecordToUser
 
 			var series = seriesResult.AsFound;
 
-			var viewRecordResult = ViewRecordService.FindBySeries(request.SeriesId);
+			var viewRecordResult = ViewRecordService.FindBySeriesAndAuthor(request.SeriesId, user);
 
 			if (viewRecordResult.IsFound)
 			{
@@ -63,6 +66,8 @@ public static class RegisterViewRecordToUser
 
 				viewRecord.Progress = request.Progress;
 				viewRecord.Time = request.Time;
+
+				TitleService.AddView(viewRecord.Title.Id);
 
 				var result = ViewRecordService.Update(viewRecord.Id, viewRecord);
 
@@ -79,6 +84,8 @@ public static class RegisterViewRecordToUser
 					Progress = request.Progress,
 					Time = DateTime.Now
 				};
+
+				TitleService.AddView(viewRecord.Title.Id);
 
 				var result = UserService.AddViewRecord(user.Id, viewRecord);
 

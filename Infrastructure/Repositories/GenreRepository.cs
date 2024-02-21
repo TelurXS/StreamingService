@@ -41,29 +41,33 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
 			.FirstOrDefault(x => x.Name == name);
 	}
 
-	public List<Genre> FindAll()
+	public List<Genre> FindAll(int count = 10, int page = 0)
     {
         return Entities
             .AsNoTracking()
             .Include(x => x.Titles)
-            .ToList();
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
     }
 
-	public List<Genre> FindAllWithTracking()
+	public List<Genre> FindAllWithTracking(int count = 10, int page = 0)
 	{
 		return Entities
 		   .Include(x => x.Titles)
+		   .Skip(page * count)
+			.Take(count)
 		   .ToList();
 	}
 
-	public Genre Insert(Genre value)
+	public Genre? Insert(Genre value)
     {
 		var entity = Entities.Add(value).Entity;
 
 		var result = Context.SaveChanges();
 
 		if (result > 0)
-			return entity;
+			return FindById(entity.Id);
 
 		return default;
 	}
@@ -86,4 +90,9 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
 
         return result > 0;
     }
+
+	public int Count()
+	{
+		return Entities.Count();
+	}
 }

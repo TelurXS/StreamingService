@@ -244,6 +244,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Index")
                         .HasColumnType("int");
 
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -269,6 +274,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -313,7 +321,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<Guid>("ImageId")
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
@@ -324,14 +332,30 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid?>("RequiredSubscriptionId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<string>("Trailer")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Views")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ImageId");
+
+                    b.HasIndex("RequiredSubscriptionId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -390,6 +414,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
+
+                    b.Property<bool>("IsTrialSubscriptionUsed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -488,6 +515,21 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TitleId");
 
                     b.ToTable("ViewRecord");
+                });
+
+            modelBuilder.Entity("Followers", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("FollowerId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Followers");
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -619,6 +661,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Readers", b =>
+                {
+                    b.Property<Guid>("ReaderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("ReaderId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Readers");
+                });
+
             modelBuilder.Entity("TitleTitlesList", b =>
                 {
                     b.Property<Guid>("ListsId")
@@ -647,21 +704,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FavouriteTitlesId");
 
                     b.ToTable("TitleUser");
-                });
-
-            modelBuilder.Entity("UserUser", b =>
-                {
-                    b.Property<Guid>("FollowersId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("FollowersId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.Comment", b =>
@@ -752,11 +794,15 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ImageId");
+
+                    b.HasOne("Domain.Entities.Subscription", "RequiredSubscription")
+                        .WithMany()
+                        .HasForeignKey("RequiredSubscriptionId");
 
                     b.Navigation("Image");
+
+                    b.Navigation("RequiredSubscription");
                 });
 
             modelBuilder.Entity("Domain.Entities.TitlesList", b =>
@@ -804,6 +850,21 @@ namespace Infrastructure.Migrations
                     b.Navigation("Series");
 
                     b.Navigation("Title");
+                });
+
+            modelBuilder.Entity("Followers", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GenreTitle", b =>
@@ -887,6 +948,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Readers", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TitleTitlesList", b =>
                 {
                     b.HasOne("Domain.Entities.TitlesList", null)
@@ -913,21 +989,6 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Title", null)
                         .WithMany()
                         .HasForeignKey("FavouriteTitlesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("UserUser", b =>
-                {
-                    b.HasOne("Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
