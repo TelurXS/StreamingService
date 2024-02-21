@@ -1,5 +1,8 @@
-﻿using Microsoft.Maui.Controls.Shapes;
+﻿using Metflix.Core.Models;
+using Microsoft.Maui.Controls.Shapes;
+using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
+using VideoDemos.Core.Backend;
 
 namespace Metflix.Core;
 
@@ -17,6 +20,11 @@ public class NavbarFactory
 
     public static Grid CreateNavBar(AuthService authService, bool displayLayout = true)
     {
+        string pJson = APIExecutor.ExecuteGet(Config.API_LINK + "/manage/profile");
+        string bookmarksJson = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
+        DBProfileModel profileModel = JsonConvert.DeserializeObject<DBProfileModel>(pJson);
+
+
         Grid navBar = new Grid();
         navBar.ColumnDefinitions = new ColumnDefinitionCollection(
             new[]
@@ -64,7 +72,8 @@ public class NavbarFactory
             HorizontalStackLayout profileSelection = new HorizontalStackLayout()
             {
                 HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0,0,20,0)
             };
             ImageButton searchButton = new ImageButton()
             {
@@ -76,7 +85,7 @@ public class NavbarFactory
             searchButton.Clicked += SearchButtonOnClicked;
             profileSelection.Add(searchButton);
             //
-          
+
             ImageButton profileDetailsButton = new ImageButton()
             {
                 Source = "arrow_down.png",
@@ -84,24 +93,25 @@ public class NavbarFactory
                 HeightRequest = 26,
                 Margin = new Thickness(0, 0, 18, 0),
                 VerticalOptions = LayoutOptions.Center
-
             };
             profileDetailsButton.Clicked += ProfileDetailsButtonOnClicked;
             profileSelection.Add(profileDetailsButton);
             profileSelection.Add(new Label()
             {
-                Text = "Natalia",
+                Text = profileModel.Name,
                 FontSize = 16,
-                Margin = new Thickness(0,0,25,0),
+                Margin = new Thickness(0, 0, 25, 0),
                 VerticalOptions = LayoutOptions.Center
-            });    
+            });
             profileSelection.Add(new Image()
             {
-                Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, 70, 70)),
-                Source = "ava_test.png",
+                Aspect = Aspect.Fill,
+                Clip = new RoundRectangleGeometry(new CornerRadius(100), new Rect(0, 0, 70, 70)),
+                Source = Config.IMAGE_LINK + profileModel.ProfileImage,
                 HeightRequest = 70,
                 WidthRequest = 70,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
+
             });
             navBar.Add(layout, 1);
             navBar.Add(profileSelection, 2);

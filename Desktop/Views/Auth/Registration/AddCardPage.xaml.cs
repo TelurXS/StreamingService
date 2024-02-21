@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Windows.Input;
 using VideoDemos.Core.Auth;
+using VideoDemos.Core.Backend;
 
 namespace VideoDemos.Views.Auth.Registration;
 
@@ -24,7 +25,7 @@ public partial class AddCardPage : ContentPage
         RegisterService.AccountModel.CardNumber = CardNumberEntry.Text;
         RegisterService.AccountModel.CardDate = ExpDateEntry.Text;
         RegisterService.AccountModel.Cvv = CvvEntry.Text;
-        
+
         await Shell.Current.GoToAsync($"/{nameof(SuccessPage)}");
     }
     

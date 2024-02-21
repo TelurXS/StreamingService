@@ -1,5 +1,7 @@
 ﻿using Metflix.Core.Models;
 using Microsoft.Maui.Controls.Shapes;
+using Newtonsoft.Json;
+using VideoDemos.Core.Backend;
 using VideoDemos.Views.Bookmarks;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
@@ -10,9 +12,13 @@ public class BookmarksFactory
 {
     private static int bannerWidth = 258;
     private static int bannerHeight = 371;
+    private static Guid currentGuid;
+    public static event EventHandler clickedEvent;
 
-    public static VerticalStackLayout CreateBanner(string name, string imageSrc, bool isPrivate)
+    public static VerticalStackLayout CreateBanner(string name, string imageSrc, bool isPrivate, Guid list_id)
     {
+        currentGuid = list_id;
+
         VerticalStackLayout resultConteiner = new VerticalStackLayout();
         Grid content = new Grid();
 
@@ -54,7 +60,10 @@ public class BookmarksFactory
             Padding = 0,
             Margin = 0,
             Background = Brush.Transparent,
-            BorderWidth = 0
+            BorderWidth = 0,
+            Text = currentGuid.ToString(),
+            FontSize = 0,
+            Opacity = 0,
         };
 
         content.Add(eventTrigger);
@@ -69,7 +78,116 @@ public class BookmarksFactory
         return resultConteiner;
     }
 
-    public static VerticalStackLayout CreateDetailsBanner(Banner banner)
+    public static Grid CreateSaveCollectionButton(Guid id, string name, string imageSrc, bool isPrivate)
+    {
+        string privacy_text = "Приватна";
+        string privacy_image_src = "lock.png";
+        if (!isPrivate)
+        {
+            privacy_image_src = "unlock.png";
+            privacy_text = "Загальнодоступна";
+        }
+
+        Grid grid = new Grid()
+        {
+            ColumnDefinitions = new ColumnDefinitionCollection()
+            {
+                new ColumnDefinition(),
+                new ColumnDefinition(),
+            },
+            WidthRequest = 510,
+            HeightRequest = 104
+        };
+
+        HorizontalStackLayout resultConteiner = new HorizontalStackLayout()
+        {
+        };
+        Grid content = new Grid();
+        content.Add(new Image()
+        {
+            Source = "bookmarks_bg_2.png",
+            Margin = new Thickness(12, 12, 0, 0),
+            WidthRequest = 47,
+            HeightRequest = 68,
+        });
+        content.Add(new Image()
+        {
+            Source = "bookmarks_bg_1.png",
+            Margin = new Thickness(6, 6, 0, 0),
+            WidthRequest = 47,
+            HeightRequest = 68,
+        });
+        content.Add(new Image()
+        {
+            Source = imageSrc,
+            WidthRequest = 47,
+            HeightRequest = 68,
+        });
+        resultConteiner.Add(content);
+        VerticalStackLayout verticalStackLayout = new VerticalStackLayout()
+        {
+            Margin = 20,
+            HorizontalOptions = LayoutOptions.Center
+        };
+        verticalStackLayout.Add(new Label()
+        {
+            Text = name,
+            FontSize = 18,
+            Margin = new Thickness(0, 5, 0, 0)
+        });
+        HorizontalStackLayout horizontalStackLayout = new HorizontalStackLayout()
+        {
+        };
+        horizontalStackLayout.Add(new Image()
+        {
+            Source = privacy_image_src,
+            WidthRequest = 12,
+            HeightRequest = 12,
+            Margin = new Thickness(0, 0, 5, 0)
+        });
+        horizontalStackLayout.Add(new Label()
+        {
+            Opacity = 0.5,
+            Text = privacy_text,
+            FontSize = 16
+        });
+        verticalStackLayout.Add(horizontalStackLayout);
+        resultConteiner.Add(verticalStackLayout);
+        grid.Add(resultConteiner, 0);
+        Button button = new Button()
+        {
+            Margin = new Thickness(0, 0, 15, 0),
+            CornerRadius = 20,
+            Text = "Зберегти",
+            FontSize = 18,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Center
+        };
+        Button eventTrigger = new Button()
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            WidthRequest = bannerWidth,
+            HeightRequest = bannerHeight,
+            Padding = 0,
+            Margin = 0,
+            Background = Brush.Transparent,
+            BorderWidth = 0,
+            Text = id.ToString(),
+            Opacity = 0,
+            FontSize = 0,
+        };
+        eventTrigger.Clicked += clickedEvent;
+
+        grid.Add(button, 1);
+        grid.Add(eventTrigger, 0);
+        grid.SetRowSpan(eventTrigger, 5);
+        grid.SetColumnSpan(eventTrigger, 5);
+
+        return grid;
+    }
+    
+    public static VerticalStackLayout CreateDetailsBanner(Title banner)
     {
         VerticalStackLayout mainLayout = new VerticalStackLayout();
         mainLayout.WidthRequest = bannerWidth;
@@ -103,7 +221,7 @@ public class BookmarksFactory
         mark.Add(new Label()
         {
             Margin = new Thickness(4, 0, 0, 2),
-            Text = banner.Rating.ToString(),
+            Text = banner.AvarageRate.ToString(),
             TextColor = Colors.White,
             FontSize = 14,
             FontAttributes = FontAttributes.Bold
@@ -138,7 +256,7 @@ public class BookmarksFactory
         };
         year_view.Add(new Label()
         {
-            Text = banner.RealiseYear.ToString(),
+            Text = banner.ReleaseDate.ToString(),
             TextColor = Colors.White,
             Padding = new Thickness(4, 0, 0, 2),
             FontSize = 14,
@@ -159,14 +277,14 @@ public class BookmarksFactory
         Button eventTrigger = new Button();
         eventTrigger.Background = Brush.Transparent;
         eventTrigger.BorderWidth = 0;
-        eventTrigger.Text = banner.VideoLink;
+        eventTrigger.Text = banner.Slug;
         eventTrigger.TextColor = new Color(0, 0, 0, 0);
         eventTrigger.WidthRequest = grid.WidthRequest;
         eventTrigger.HeightRequest = grid.HeightRequest;
         eventTrigger.Clicked += WatchClicked;
         Image bannerImage = new Image
         {
-            Source = banner.Image,
+            Source = banner.Image.Uri,
             Aspect = Aspect.AspectFill,
             WidthRequest = bannerWidth,
             HeightRequest = bannerHeight,
@@ -177,7 +295,7 @@ public class BookmarksFactory
         grid.Children.Add(bannerImage);
 
         grid.Children.Add(eventTrigger);
-        
+
 
         mainLayout.Children.Add(grid);
         mainLayout.Children.Add(new Label
@@ -193,13 +311,16 @@ public class BookmarksFactory
         return mainLayout;
     }
 
-    private static void WatchClicked(object sender, EventArgs e)
+    private static async void WatchClicked(object sender, EventArgs e)
     {
-        
+
     }
 
     private async static void ButtonClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync($"/{nameof(BookmarksDetailsPage)}");
+        Dictionary<string, object> sendParams = new Dictionary<string, object>();
+        sendParams.Add("listId", currentGuid);
+        await Shell.Current.GoToAsync($"/{nameof(BookmarksDetailsPage)}", sendParams);
+        
     }
 }

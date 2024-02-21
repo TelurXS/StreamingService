@@ -45,9 +45,7 @@
     <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}"
                   Route="VideoPlayer"
                   FlyoutItemIsVisible="False" />
-    <ShellContent ContentTemplate="{DataTemplate views:BannerDetailsPage}"
-                  Route="BannerDetails"
-                  FlyoutItemIsVisible="False" />
+
     <ShellContent ContentTemplate="{DataTemplate views:HelloPage}"
                   Route="HelloPage"
                   FlyoutItemIsVisible="False" />

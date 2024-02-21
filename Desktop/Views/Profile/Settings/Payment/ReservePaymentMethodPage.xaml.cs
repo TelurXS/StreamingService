@@ -28,4 +28,9 @@ public partial class ReservePaymentMethodPage : ContentPage
     {
         await Shell.Current.GoToAsync($"/{nameof(AddNewCardPage)}");
     }
+
+    private async void BackButtonClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using VideoDemos.Core.Backend;
 using Brush = Microsoft.Maui.Controls.Brush;
 using Button = Microsoft.Maui.Controls.Button;
 using ColumnDefinition = Microsoft.Maui.Controls.ColumnDefinition;
@@ -69,7 +70,7 @@ public class BannerDetailsFactory
         // throw new NotImplementedException();
     }
 
-    public static Grid CreateComment(Comment comment)
+    public static Grid CreateComment(DB_Comment comment)
     {
         Grid reusltGrid = new Grid()
         {
@@ -90,7 +91,7 @@ public class BannerDetailsFactory
 
         Image avatarImage = new Image
         {
-            Source = comment.AvatarUrl,
+            Source = Config.IMAGE_LINK + comment.Author.ProfileImage,
             Aspect = Aspect.AspectFill,
             WidthRequest = 70,
             HeightRequest = 70,
@@ -103,14 +104,14 @@ public class BannerDetailsFactory
         {
             FontSize = 22,
             FontAttributes = FontAttributes.Bold,
-            Text = comment.Nickname
+            Text = comment.Author.Name
         };
         reusltGrid.Add(nicknmeLabel, 1, 0);
 
         Label commentTextLabel = new Label()
         {
             FontSize = 20,
-            Text = comment.CommentText,
+            Text = comment.Content,
             MaxLines = 5
         };
         reusltGrid.Add(commentTextLabel, 1, 1);
@@ -120,7 +121,7 @@ public class BannerDetailsFactory
         {
             FontSize = 16,
             TextColor = Color.FromArgb("#838383"),
-            Text = comment.CommentDate.ToLongTimeString(),
+            Text = comment.ReleaseDate.ToLongTimeString(),
             HorizontalOptions = LayoutOptions.End
         };
         reusltGrid.Add(dateTextLabel, 2, 0);
@@ -146,7 +147,7 @@ public class BannerDetailsFactory
         {
             FontSize = 22,
             FontAttributes = FontAttributes.Bold,
-            Text = comment.LikesAmmount.ToString(),
+            // Text = comment.LikesAmmount.ToString(),
             VerticalOptions = LayoutOptions.Center,
         });
         ImageButton imageButton = new ImageButton()
@@ -170,7 +171,7 @@ public class BannerDetailsFactory
         throw new NotImplementedException();
     }
 
-    public static VerticalStackLayout CreateCommentsLayout(List<Comment> comments)
+    public static VerticalStackLayout CreateCommentsLayout(List<DB_Comment> comments)
     {
         VerticalStackLayout verticalStackLayout = new VerticalStackLayout();
 
@@ -180,5 +181,17 @@ public class BannerDetailsFactory
         }
 
         return verticalStackLayout;
+    }
+
+    public static Image CreateScreenshot(DB_Image image)
+    {
+        return new Image()
+        {
+            Source = Config.IMAGE_LINK + image.Uri,
+            WidthRequest = 261,
+            HeightRequest = 151,
+            Margin = new Thickness(0, 0, 15, 0),
+            Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, 261, 151))
+        };
     }
 }

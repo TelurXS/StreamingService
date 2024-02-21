@@ -25,4 +25,9 @@ public partial class ChangePlanPage : ContentPage
     {
         await Shell.Current.GoToAsync($"/{nameof(AccountSettingsPage)}");
     }
+
+    private async void BackButtonClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 }

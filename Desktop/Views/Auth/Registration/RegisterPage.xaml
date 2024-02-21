@@ -96,6 +96,8 @@
                     FontSize="20"/>
                 
                 <Label Text="У вас вже є обліковий запис?" Margin="0,20,0,0"></Label>
+                <ScrollView x:Name="ErrorsContainer" HeightRequest="50">
+                </ScrollView>
                 <Button x:Name="RegiserButton" Text="Увійти" BorderWidth="0"
                         BackgroundColor="Transparent"
                         FontSize="16"

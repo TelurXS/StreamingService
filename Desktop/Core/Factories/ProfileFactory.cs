@@ -1,5 +1,6 @@
 ﻿using Metflix.Core.Models;
 using Microsoft.Maui.Controls.Shapes;
+using VideoDemos.Core.Backend;
 
 namespace Metflix.Core;
 
@@ -9,7 +10,7 @@ public class ProfileFactory
     {
         Grid mainGrid = new Grid()
         {
-            Margin = new Thickness(0, 0,-31,0),
+            Margin = new Thickness(0, 0, -31, 0),
             HeightRequest = 107,
             WidthRequest = 74,
         };
@@ -32,7 +33,7 @@ public class ProfileFactory
         {
             Aspect = Aspect.AspectFill,
             HorizontalOptions = LayoutOptions.Center,
-            Source = banner.Image,
+            Source = Config.IMAGE_LINK + banner.Image,
             VerticalOptions = LayoutOptions.Center,
             ZIndex = 999
         };
@@ -48,6 +49,7 @@ public class ProfileFactory
         mainGrid.Add(trigger);
         return mainGrid;
     }
+
     public static Grid CreateWatchProgress(int precent)
     {
         Grid watchProgressGrid = new Grid()
@@ -74,6 +76,7 @@ public class ProfileFactory
             });
         return watchProgressGrid;
     }
+
     public static HorizontalStackLayout CreateBannerCollection(List<Banner> banners)
     {
         HorizontalStackLayout horizontalStackLayout = new HorizontalStackLayout()
@@ -90,7 +93,7 @@ public class ProfileFactory
                 return horizontalStackLayout;
             }
         }
+
         return horizontalStackLayout;
-        
     }
 }

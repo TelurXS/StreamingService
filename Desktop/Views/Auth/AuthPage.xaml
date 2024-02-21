@@ -47,6 +47,7 @@
                 WidthRequest="415"
                 BackgroundColor="Black">
                 <Label Text="Вхід" x:Name="TitleLabel" FontSize="40" TextColor="White" />
+                <Label Text="" x:Name="ErrorLabel" FontSize="25" TextColor="White" />
                 <Border Stroke="#0044E9"
                         StrokeShape="RoundRectangle 20,20,20,20"
                         HorizontalOptions="Center"

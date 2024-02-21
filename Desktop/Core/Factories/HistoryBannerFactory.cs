@@ -1,6 +1,7 @@
 ﻿using Metflix.Core.Models;
 using Microsoft.Maui.Controls.Shapes;
 using VideoDemos.Controls;
+using VideoDemos.Views;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
 
@@ -166,6 +167,6 @@ public class HistoryBannerFactory
         Button button = (Button)sender;
         VideoSource vs = VideoSource.FromUri(button.Text);
         Dictionary<string, object> sendParams = new Dictionary<string, object>();
-        await Shell.Current.GoToAsync($"///BannerDetails", true, sendParams);
+        await Shell.Current.GoToAsync($"/{nameof(BannerDetailsPage)}", true, sendParams);
     }
 }

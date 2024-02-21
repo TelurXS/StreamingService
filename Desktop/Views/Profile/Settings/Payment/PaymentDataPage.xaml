@@ -92,7 +92,7 @@
                                HorizontalOptions="Start" TextColor="#9c9c9c">
                         </Label>
                         <Button Text="Назад" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
-                                HorizontalOptions="End"
+                                HorizontalOptions="End" Clicked="BackButtonClicked"
                                 FontAttributes="Bold" BackgroundColor="#042678" Margin="0,0,112,0">
                         </Button>
                     </FlexLayout>

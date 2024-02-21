@@ -1,4 +1,7 @@
-﻿using Sharpnado.MaterialFrame;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using Sharpnado.MaterialFrame;
 using VideoDemos.Controls;
 using VideoDemos.Core.Auth;
 using VideoDemos.Handlers;

@@ -92,4 +92,6 @@ public class AccountModel
         get => _cvv;
         set => _cvv = value;
     }
+
+    public string Result { get; set; }
 }

@@ -27,7 +27,13 @@ public partial class AuthPage : ContentPage
 
     async void OnSignInClicked(object sender, EventArgs e)
     {
-        _authService.Login(123);
+        string result = _authService.Login(LoginEntry.Text, PasswordEntry.Text);
+        if (result != "" && result.Length < 50)
+        {
+            ErrorLabel.Text = result;
+            return;
+        }
+
         await Shell.Current.GoToAsync($"///{nameof(MainPage)}");
     }
 
