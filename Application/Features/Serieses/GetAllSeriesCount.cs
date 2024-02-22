@@ -2,9 +2,9 @@
 using Domain.Interfaces.Services;
 using MediatR;
 
-namespace Application.Features.Titles;
+namespace Application.Features.Serieses;
 
-public static class GetTitlesCount
+public static class GetAllSeriesCount
 {
 	public class Request : IRequest<int>
 	{
@@ -12,16 +12,16 @@ public static class GetTitlesCount
 
 	public class Handler : SyncRequestHandler<Request, int>
 	{
-		public Handler(ITitleService titleService)
+		public Handler(ISeriesService seriesService)
 		{
-			TitleService = titleService;
+			SeriesService = seriesService;
 		}
 
-		private ITitleService TitleService { get; }
+		private ISeriesService SeriesService { get; }
 
 		protected override int Handle(Request request)
 		{
-			return TitleService.Count();
+			return SeriesService.Count();
 		}
 	}
 }

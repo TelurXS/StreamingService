@@ -7,8 +7,7 @@ using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using System.Security.Claims;
-using API.Extensions;
+using Domain.Models.Results;
 
 namespace API.Endpoints;
 
@@ -35,6 +34,15 @@ public class UserEndpoint : ICarterModule
 			.RequireAuthorization();
 
 		app.MapGet(ApiRoutes.Users.Followers, GetFollowersFromUserAsync)
+			.RequireAuthorization();
+
+        app.MapGet(ApiRoutes.Users.All, GetAllUsersAsync)
+            .RequireAuthorization();
+
+        app.MapGet(ApiRoutes.Users.CountAll, GetAllUsersCountAsync)
+            .RequireAuthorization();
+
+		app.MapPut(ApiRoutes.Users.Profile, UpdateUserAsync)
 			.RequireAuthorization();
 	}
 
@@ -193,6 +201,72 @@ public class UserEndpoint : ICarterModule
 		return result.Match(
 			users => Results.Ok(users.Select(x => mapper.ToResponse(x))),
 			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+    [ProducesResponseType<List<UserResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private async Task<IResult> GetAllUsersAsync(
+        [FromServices] IMediator mediator,
+        [FromServices] IResponseMapper mapper,
+		[FromQuery] int count = 10,
+		[FromQuery] int page = 0)
+    {
+        var request = new GetAllUsers.Request
+        {
+            Count = count,
+			Page = page
+        };
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            users => Results.Ok(users.Select(x => mapper.ToResponse(x))),
+            notFound => Results.NotFound(),
+            failed => Results.BadRequest()
+            );
+    }
+
+    [ProducesResponseType<int>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private async Task<int> GetAllUsersCountAsync(
+        [FromServices] IMediator mediator
+		)
+    {
+        var request = new GetAllUsersCount.Request
+        {
+        };
+
+        var result = await mediator.Send(request);
+
+		return result;
+    }
+
+	[Consumes(MediaTypeNames.Application.Json)]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> UpdateUserAsync(
+		[FromRoute] Guid id,
+		[FromBody] UpdateUser.Request request,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper
+		)
+	{
+		request.Id = id;
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			user => Results.Ok(mapper.ToResponse(user)),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
 			failed => Results.BadRequest()
 			);
 	}

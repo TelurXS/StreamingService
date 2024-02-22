@@ -49,6 +49,8 @@ public static class ApiRoutes
 
 		public const string ReadersById = Base + "/readers/{userId}";
 
+		public const string ApplyTrial = Base + "/apply-trial";
+
 		public static class FavouriteTitles 
 		{
 			public const string GroupName = "/favourites";
@@ -62,6 +64,10 @@ public static class ApiRoutes
 	public class Users
 	{
 		public const string GroupName = "/users";
+
+		public const string All = Base + GroupName;
+
+		public const string CountAll = All + "/count";
 
 		public const string GroupNameWithId = GroupName + "/{id}";
 
@@ -104,7 +110,7 @@ public static class ApiRoutes
 
 		public const string CountByGenres = AllByGenres + "/count";
 
-		public const string ById = Base + GroupName + "/{id}";
+		public const string ById = Base + GroupName + "/{id:guid}";
 
         public const string ByIdImage = ById + "/image";
 
@@ -161,6 +167,19 @@ public static class ApiRoutes
 		public const string Route = Base + GroupName;
 
 		public const string ByTitle = Route + "/{titleId}";
+	}
+
+	public static class Series
+	{
+		public const string GroupName = "/series";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+		public const string CountAll = Route + "/count";
+
+		public const string ById = Route + "/{id}";
 	}
 
 	public class Hubs

@@ -145,6 +145,21 @@ h4 {
     backdrop-filter: blur(10px);
 }
 
+.input {
+    width: 100%;
+    height: fit-content;
+    border-radius: 20px;
+    padding: 5px 10px;
+
+    background-color: var(--dark);
+    color: var(--white);
+    border: 1px solid var(--primary);
+}
+
+select.input {
+    padding: 5px 20px 5px 10px;
+}
+
 a {
     text-decoration: none;
     cursor: pointer;

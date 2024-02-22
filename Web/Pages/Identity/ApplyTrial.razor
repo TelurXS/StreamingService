@@ -1,0 +1,58 @@
+﻿@attribute [Route(WebRoutes.ApplyTrial)]
+@layout MinimalisticLayout
+
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<Background />
+
+<RequireAuthorization />
+
+<div class="gradient-panel card-form form-shadow-primary p-4">
+	<h2 class="mb-2">Apply Trial</h2>
+
+	@if (Success)
+	{
+		<span class="mt-2">Trial subscription activated</span>
+
+		<a @onclick="() => OnClick()" class="mt-3 button font-white">Continue</a>
+	}
+
+	@if (Error)
+	{
+		<span class="mt-2">Something went wrong...</span>
+
+		<a href="@WebRoutes.Home" class="mt-3 button font-white">To Home Page</a>
+	}
+</div>
+
+@code {
+
+	[SupplyParameterFromQuery]
+	public string? ReturnUrl { get; set; } = default;
+
+	private bool Success { get; set; } = false;
+
+	private bool Error { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await IdentityService.AppyTrialSubscription();
+
+		if (result.IsUpdated)
+		{
+			Success = true;
+			return;
+		}
+
+		Error = true;
+	}
+
+	private void OnClick()
+	{
+		if (ReturnUrl is not null)
+			NavigationManager.NavigateTo(ReturnUrl);
+
+		NavigationManager.NavigateTo(WebRoutes.RegistrationSuccess);
+	}
+}

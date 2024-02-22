@@ -17,21 +17,6 @@ public class CommentService : ICommentsService
 
 	private HttpClient Client { get; }
 
-	public Task<GetResult<Comment>> FindByIdAsync(Guid id)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task<GetAllResult<Comment>> FindAllAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task<CreateResult<Comment>> CreateAsync(Comment value)
-	{
-		throw new NotImplementedException();
-	}
-
 	public async Task<CreateResult<Comment>> CreateCommentForTitle(Guid id, CreateCommentForTitleFromAuthor.Request request)
 	{
 		try
@@ -48,21 +33,5 @@ public class CommentService : ICommentsService
 		{
 			return new Failed(ex.Message);
 		}
-	}
-
-
-	public Task<UpdateResult<Comment>> UpdateAsync(Guid id, Comment value)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task<DeleteResult> DeleteByIdAsync(Guid id)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task<DeleteResult> DeleteAsync(Comment value)
-	{
-		return DeleteByIdAsync(value.Id);
 	}
 }

@@ -1,8 +1,9 @@
-﻿@page "/payment/{selected}"
+﻿@attribute [Route(WebRoutes.PaymentByName)]
 @using Domain.Entities
 @layout MinimalisticLayout
 
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 
 <RequireAuthorization />
 

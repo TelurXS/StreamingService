@@ -2,7 +2,7 @@
 
 @if (IsOpened)
 {
-	<div class="full-screen" @onclick="() => Close()">
+	<div class="full-screen" @onclick="() => InternalClose()">
 		@ChildContent
 	</div>
 }
@@ -12,6 +12,9 @@
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; } = default!;
+
+	[Parameter]
+	public bool CloseOnBackgroundClick { get; set; } = true;
 
 	private bool IsOpened { get; set; } = false;
 
@@ -25,5 +28,11 @@
 	{
 		IsOpened = false;
 		StateHasChanged();
+	}
+
+	private void InternalClose()
+	{
+		if (CloseOnBackgroundClick)
+			Close();
 	}
 }

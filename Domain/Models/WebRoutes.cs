@@ -1,10 +1,18 @@
-﻿namespace Domain.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace Domain.Models;
 
 public static class WebRoutes
 {
 	public const string Home = "/";
 
 	public const string NotAuthorized = "/not-authorized";
+
+	public const string Payment = "/payment";
+
+	public const string PaymentByName = Payment + "/{selected}";
+
+	public const string ApplyTrial = "/apply-trial";
 
 	public const string Register = "/register";
 
@@ -67,5 +75,25 @@ public static class WebRoutes
 		public const string Base = "/lists";
 
 		public const string ById = Base + "/{id}";
+	}
+
+	public static class Sessions
+	{
+		public const string Base = "/sessions";
+
+		public const string ByTitleAndId = Base + "/{slug}/{sessionId}";
+	}
+
+	public static class Dashboard
+	{
+		public const string Base = "/dashboard";
+
+		public const string Home = Base + "/home";
+
+		public const string Titles = Base + "/titles";
+
+		public const string Series = Base + "/series";
+
+		public const string Users = Base + "/users";
 	}
 }

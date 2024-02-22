@@ -252,6 +252,10 @@ main {
     width: 400px;
 }
 
+.dashboard-form {
+    width: 700px;
+}
+
 .dropdown-item {
     color: var(--white) !important;
 }
@@ -318,21 +322,31 @@ main {
     padding: 10px;
 }
 
-@media (max-width: 400px) {
-    .card-form {
-        width: 100%;
+@media(min-height: 1080px) {
+    .page-container {
+        min-height: 1080px;
     }
 }
+
 
 @media (max-width: 768px) {
     .circle-profile-picture {
         width: 60%;
         margin: auto;
     }
-}
 
-@media(min-height: 1080px) {
-    .page-container {
-        min-height: 1080px;
+    .dashboard-form {
+        width: 100%;
+        margin: 50px;
+    }
+}
+@media (max-width: 400px) {
+    .card-form {
+        width: 100%;
+    }
+
+    .dashboard-form {
+        width: 100%;
+        margin: 0px;
     }
 }

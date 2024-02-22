@@ -1,0 +1,240 @@
+﻿@using Application.Features.Titles
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Responses
+@using Infrastructure.Configurations
+
+@inject IUserService UserService
+
+<ModalWindow @ref="Window">
+	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
+		<h2>Title</h2>
+
+		<EditForm Model="Input">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Email</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Email" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Email" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">PhoneNumber</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.PhoneNumber" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.PhoneNumber" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">UserName</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.UserName" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.UserName" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Name</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Name" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">FirstName</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.FirstName" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.FirstName" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">SecondName</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.SecondName" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.SecondName" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">BirthDate</span>
+				</div>
+				<div class="col-md-9">
+					<InputDate @bind-Value="Input.BirthDate" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.BirthDate" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Trial Used</span>
+				</div>
+				<div class="col-md-9">
+					<InputCheckbox @bind-Value="Input.IsTrialSubscriptionUsed" class="mx-2 rounded-checkbox" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.IsTrialSubscriptionUsed" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Subs. Expires In</span>
+				</div>
+				<div class="col-md-9">
+					<InputDate @bind-Value="Input.SubscriptionExpiresIn" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.SubscriptionExpiresIn" />
+				</div>
+			</div>
+
+			<div class="mt-3 d-flex">
+				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
+				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
+			</div>
+		</EditForm>
+	</div>
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public Func<Task> OnChanged { get; set; } = default!;
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	public Guid Id { get; set; } = default;
+
+	private ModalWindow Window { get; set; } = default!;
+
+
+	public async void Open(Guid id)
+	{
+		var userResult = await UserService.FindByIdAsync(id);
+
+		if (userResult.IsFound)
+		{
+			var user = userResult.AsFound;
+
+			Id = user.Id;
+
+			Input = new InputModel
+				{
+					Id = user.Id,
+					Email = user.Email,
+					PhoneNumber = user.PhoneNumber,
+					UserName = user.UserName,
+					Name = user.Name,
+					FirstName = user.FirstName,
+					SecondName = user.SecondName,
+					ProfileImage = user.ProfileImage,
+					BirthDate = user.BirthDate,
+					IsTrialSubscriptionUsed = user.IsTrialSubscriptionUsed,
+					SubscriptionExpiresIn = user.SubscriptionExpiresIn,
+					Subscription = user.Subscription,
+				};
+		}
+
+		Window.Open();
+	}
+
+	public void Close() => Window.Close();
+
+	private async Task Save()
+	{
+		var request = new UpdateUser.Request
+			{
+				Id = Input.Id,
+				Email = Input.Email,
+				PhoneNumber = Input.PhoneNumber,
+				UserName = Input.UserName,
+				Name = Input.Name,
+				FirstName = Input.FirstName,
+				SecondName = Input.SecondName,
+				ProfileImage = Input.ProfileImage,
+				BirthDate = Input.BirthDate,
+				IsTrialSubscriptionUsed = Input.IsTrialSubscriptionUsed,
+				SubscriptionExpiresIn = Input.SubscriptionExpiresIn,
+			};
+
+		var result = await UserService.UpdateAsync(Id, request);
+
+		if (result.IsUpdated)
+		{
+			OnChanged?.Invoke();
+			Close();
+		}
+	}
+
+	private class InputModel
+	{
+		public Guid Id { get; set; } = default;
+
+		public string Email { get; set; } = string.Empty;
+
+		public string PhoneNumber { get; set; } = string.Empty;
+
+		public string UserName { get; set; } = string.Empty;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string FirstName { get; set; } = string.Empty;
+
+		public string SecondName { get; set; } = string.Empty;
+
+		public string ProfileImage { get; set; } = string.Empty;
+
+		public DateTime BirthDate { get; set; } = default;
+
+		public bool IsTrialSubscriptionUsed { get; set; } = default;
+
+		public DateTime? SubscriptionExpiresIn { get; set; } = default;
+
+		public Subscription? Subscription { get; set; } = default;
+	}
+}

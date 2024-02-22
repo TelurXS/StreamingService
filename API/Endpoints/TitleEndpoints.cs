@@ -24,7 +24,11 @@ public class TitleEndpoints : ICarterModule
             .DisableAntiforgery()
             .RequireAuthorization();
 
+        app.MapGet(ApiRoutes.Titles.ById, GetTitleByIdAsync);
+
         app.MapGet(ApiRoutes.Titles.BySlug, GetTitleBySlugAsync);
+
+        app.MapGet(ApiRoutes.Titles.All, GetTitlesAsync);
 
 		app.MapGet(ApiRoutes.Titles.AllPopular, GetPopularTitlesAsync);
 
@@ -41,6 +45,8 @@ public class TitleEndpoints : ICarterModule
 		app.MapGet(ApiRoutes.Titles.CountByGenre, GetTitlesCountByGenreAsync);
 
 		app.MapGet(ApiRoutes.Titles.CountByGenres, GetTitlesCountByGenresAsync);
+
+		app.MapPut(ApiRoutes.Titles.ById, UpdateTitleByIdAsync);
 	}
 
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -86,7 +92,28 @@ public class TitleEndpoints : ICarterModule
             failed => Results.BadRequest());
     }
 
-    [ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetTitleByIdAsync(
+		[FromRoute] Guid id,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper)
+	{
+		var request = new GetTitleById.Request
+		{
+			Id = id
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			title => Results.Ok(mapper.ToResponse(title)),
+			NotFound => Results.NotFound(),
+			failed => Results.BadRequest());
+	}
+
+	[ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetTitleBySlugAsync(
@@ -107,7 +134,32 @@ public class TitleEndpoints : ICarterModule
 			failed => Results.BadRequest());
 	}
 
-	[ProducesResponseType<TitleInfoResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<TitleInfoResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetTitlesAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		[FromQuery] int count = 10,
+		[FromQuery] int page = 0
+		)
+	{
+		var request = new GetAllTitles.Request
+		{
+			Count = count,
+			Page = page,
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			titles => Results.Ok(titles.Select(x => mapper.ToInfoResponse(x))),
+			notFound => Results.BadRequest(),
+			failed => Results.BadRequest());
+	}
+
+	[ProducesResponseType<List<TitleInfoResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -134,7 +186,7 @@ public class TitleEndpoints : ICarterModule
 			failed => Results.BadRequest());
 	}
 
-	[ProducesResponseType<TitleInfoResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<TitleInfoResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -161,7 +213,7 @@ public class TitleEndpoints : ICarterModule
 			failed => Results.BadRequest());
 	}
 
-	[ProducesResponseType<TitleInfoResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<TitleInfoResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -188,7 +240,7 @@ public class TitleEndpoints : ICarterModule
 			failed => Results.BadRequest());
 	}
 
-	[ProducesResponseType<TitleInfoResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<TitleInfoResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -221,7 +273,7 @@ public class TitleEndpoints : ICarterModule
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper)
 	{
-		var request = new GetTitlesCount.Request
+		var request = new GetAllTitlesCount.Request
 		{
 		};
 
@@ -285,5 +337,27 @@ public class TitleEndpoints : ICarterModule
 		var result = await mediator.Send(request);
 
 		return Results.Ok(result);
+	}
+
+	[Consumes(MediaTypeNames.Application.Json)]
+	[ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> UpdateTitleByIdAsync(
+		[FromRoute] Guid id,
+		[FromBody] UpdateTitle.Request request,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper)
+	{
+		request.Id = id;
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			title => Results.Ok(mapper.ToResponse(title)),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest());
 	}
 }

@@ -6,7 +6,7 @@ public class Session
 
 	public Guid TitleId { get; set; } = default;
 
-	public SessionState State { get; set; } = new();
-
 	public List<string> Connections { get; set; } = new();
+
+	public string Host { get; set; } = string.Empty;
 }

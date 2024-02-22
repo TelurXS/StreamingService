@@ -1,0 +1,57 @@
+﻿
+.screenshot-panel {
+    overflow-y: auto;
+    padding-bottom: 5px;
+}
+
+.screenshot {
+    height: 170px;
+    border-radius: 10px;
+    margin-right: 10px;
+    border: 1px solid var(--primary)
+}
+
+.poster {
+    width: 100%;
+    border-radius: 20px;
+    aspect-ratio: 3 / 4;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    margin: 5px 10px;
+    border-radius: 50%;
+    border: 2px solid var(--gray);
+}
+
+.messages-panel {
+    height: 440px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media (max-width: 1200px) {
+    .poster {
+        aspect-ratio: 3 / 5;
+    }
+
+    .messages-panel {
+        height: 300px;
+    }
+}
+
+@media (max-width: 992px) {
+    .messages-panel {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .poster {
+        aspect-ratio: 3 / 4;
+    }
+}

@@ -79,6 +79,7 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
     {
         return Entities
             .AsNoTracking()
+			.AsSplitQuery()
             .Include(x => x.Names)
             .Include(x => x.Descriptions)
             .Include(x => x.Image)
@@ -241,12 +242,14 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
                 .SetProperty(x => x.Name, x => value.Name)
                 .SetProperty(x => x.Description, x => value.Description)
                 .SetProperty(x => x.Slug, x => value.Slug)
+                .SetProperty(x => x.AvarageRate, x => value.AvarageRate)
                 .SetProperty(x => x.ReleaseDate, x => value.ReleaseDate)
                 .SetProperty(x => x.Country, x => value.Country)
                 .SetProperty(x => x.AgeRestriction, x => value.AgeRestriction)
                 .SetProperty(x => x.Director, x => value.Director)
                 .SetProperty(x => x.Cast, x => value.Cast)
-                .SetProperty(x => x.Views, x => value.Views));
+                .SetProperty(x => x.Views, x => value.Views)
+                .SetProperty(x => x.Trailer, x => value.Trailer));
 
         return result > 0;
     }

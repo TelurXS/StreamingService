@@ -1,0 +1,19 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <DashboardNavMenu />
+    </div>
+
+    <main class="bg-none">
+        <div class="top-row">
+            <DashboardHeader />
+        </div>
+
+        <article class="content responsive-padding container">
+            @Body
+        </article>
+
+        <Footer />
+    </main>
+</div>

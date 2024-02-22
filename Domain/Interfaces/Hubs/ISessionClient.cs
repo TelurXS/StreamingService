@@ -11,4 +11,8 @@ public interface ISessionClient
 	Task ChangeProgress(float progress);
 
 	Task ChangeSeries(Guid seriesId);
+
+	Task Syncronize(Guid seriesId, float progress, bool isPlaying);
+
+	Task RequestState(string connection);
 }

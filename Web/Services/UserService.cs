@@ -4,6 +4,8 @@ using Domain.Models;
 using Domain.Models.Results.Unions;
 using Web.Interfaces;
 using System.Net.Http.Json;
+using Application.Features.Users;
+using Azure;
 
 namespace Web.Services;
 
@@ -141,4 +143,91 @@ public class UserService : IUserService
 			return new Failed(ex.Message);
 		}
 	}
+
+    public async Task<GetResult<User>> FindByIdAsync(Guid id)
+    {
+        try
+        {
+            var response = await Client
+                .GetAsync(ApiRoutes.Users.Profile.Replace("{id}", id.ToString()));
+
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<User>();
+
+            return new Failed();
+        }
+        catch (Exception ex)
+        {
+            return new Failed(ex.Message);
+        }
+    }
+
+    public async Task<GetAllResult<User>> FindAllAsync(int count = 10, int page = 0)
+    {
+        try
+        {
+            var response = await Client
+                .GetAsync(ApiRoutes.Users.All + $"?count={count}&page={page}");
+
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<List<User>>();
+
+            return new Failed();
+        }
+        catch (Exception ex)
+        {
+            return new Failed(ex.Message);
+        }
+    }
+
+    public Task<CreateResult<User>> CreateAsync(User value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<UpdateResult<User>> UpdateAsync(Guid id, UpdateUser.Request value)
+    {
+		try
+		{
+			var response = await Client
+				.PutAsJsonAsync(ApiRoutes.Users.Profile.Replace("{id}", id.ToString()), value);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<User>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+    public Task<DeleteResult> DeleteByIdAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<DeleteResult> DeleteAsync(User value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<int> CountAsync()
+    {
+        try
+        {
+            var response = await Client
+                .GetAsync(ApiRoutes.Users.CountAll);
+
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<int>();
+
+            return default;
+        }
+        catch
+        {
+            return default;
+        }
+    }
 }

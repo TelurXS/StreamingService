@@ -4,7 +4,7 @@ using Domain.Models.Results.Unions;
 
 namespace Web.Interfaces;
 
-public interface ITitleService : IWebService<Title>
+public interface ITitleService : IWebService<Title, CreateTitle.Request, UpdateTitle.Request>
 {
 	Task<GetResult<Title>> FindBySlugAsync(string slug);
 
@@ -15,8 +15,6 @@ public interface ITitleService : IWebService<Title>
 	Task<GetAllResult<Title>> FindAllByGenreAsync(string genre, int count = 10, int page = 0);
 
 	Task<GetAllResult<Title>> FindAllByGenresAsync(List<string> genres, int count = 10, int page = 0);
-
-	Task<int> CountAsync();
 
 	Task<int> CountByNameAsync(string name);
 

@@ -2,7 +2,6 @@
 using Application.Features.Images;
 using Application.Features.Names;
 using Application.Interfaces.Mappings;
-using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces.Services;
 using Domain.Models;
@@ -11,8 +10,6 @@ using Domain.Models.Results.Unions;
 using FluentValidation;
 using Infrastructure.Configurations;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json.Serialization;
 
 namespace Application.Features.Titles;
 

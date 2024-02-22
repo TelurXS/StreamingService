@@ -1,0 +1,154 @@
+﻿@attribute [Route(WebRoutes.Dashboard.Series)]
+@layout DashboardLayout
+@using Domain.Entities
+@using Domain.Extensions
+
+@inject ISeriesService SeriesService
+@inject NavigationManager NavigationManager
+
+<table class="table table-dark table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Uri</th>
+            <th>Dubbing</th>
+            <th>Language</th>
+            <th>Index</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var series in Series)
+        {
+            <tr @onclick="() => UpdateWindow.Open(series.Id)">
+                <td>@series.Id</td>
+                <td>@series.Name</td>
+                <td>@series.Uri</td>
+                <td>@series.Dubbing</td>
+                <td>@series.Language</td>
+                <td>@series.Index</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav data-bs-theme="dark">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToPreviousAsync()">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        @foreach (var i in Enumerable.Range(0, TotalPages + 1))
+        {
+            if (i == Page)
+            {
+                <li class="page-item active">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+        }
+
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToNextAsync()">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<UpdateSeriesModalWindow @ref="UpdateWindow" OnChanged="OnUpdated" />
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public int? Page { get; set; } = 0;
+
+    [SupplyParameterFromQuery]
+    public int? Count { get; set; } = 10;
+
+    private List<Series> Series { get; set; } = new();
+
+    private int TotalCount { get; set; } = 0;
+
+    private int TotalPages { get; set; } = 0;
+
+    private string Url { get; set; } = WebRoutes.Dashboard.Titles;
+
+    private UpdateSeriesModalWindow UpdateWindow { get; set; } = default!;
+
+    private const int DEFAULT_COUNT = 10;
+    private const int DEFAULT_PAGE = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Count ??= DEFAULT_COUNT;
+        Page ??= DEFAULT_PAGE;
+
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        var titlesResult = await SeriesService.FindAllAsync(Count ?? DEFAULT_COUNT, Page ?? DEFAULT_PAGE);
+
+        if (titlesResult.IsFound)
+        {
+            Series = titlesResult.AsFound;
+        }
+
+        TotalCount = await SeriesService.CountAsync();
+
+        TotalPages = TotalCount / (Count ?? DEFAULT_COUNT);
+    }
+
+    private async Task OnUpdated()
+    {
+        await Refresh();
+        StateHasChanged();
+    }
+
+    private async Task NavigateToNextAsync()
+    {
+        if (Page >= TotalPages)
+            return;
+
+        Page += 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPageAsync(int page)
+    {
+        Page = page;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPreviousAsync()
+    {
+        if (Page <= 0)
+            return;
+
+        Page -= 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+}

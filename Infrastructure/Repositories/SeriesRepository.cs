@@ -74,6 +74,7 @@ public sealed class SeriesRepository : EntityRepository<Series>, ISeriesReposito
 				.SetProperty(x => x.Name, x => value.Name)
 				.SetProperty(x => x.Uri, x => value.Uri)
 				.SetProperty(x => x.Dubbing, x => value.Dubbing)
+				.SetProperty(x => x.Language, x => value.Language)
 				.SetProperty(x => x.Index, x => value.Index));
 
 		return result > 0;

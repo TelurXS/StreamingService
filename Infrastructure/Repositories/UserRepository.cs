@@ -42,6 +42,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 	{
 		return Entities
 			.AsNoTracking()
+			.AsSplitQuery()
 			.Include(x => x.Subscription)
 			.Include(x => x.Rates)
 			.Include(x => x.Comments)
@@ -233,6 +234,9 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 		var result = Entities
 			.Where(x => x.Id == id)
 			.ExecuteUpdate(setters => setters
+				.SetProperty(x => x.Email, x => value.Email)
+				.SetProperty(x => x.PhoneNumber, x => value.PhoneNumber)
+				.SetProperty(x => x.UserName, x => value.UserName)
 				.SetProperty(x => x.Name, x => value.Name)
 				.SetProperty(x => x.FirstName, x => value.FirstName)
 				.SetProperty(x => x.SecondName, x => value.SecondName)

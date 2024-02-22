@@ -1,0 +1,156 @@
+﻿@attribute [Route(WebRoutes.Dashboard.Titles)]
+@layout DashboardLayout
+@using Domain.Entities
+@using Domain.Extensions
+
+@inject ITitleService TitleService
+@inject NavigationManager NavigationManager
+
+<table class="table table-dark table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>AvarageRate</th>
+            <th>Type</th>
+            <th>Country</th>
+            <th>AgeRestriction</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var title in Titles)
+        {
+            <tr @onclick="() => UpdateWindow.Open(title.Id)">
+                <td>@title.Id</td>
+                <td>@title.Name</td>
+                <td>@title.Slug</td>
+                <td>@title.AvarageRate</td>
+                <td>@title.Type.GetDescription()</td>
+                <td>@title.Country.GetDescription()</td>
+                <td>@title.AgeRestriction.GetDescription()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav data-bs-theme="dark">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToPreviousAsync()">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        @foreach (var i in Enumerable.Range(0, TotalPages + 1))
+        {
+            if(i == Page)
+            {
+                <li class="page-item active">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+        }
+
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToNextAsync()">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<UpdateTitleModalWindow @ref="UpdateWindow" OnChanged="OnUpdated" />
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public int? Page { get; set; } = 0;
+
+    [SupplyParameterFromQuery]
+    public int? Count { get; set; } = 10;
+
+    private List<Title> Titles { get; set; } = new();
+
+    private int TotalCount { get; set; } = 0;
+
+    private int TotalPages { get; set; } = 0;
+
+    private string Url { get; set; } = WebRoutes.Dashboard.Titles;
+
+    private UpdateTitleModalWindow UpdateWindow { get; set; } = default!;
+
+    private const int DEFAULT_COUNT = 10;
+    private const int DEFAULT_PAGE = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Count ??= DEFAULT_COUNT;
+        Page ??= DEFAULT_PAGE;
+
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        var titlesResult = await TitleService.FindAllAsync(Count ?? DEFAULT_COUNT, Page ?? DEFAULT_PAGE);
+
+        if (titlesResult.IsFound)
+        {
+            Titles = titlesResult.AsFound;
+        }
+
+        TotalCount = await TitleService.CountAsync();
+
+        TotalPages = TotalCount / (Count ?? DEFAULT_COUNT);
+    }
+
+    private async Task OnUpdated(Title title)
+    {
+        await Refresh();
+        StateHasChanged();
+    }
+
+    private async Task NavigateToNextAsync()
+    {
+        if (Page >= TotalPages)
+            return;
+
+        Page += 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPageAsync(int page)
+    {
+        Page = page;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPreviousAsync()
+    {
+        if (Page <= 0)
+            return;
+
+        Page -= 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+}

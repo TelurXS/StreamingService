@@ -3,14 +3,122 @@
 
 @using Domain.Entities
 
+@inject IIdentityService IdentityService
+
 <h1>Hello</h1>
 
-<form method="post" action="/api/files">
-	<input type="file"/>
-	<button>Upload</button>
-</form>
+@if (Loaded is false)
+{
+	<span>Loading...</span>
+	return;
+}
 
-<img src="/api/users/images/7066983d-7a25-4813-a71d-b865027b06fb.png" />
+<div>
+	@User.Name
+</div>
+
+<div>
+	@string.Join(", ", Genres);
+</div>
+
+<div>
+	@FavouriteTitles.Count
+</div>
+
+<div>
+	@ViewRecords.Count
+</div>
+
+<div>
+	@Followers.Count
+</div>
+
+<div>
+	@Readers.Count
+</div>
+
+<div>
+	@Lists.Count
+</div>
 
 @code {
+
+	private User User { get; set; } = default!;
+
+	private List<string> Genres { get; set; } = [];
+
+	private List<Title> FavouriteTitles { get; set; } = new();
+
+	private List<ViewRecord> ViewRecords { get; set; } = new();
+
+	private List<User> Followers { get; set; } = new();
+
+	private List<User> Readers { get; set; } = new();
+
+	private List<TitlesList> Lists { get; set; } = new();
+
+	private ViewRecord? LastWatched { get; set; } = default;
+
+	private bool Loaded { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var userTask = IdentityService.GetProfileAsync();
+		var genresTask = IdentityService.GetFavouriteGenresAsync();
+		var favouriteTitlesTask = IdentityService.GetFavouriteTitlesAsync();
+		var viewRecordsTask = IdentityService.GetViewRecordsAsync();
+		var titlesListsTask = IdentityService.GetTitlesListsAsync();
+		var followersTask = IdentityService.GetFollowersAsync();
+		var readersTask = IdentityService.GetReadersAsync();
+
+		await Task.WhenAll(
+			userTask, 
+			genresTask, 
+			favouriteTitlesTask, 
+			viewRecordsTask, 
+			titlesListsTask, 
+			followersTask, 
+			readersTask);
+
+		if (userTask.Result.IsFound)
+		{
+			User = userTask.Result.AsFound;
+		}
+
+		if (genresTask.Result.IsFound)
+		{
+			Genres = genresTask.Result.AsFound.Select(x => x.Name).ToList();
+		}
+
+		if (favouriteTitlesTask.Result.IsFound)
+		{
+			FavouriteTitles = favouriteTitlesTask.Result.AsFound;
+		}
+
+		if (viewRecordsTask.Result.IsFound)
+		{
+			var viewRecords = viewRecordsTask.Result.AsFound;
+
+			LastWatched = viewRecords.OrderBy(x => x.Time).LastOrDefault();
+			ViewRecords = viewRecords.DistinctBy(x => x.Title.Id).ToList();
+		}
+
+		if (titlesListsTask.Result.IsFound)
+		{
+			Lists = titlesListsTask.Result.AsFound;
+		}
+
+		if (followersTask.Result.IsFound)
+		{
+			Followers = followersTask.Result.AsFound;
+		}
+
+		if (readersTask.Result.IsFound)
+		{
+			Readers = readersTask.Result.AsFound;
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
 }

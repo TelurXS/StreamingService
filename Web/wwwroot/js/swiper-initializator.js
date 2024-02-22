@@ -7,6 +7,9 @@ window.initializeSwiper = (id) => {
 		loop: false,
 		grabCursor: true,
 		centeredSlides: false,
+		autoplay: {
+			delay: 5000,
+		},
 
 		pagination: {
 			el: `.swiper-pagination-${id}`,

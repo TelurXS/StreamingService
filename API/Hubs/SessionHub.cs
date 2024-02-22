@@ -7,52 +7,72 @@ namespace API.Hubs;
 
 public class SessionHub : Hub<ISessionClient>
 {
-    public SessionHub(ILogger<SessionHub> logger)
-    {
+	private const string ANONYMOUS = "Anonymous";
+
+	public SessionHub(ILogger<SessionHub> logger)
+	{
 		Logger = logger;
-		Sessions = new();
 	}
 
 	private ILogger<SessionHub> Logger { get; }
-	private List<Session> Sessions { get; }
+
+	private static List<Session> Sessions { get; } = new();
 
 	public override async Task OnConnectedAsync()
 	{
-		await Clients
-			.All
-			.ReceiveMessage($"User {Context.User?.Identity?.Name} {{{Context.ConnectionId}}} connected");
-
 		Logger.LogInformation("User {ConnectionId} connected", Context.ConnectionId);
 	}
 
-
 	public override async Task OnDisconnectedAsync(Exception? exception)
 	{
-		await Clients
-			.All
-			.ReceiveMessage($"User {Context.User?.Identity?.Name} {{{Context.ConnectionId}}} disconnected");
-
 		Logger.LogInformation("User {ConnectionId} disconnected", Context.ConnectionId);
 	}
 
-	public async Task PlaybackStarted()
+	public async Task PlaybackStarted(Guid id)
 	{
-		await Clients.All.StartPlayback();
+		Logger.LogInformation("Received {message} to session {id}", nameof(PlaybackStarted), id);
+
+		await Clients
+			.OthersInGroup(id.ToString())
+			.StartPlayback();
 	}
 
-    public async Task PlaybackStoped()
-    {
-        await Clients.All.StopPlayback();
-    }
-
-    public async Task ProgressChanged(float value)
-    {
-        await Clients.All.ChangeProgress(value);
-    }
-
-	public async Task SeriesChanged(Guid value)
+	public async Task PlaybackStoped(Guid id)
 	{
-		await Clients.All.ChangeSeries(value);
+		Logger.LogInformation("Received {message} to session {id}", nameof(PlaybackStoped), id);
+
+		await Clients
+			.OthersInGroup(id.ToString())
+			.StopPlayback();
+	}
+
+	public async Task ProgressChanged(Guid id, float value)
+	{
+		Logger.LogInformation("Received {message} to session {id} and value {value}", nameof(ProgressChanged), id, value);
+
+		await Clients
+			.OthersInGroup(id.ToString())
+			.ChangeProgress(value);
+	}
+
+	public async Task SeriesChanged(Guid id, Guid value)
+	{
+		Logger.LogInformation("Received {message} to session {id} and value {value}", nameof(SeriesChanged), id, value);
+
+		await Clients
+			.OthersInGroup(id.ToString())
+			.ChangeSeries(value);
+	}
+
+	public async Task SyncronizeConnection(string connection, Guid seriesId, float progress, bool isPlaying)
+	{
+		Logger.LogInformation("Syncronizing {connection} with ({seriesId}, {progress}, {isPlaying})", 
+			connection, 
+			seriesId, 
+			progress, 
+			isPlaying);
+
+		await Clients.Client(connection).Syncronize(seriesId, progress, isPlaying);
 	}
 
 	public async Task JoinSession(Guid id, Guid titleId, Guid seriesId)
@@ -60,13 +80,25 @@ public class SessionHub : Hub<ISessionClient>
 		var session = Sessions.FirstOrDefault(x => x.Id == id);
 
 		if (session is null)
-		{
-			session = await CreateSession(titleId, seriesId);
-		}
+			session = CreateSession(id, titleId, seriesId);
+
+		if (session.TitleId != titleId)
+			return;
 
 		session.Connections.Add(Context.ConnectionId);
 
 		await Groups.AddToGroupAsync(Context.ConnectionId, session.Id.ToString());
+
+		await SendSessionMessage(id, $"{(Context.User?.Identity?.Name ?? ANONYMOUS)} connected.");
+
+		var connection = session.Host;
+
+		if (string.IsNullOrEmpty(connection) || connection.Equals(Context.ConnectionId))
+			return;
+
+		Logger.LogInformation("Requesting connection {connection} to get current state", connection);
+
+		await Clients.Client(connection).RequestState(Context.ConnectionId);
 	}
 
 	public async Task LeaveSession(Guid id)
@@ -76,26 +108,38 @@ public class SessionHub : Hub<ISessionClient>
 		if (session is null)
 			return;
 
+		if (session.Connections.Contains(Context.ConnectionId) is false)
+			return;
+
 		session.Connections.Remove(Context.ConnectionId);
 
-		if (session.Connections.Any() is false)
-			Sessions.Remove(session);
-
 		await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.Id.ToString());
+
+		if (session.Connections.Any() is false) 
+		{
+			Sessions.Remove(session);
+			return;
+		}
+
+		await SendSessionMessage(id, $"{(Context.User?.Identity?.Name ?? ANONYMOUS)} disconnected.");
+
+		if (session.Host.Equals(Context.ConnectionId)) 
+			session.Host = session.Connections.First();
 	}
 
-	public async Task<Session> CreateSession(Guid titleId, Guid seriesId)
+	public async Task SendSessionMessage(Guid id, string message)
+	{
+		await Clients.Group(id.ToString()).ReceiveMessage(message);
+	}
+
+	public Session CreateSession(Guid id, Guid titleId, Guid seriesId)
 	{
 		var session = new Session
 		{
-			Id = Guid.NewGuid(),
+			Id = id,
 			TitleId = titleId,
-			State = new SessionState
-			{
-				SeriesId = seriesId,
-				Progress = 0,
-				IsPlaying = false,
-			},
+			Connections = new(),
+			Host = Context.ConnectionId,
 		};
 
 		Sessions.Add(session);

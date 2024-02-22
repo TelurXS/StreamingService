@@ -4,6 +4,7 @@ public sealed class Subscription
 {
 	public const string CURRENCY = "USD"; 
 	public const int ACTIVE_DAYS = 30; 
+	public const int TRIAL_ACTIVE_DAYS = 7; 
 
 	public static readonly Subscription Trial = new Subscription 
     {

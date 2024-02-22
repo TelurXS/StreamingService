@@ -1,4 +1,5 @@
 ﻿using API.Extensions;
+using Application.Features.Subscriptions;
 using Application.Features.TitleLists;
 using Application.Features.TitlesLists;
 using Application.Features.Users;
@@ -70,6 +71,9 @@ public class IdentityUserEndpoints : ICarterModule
 			.RequireAuthorization();
 
 		app.MapDelete(ApiRoutes.IdentityUsers.FollowersById, RemoveUserToFollowersAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.IdentityUsers.ApplyTrial, ApplyTrialAsync)
 			.RequireAuthorization();
 	}
 
@@ -354,7 +358,7 @@ public class IdentityUserEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private async Task<IResult> DeleteProfileImageAsync(
+	private static async Task<IResult> DeleteProfileImageAsync(
 		[FromServices] IMediator mediator,
 		ClaimsPrincipal claims)
 	{
@@ -377,7 +381,7 @@ public class IdentityUserEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private async Task<IResult> GetFollowersFromUserAsync(
+	private static async Task<IResult> GetFollowersFromUserAsync(
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper,
 		ClaimsPrincipal claims)
@@ -400,7 +404,7 @@ public class IdentityUserEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private async Task<IResult> GetReadersFromUserAsync(
+	private static async Task<IResult> GetReadersFromUserAsync(
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper,
 		ClaimsPrincipal claims)
@@ -423,7 +427,7 @@ public class IdentityUserEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private async Task<IResult> AddUserToFollowersAsync(
+	private static async Task<IResult> AddUserToFollowersAsync(
 		[FromRoute] Guid userId,
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper,
@@ -449,7 +453,7 @@ public class IdentityUserEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	private async Task<IResult> RemoveUserToFollowersAsync(
+	private static async Task<IResult> RemoveUserToFollowersAsync(
 		[FromRoute] Guid userId,
 		[FromServices] IMediator mediator,
 		[FromServices] IResponseMapper mapper,
@@ -465,6 +469,30 @@ public class IdentityUserEndpoints : ICarterModule
 
 		return result.Match(
 			users => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> ApplyTrialAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims
+		)
+	{
+		var request = new ApplyTrialSubscriptionToUser.Request
+		{
+			UserId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			success => Results.Ok(),
 			notFound => Results.NotFound(),
 			invalid => Results.BadRequest(),
 			failed => Results.BadRequest()
