@@ -28,7 +28,7 @@
                                     FontSize="18" TextColor="White" />
                                 <HorizontalStackLayout Margin="0,40,0,0">
                                     <acrylic:AcrylicView  BorderThickness="0" CornerRadius="20"
-                                                         WidthRequest="274" TintOpacity="0.1" TintColor="#0044E9"
+                                                         WidthRequest="274" TintOpacity="0.3" TintColor="#0044E9"
                                                          HeightRequest="50">
                                         <Button Text="Переглянути" x:Name="WatchGlassBgButton" TextColor="White"
                                                 WidthRequest="274" BackgroundColor="Transparent"
@@ -41,7 +41,7 @@
                                     </acrylic:AcrylicView>
                                     <acrylic:AcrylicView CornerRadius="20" BorderThickness="0"
                                                          Margin="40,0,0,0"
-                                                         WidthRequest="274"  TintOpacity="0.02" TintColor="Black"
+                                                         WidthRequest="274"  TintOpacity="0.2" TintColor="Black"
                                                          HeightRequest="50">
                                         <Button Text="Докладніше" x:Name="DetailsGlassBgButton" BorderWidth="0"
                                                 TextColor="White"

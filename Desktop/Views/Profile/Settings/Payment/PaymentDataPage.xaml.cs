@@ -33,4 +33,9 @@ public partial class PaymentDataPage : ContentPage
             "13,99 USD (+ПДВ 1,00 USD)",
             "14,99 USD");
     }
+
+    private async void BackButtonClicked(object sender, EventArgs e)
+    {
+            await Shell.Current.GoToAsync("..");
+    }
 }

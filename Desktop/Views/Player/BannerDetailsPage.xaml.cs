@@ -5,110 +5,115 @@ using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Models;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using VideoDemos.Controls;
 using VideoDemos.Core.Auth;
+using VideoDemos.Core.Backend;
+using VideoDemos.Core.Models.Bookmarks;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
 
 
 namespace VideoDemos.Views;
 
-[QueryProperty(nameof(FilmsDetails), "FilmsDetails")]
 public partial class BannerDetailsPage : ContentPage
 {
-    public static List<Comment> _comments = new List<Comment>()
-    {
-        new Comment("Kawazaki", "ava_test.png",
-            "Серіал мені дуже сподобався, не дивлячись на те що трилери не мій жанр, а мимо корейських я зовсім проходила, але цей мене вразив. Я б хотіла меньше жорстоких сцен, але розумію що без них меньше сенсу. Є над чим поміркувати і після фільма і під час перегляду, рекомендую!",
-            5, DateTime.Now),
-        new Comment("Cago", "ava_test.png",
-            "Звичайний серіал. Він не шедевр, але і не зовсім вже сміття. Чи вартий він того хайпу, який трапився? Ні. Це явно не \"Гра престолів\" від Південної Кореї. І тим не менше саме для Південної Кореї серіал непоганий. Якщо краще опрацюють сюжетну лінію, головних і другорядних героїв, то у серіалу є шанс стати дуже хорошим у другому сезоні. Це справді диво, що він вистрілив. Особисто для мене 6 з 10.\nІ так, люди тут мають рацію. Тупості в серіалі дійсно багато.",
-            5, DateTime.Now),
-        new Comment("Krico", "ava_test.png",
-            "Серіал просто шикарний, чудовий каст акторів, ігри, стилістика, серіал взагалі не нудний. Порівняно з тим, що зараз за серіали виходять, це як ковток свіжого повітря, щось нове і незвичайне, а не як зазвичай, де більша частина серіалів - це кліше.\nЧекаємо 2 сезон, сподіваюся з'являться нові ігри, інакше буде вже не так цікаво дивитися.",
-            5, DateTime.Now),
-        new Comment("Estriper", "ava_test.png",
-            "Серіал хороший.\nЯ, звісно, запізнився з переглядом (1-го сезону) і тому частину сюжету знав, але все одно було цікаво.\nМені здається, що було б цікавіше, якби переможець не був таким очевидним,\nа то з першої серії зрозуміло хто \"головний герой\".\nПодивимося що буде в другому сезоні ...",
-            5, DateTime.Now),
-    };
-
-    public static FilmsDetails FilmsDetails = new()
-    {
-        Actors =
-            "Ли Джон-джэ, Пак Хэ-су, О Ён-су, Чон Хо-ён, Хо Сон-тхэ, Анупам Трипати, Ким Джу Рён, Ви Ха-джун, Ю Сон-джу, Ли Ю-мия та інші",
-        Mark = 8.5,
-        Title = "Гра в кальмара",
-        Rateings = "IMDb: 8.0       RottenTomatoes: 95%",
-        Type = "Серіал",
-        Id = 1,
-        Country = "Південна Корея",
-        Details =
-            "47-річний Сон Гі-Хун, залежний від азартних ігор, живе на доходи своєї хворої матері. Через його пристрасть до азартних ігор і невимушене ставлення до грошей він опинився у фінансовій ямі, і не може отримати опіку над своєю донькою Га-Єн. Коли кредитори погрожують Сону фізичною розправою, якщо чоловік не поверне гроші до кінця місяця, загадковий незнайомець пропонує йому взяти участь у секретній грі на виживання. 456 учасникам доведеться вести боротьбу за солідний грошовий приз, граючи в дитячі ігри...",
-        Director = "Хван Дон-хёк",
-        Genre = "Трилери, Драми, Бойовики, Детективи",
-        Old = "18+ лише для дорослих",
-        ReliseDate = "17 вересня 2021 року",
-        VideoLink = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-        TrailerLink = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        SeasonCount = 3,
-        EpisodesCount = 12
-    };
-
-    public static int CurrentEpisode = 1;
-
-    public static List<VozModel> _voz = new List<VozModel>()
-    {
-        new VozModel("HDrezka Studio", "HDrezka Studio", true),
-        new VozModel("Дубляж", "Дубляж"),
-        new VozModel("Оригінал (+субтитри)", "Оригінал (+субтитри)"),
-    };
+    public static Title currentTitle;
+    public static int CurrentEpisode = 0;
 
     private static bool _isSeasonChooseing = false;
     private static bool _isEpisodeChooseing = false;
 
+    private static IDispatcherTimer timer;
+
     public BannerDetailsPage()
     {
         InitializeComponent();
+        string slug = BannerFactory.NavigatedBanner;
+
+        BookmarksFactory.clickedEvent += BookmarksFactoryOnclickedEvent;
+        string json = APIExecutor.ExecuteGet(Config.API_LINK + "/titles/" + slug);
+        currentTitle =
+            JsonConvert.DeserializeObject<Title>(json);
+        currentTitle.Image.Uri = Config.IMAGE_LINK + currentTitle.Image.Uri;
         this.BindingContext = this;
-        DetailsGrid.BindingContext = FilmsDetails;
-        RateingContainer.BindingContext = FilmsDetails;
+        DetailsGrid.BindingContext = currentTitle;
+        BackgroundImage.Source = currentTitle.Image.Uri;
+        PreviewImage.Source = currentTitle.Image.Uri;
+        RateingContainer.BindingContext = currentTitle;
         NavBarGrid.Children.Add(NavbarFactory.CreateNavBar(new AuthService()));
-        DescriptionLabel.Text = $"Про що {FilmsDetails.Type.ToLower()} \"{FilmsDetails.Title}\":";
-        FilmsForYouLayout.Children.Add(BannerFactory.CreateBannerCollection("Фільми для вас", new List<Banner>()
+        DescriptionLabel.Text = $"Про що {currentTitle.Type} \"{currentTitle.Name}\":";
+
+        if (currentTitle.Genres.Count > 0)
         {
-            new Banner(0, "big_buck_bunny.png", "Big Buck Bunny",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                "Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him, something snaps... and the rabbit ain't no bunny anymore!"),
-            new Banner(1, "elephant_dream.png", "Elephant Dream",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                "The first Blender Open Movie from 2006"),
-            new Banner(2, "for_bigger_blaze.png", "For Bigger Blazes",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                "HBO GO now works with Chromecast -- the easiest way to enjoy online video on your TV. For when you want to settle into your Iron Throne to watch the latest episodes. For $35.\\nLearn how to use Chromecast with HBO GO and more at google.com/chromecast."),
-            new Banner(3, "for_big_escape.png", "For Bigger Escape",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-                "ntroducing Chromecast. The easiest way to enjoy online video and music on your TV—for when Batman's escapes aren't quite big enough. For $35. Learn how to use Chromecast with Google Play Movies and more at google.com/chromecast."),
-            new Banner(4, "for_bigger_fun.png", "For Bigger Fun",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-                "Introducing Chromecast. The easiest way to enjoy online video and music on your TV. For $35.  Find out more at google.com/chromecast."),
-            new Banner(5, "for_bigger_fun.png", "For Bigger Fun",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-                "Introducing Chromecast. The easiest way to enjoy online video and music on your TV. For $35.  Find out more at google.com/chromecast."),
-        }));
+            string request = Config.API_LINK + "/titles/by-genres?genres=";
+            foreach (var gena in currentTitle.Genres)
+            {
+                request += $"{gena.Name}&genres=";
+            }
+
+            request = request.Substring(0, request.Length - 7);
+            request += "count=6&page=0";
+            string j = APIExecutor.ExecuteGet(request);
+            List<Title> same = JsonConvert.DeserializeObject<List<Title>>(j);
+            FilmsForYouLayout.Add(BannerFactory.CreateBannerCollection("Фільми для вас", same));
+        }
 
         Shell.SetTabBarIsVisible(Application.Current.MainPage, false);
         Shell.SetFlyoutBehavior(Application.Current.MainPage, FlyoutBehavior.Flyout);
-        TitleNameLabel.Text = FilmsDetails.Title;
+        TitleNameLabel.Text = currentTitle.Name;
 
-        foreach (VozModel vozModel in _voz)
+        if (currentTitle.Series.Count > 1)
         {
-            VozContainerLayout.Add(BannerDetailsFactory.CreateVoz(vozModel));
         }
 
-        CommentsContainer.Content = BannerDetailsFactory.CreateCommentsLayout(_comments);
-        
+        CommentsContainer.Content = BannerDetailsFactory.CreateCommentsLayout(currentTitle.Comments);
+        foreach (var screen in currentTitle.Screenshots)
+
+        {
+            ScreenshotsContainer.Add(BannerDetailsFactory.CreateScreenshot(screen));
+        }
+
+
+        timer = Application.Current.Dispatcher.CreateTimer();
+        timer.Interval = TimeSpan.FromSeconds(5);
+        timer.Tick += (s, e) => SaveProgress();
+        timer.Start();
+
         video.Stop();
         VideoSourceChanged();
+    }
+
+    private void SaveProgress()
+    {
+        if (video.Status == VideoStatus.Playing)
+        {
+            TimeSpan currentVideoPosition = video.Position;
+            TimeSpan videoDuration = video.Duration;
+            int percentWatched;
+            if (videoDuration.Seconds / 100 == 0)
+            {
+                percentWatched = 0;
+            }
+            else
+            {
+                percentWatched = currentVideoPosition.Seconds / (videoDuration.Seconds / 100);
+
+            }
+            string res = APIExecutor.ExecutePost(Config.API_LINK + $"/register-view-record/{currentTitle.Id}",
+                JsonConvert.SerializeObject(new DB_DuractionSendObject()
+                {
+                    WatchPercent = percentWatched,
+                    WatchTime = DateTime.Now
+                }));
+        }
+    }
+
+    private void BookmarksFactoryOnclickedEvent(object sender, EventArgs e)
+    {
+        Button button = ((Button)sender);
+        APIExecutor.ExecutePost(Config.API_LINK + "/lists/" + button.Text + "/" + currentTitle.Id);
     }
 
 
@@ -123,8 +128,11 @@ public partial class BannerDetailsPage : ContentPage
 #endif
     private void VideoSourceChanged()
     {
-        video.Source = VideoSource.FromUri(FilmsDetails.VideoLink);
-        video.AutoPlay = false;
+        if (!currentTitle.Series.IsNullOrEmpty() && !currentTitle.Series[CurrentEpisode].Uri.IsNullOrEmpty())
+        {
+                video.Source = VideoSource.FromUri(Config.IMAGE_LINK + currentTitle.Series[CurrentEpisode].Uri);
+                video.AutoPlay = false;    
+        }
     }
 
     void OnPlayPauseButtonClicked(object sender, EventArgs args)
@@ -157,7 +165,6 @@ public partial class BannerDetailsPage : ContentPage
     private void OnNextEpisodeClicked(object sender, EventArgs e)
     {
         video.Stop();
-        // video.Source = VideoSource.FromUri(_videoModel.NextEpisode.Url);
         video.Play();
     }
 
@@ -204,15 +211,15 @@ public partial class BannerDetailsPage : ContentPage
 
     private void EpisodeButton_OnClicked(object sender, EventArgs e)
     {
-        if (FilmsDetails.EpisodesCount > 1)
+        if (currentTitle.Series.Count > 1)
         {
             if (!_isEpisodeChooseing)
             {
                 int opacity = 100;
-                for (int i = 0; i < FilmsDetails.EpisodesCount; i++)
+                for (int i = 0; i < currentTitle.Series.Count; i++)
                 {
                     if (i > 5) opacity -= 10;
-                    EpisodesContainer.Children.Add(CreateAcrilicButton("Серiя " + (i + 1), opacity));
+                    EpisodesContainer.Children.Add(CreateAcrilicButton("Серiя " + (i + 1), opacity, i));
                 }
 
                 _isEpisodeChooseing = true;
@@ -225,7 +232,7 @@ public partial class BannerDetailsPage : ContentPage
         }
     }
 
-    private AcrylicView CreateAcrilicButton(string text, int opacity)
+    private AcrylicView CreateAcrilicButton(string text, int opacity, int episodeNumber)
     {
         AcrylicView acrylicView = new AcrylicView
         {
@@ -255,6 +262,11 @@ public partial class BannerDetailsPage : ContentPage
             BorderWidth = 0,
             Text = text
         };
+        button.Clicked += (sender, args) =>
+        {
+            CurrentEpisode = episodeNumber;
+            VideoSourceChanged();
+        };
         button_view.Add(button);
 
         acrylicView.Content = button_view;
@@ -262,26 +274,150 @@ public partial class BannerDetailsPage : ContentPage
         return acrylicView;
     }
 
+
     private void SeasonButton_OnClicked(object sender, EventArgs e)
     {
-        if (FilmsDetails.SeasonCount > 1)
-        {
-            if (!_isSeasonChooseing)
-            {
-                int opacity = 100;
-                for (int i = 0; i <= FilmsDetails.SeasonCount; i++)
-                {
-                    if (i > 5) opacity -= 10;
-                    SeasonContainer.Children.Add(CreateAcrilicButton("Сезон " + (i + 1), opacity));
-                }
+        // if (FilmsDetails.SeasonCount > 1)
+        // {
+        //     if (!_isSeasonChooseing)
+        //     {
+        //         int opacity = 100;
+        //         for (int i = 0; i <= FilmsDetails.SeasonCount; i++)
+        //         {
+        //             if (i > 5) opacity -= 10;
+        //             SeasonContainer.Children.Add(CreateAcrilicButton("Сезон " + (i + 1), opacity, i));
+        //         }
+        //
+        //         _isSeasonChooseing = true;
+        //     }
+        //     else
+        //     {
+        //         SeasonContainer.Children.Clear();
+        //         _isSeasonChooseing = false;
+        //     }
+        // }
+    }
 
-                _isSeasonChooseing = true;
-            }
-            else
+    private void CreateCollectionClicked(object sender, EventArgs e)
+    {
+        ShowCreateNewFolderNotification();
+        HideAddToFolderNotification();
+    }
+
+    private void HideAddToFolderNotification()
+    {
+        AddToFolder.Opacity = 0;
+        AddToFolder.WidthRequest = 0;
+        AddToFolder.HeightRequest = 0;
+    }
+
+    private void HideCreateNewFolderNotification()
+    {
+        CreateNewFolder.Opacity = 0;
+        CreateNewFolder.WidthRequest = 0;
+        CreateNewFolder.HeightRequest = 0;
+    }
+
+    private void ShowAddToFolderNotification()
+    {
+        AddToFolder.Opacity = 1;
+
+        AddToFolder.HeightRequest = 623;
+        AddToFolder.WidthRequest = 540;
+    }
+
+    private void ShowCreateNewFolderNotification()
+    {
+        CreateNewFolder.Opacity = 1;
+        CreateNewFolder.HeightRequest = 623;
+        CreateNewFolder.WidthRequest = 540;
+    }
+
+    private void CreateFolderConfirmClicked(object sender, EventArgs e)
+    {
+        if (FolderNameEntry.Text != null)
+        {
+            DBBookmarkModel @params = new DBBookmarkModel()
             {
-                SeasonContainer.Children.Clear();
-                _isSeasonChooseing = false;
+                Availability = 0,
+                Name = FolderNameEntry.Text
+            };
+            string result = APIExecutor.ExecutePost(Config.API_LINK + "/lists", JsonConvert.SerializeObject(@params));
+            if (result != "")
+            {
+                HideCreateNewFolderNotification();
+                ShowAddToFolderNotification();
             }
         }
     }
+
+    private void CancelFolderCreationClicked(object sender, EventArgs e)
+    {
+        HideCreateNewFolderNotification();
+        ShowAddToFolderNotification();
+    }
+
+    private void FavButtonClicked(object sender, EventArgs e)
+    {
+        APIExecutor.ExecutePost(Config.API_LINK + "/favorites/" + currentTitle.Id);
+        ImageButton button = (ImageButton)sender;
+        button.Source = "liked.png";
+    }
+
+    private void BookmarksButtonClicked(object sender, EventArgs e)
+    {
+        if (MainBookmarksContentScrollView.Content == null)
+        {
+            string data = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
+            List<DBBanner> model = JsonConvert.DeserializeObject<List<DBBanner>>(data);
+            VerticalStackLayout verticalStackLayout = new VerticalStackLayout();
+            foreach (DBBanner bookmarkModel in model)
+            {
+                verticalStackLayout.Add(
+                    BookmarksFactory.CreateSaveCollectionButton(bookmarkModel.Id, bookmarkModel.Name,
+                        currentTitle.Image.Uri,
+                        bookmarkModel.Availability == 1));
+            }
+
+            MainBookmarksContentScrollView.Content = verticalStackLayout;
+        }
+
+        if (AddToFolder.Opacity == 1)
+        {
+            HideAddToFolderNotification();
+            return;
+        }
+
+        ShowAddToFolderNotification();
+    }
+
+    private void CommentsButtonClicked(object sender, EventArgs e)
+    {
+        if (CommentsEntry.Text != "")
+        {
+            string commentJson = APIExecutor.ExecutePost(Config.API_LINK + $"/comments/{currentTitle.Id}",
+                JsonConvert.SerializeObject(new DB_CommentsSendobject()
+                {
+                    Content = CommentsEntry.Text,
+                    CreationTime = DateTime.Now
+                }));
+
+            // DisplayAlert("Alert", commentJson, "OK");
+
+            currentTitle.Comments.Add(JsonConvert.DeserializeObject<DB_Comment>(commentJson));
+            CommentsContainer.Content = BannerDetailsFactory.CreateCommentsLayout(currentTitle.Comments);
+        }
+    }
+}
+
+class DB_CommentsSendobject
+{
+    public string Content { get; set; }
+    public DateTime CreationTime { get; set; }
+}
+
+class DB_DuractionSendObject
+{
+    public int WatchPercent { get; set; }
+    public DateTime WatchTime { get; set; }
 }

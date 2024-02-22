@@ -2,6 +2,7 @@
 using VideoDemos.Views.Auth.Registration;
 using VideoDemos.Views.Bookmarks;
 using VideoDemos.Views.Notifications;
+using VideoDemos.Views.Profile;
 using VideoDemos.Views.Profile.Settings;
 using VideoDemos.Views.Profile.Settings.ChangeEmail;
 using VideoDemos.Views.Profile.Settings.ChangePassword;
@@ -14,13 +15,16 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-
+        // MAIN PAGES
         Routing.RegisterRoute(nameof(ListeningPage), typeof(ListeningPage));
         Routing.RegisterRoute(nameof(LoadingPage), typeof(LoadingPage));
         Routing.RegisterRoute(nameof(AuthPage), typeof(AuthPage));
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
+        
+        //VIDEO
         Routing.RegisterRoute(nameof(VideoPlayerPage), typeof(VideoPlayerPage));
+        Routing.RegisterRoute(nameof(BannerDetailsPage), typeof(BannerDetailsPage));
 
         // REGISTER
         Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
@@ -32,6 +36,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SuccessPage), typeof(SuccessPage));
 
         // SETTINGS
+        Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
+        Routing.RegisterRoute(nameof(ProfileEditPage), typeof(ProfileEditPage));
         Routing.RegisterRoute(nameof(AccountSettingsPage), typeof(AccountSettingsPage));
         Routing.RegisterRoute(nameof(ChangeEmailPage), typeof(ChangeEmailPage));
         Routing.RegisterRoute(nameof(ConfirmNewEmailPage), typeof(ConfirmNewEmailPage));

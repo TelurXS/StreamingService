@@ -123,6 +123,10 @@
           <DependentUpon>ChangeEmailPage.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Profile\ProfileEditPage.xaml.cs">
+          <DependentUpon>RegisterSecondPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('net7.0-ios')) != true AND $(TargetFramework.StartsWith('net7.0-maccatalyst')) != true">
@@ -201,6 +205,9 @@
         <MauiXaml Update="Views\Profile\Settings\ChangeEmail\ChangeEmailPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="Views\Profile\ProfileEditPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -212,6 +219,7 @@
       <PackageReference Include="AcrylicView.Maui" Version="2.1.1" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
       <PackageReference Include="Microsoft.Identity.Client" Version="4.58.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     </ItemGroup>

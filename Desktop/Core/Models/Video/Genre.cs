@@ -10,5 +10,10 @@ public class Genre
         _name = name;
         _id = 0;
     }
-    
+
+    public string Name
+    {
+        get => _name;
+        set => _name = value;
+    }
 }

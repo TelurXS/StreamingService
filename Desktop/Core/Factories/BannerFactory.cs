@@ -7,11 +7,14 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Layouts;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
+using VideoDemos.Core.Backend;
 
 namespace Metflix.Core;
 
 public class BannerFactory
 {
+    public static string NavigatedBanner;
+    private static Title _currentTitle;
     private static Banner _currentBanner;
     private static float bannerWidth = 279;
     private static float bannerHeight = 402;
@@ -160,13 +163,14 @@ public class BannerFactory
         return mainLayout;
     }
 
-    public static VerticalStackLayout CreateFavBanner(Banner banner, bool isLast = false, int width = 160,
-        int height = 261, int fontSize = 16)
+    public static VerticalStackLayout CreateBanner(Title banner, bool isLast = false, int width = 279,
+        int height = 402, int fontSize = 22)
     {
-        _currentBanner = banner;
+        _currentTitle = banner;
+        banner.Image.Uri = Config.IMAGE_LINK + banner.Image.Uri;
         VerticalStackLayout mainLayout = new VerticalStackLayout();
         mainLayout.WidthRequest = width;
-        mainLayout.HeightRequest = height +31;
+        mainLayout.HeightRequest = height + 150;
         mainLayout.HorizontalOptions = LayoutOptions.Center;
         mainLayout.VerticalOptions = LayoutOptions.Center;
         mainLayout.Margin = new Thickness(0, 0, 20, 0);
@@ -196,7 +200,7 @@ public class BannerFactory
         mark.Add(new Label()
         {
             Margin = new Thickness(4, 0, 0, 2),
-            Text = banner.Rating.ToString(),
+            Text = banner.AvarageRate.ToString(),
             TextColor = Colors.White,
             FontSize = 14,
             FontAttributes = FontAttributes.Bold
@@ -231,7 +235,149 @@ public class BannerFactory
         };
         year_view.Add(new Label()
         {
-            Text = banner.RealiseYear.ToString(),
+            Text = banner.ReleaseDate.Year.ToString(),
+            TextColor = Colors.White,
+            Padding = new Thickness(4, 0, 0, 2),
+            FontSize = 14,
+            FontAttributes = FontAttributes.Bold
+        });
+        year.Content = year_view;
+        grid.Add(year);
+        grid.Add(new Image()
+        {
+            Margin = new Thickness(0, 20, 20, 0),
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Start,
+            Source = "info.png",
+            WidthRequest = 22,
+            HeightRequest = 22,
+            ZIndex = 999
+        });
+        Button eventTrigger = new Button();
+        eventTrigger.Background = Brush.Transparent;
+        eventTrigger.BorderWidth = 0;
+        eventTrigger.Text = banner.Slug;
+        eventTrigger.TextColor = new Color(0, 0, 0, 0);
+        eventTrigger.WidthRequest = grid.WidthRequest;
+        eventTrigger.HeightRequest = grid.HeightRequest;
+        eventTrigger.Clicked += WatchClicked;
+        Image bannerImage = new Image
+        {
+            Source = banner.Image.Uri,
+            Aspect = Aspect.AspectFill,
+            WidthRequest = width,
+            HeightRequest = height,
+            Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, width, height)),
+        };
+
+
+        grid.Children.Add(bannerImage);
+
+        grid.Children.Add(eventTrigger);
+        if (isLast)
+        {
+            ImageButton nextButton = new ImageButton()
+            {
+                Source = "next_banners_page_button.png",
+                WidthRequest = 100,
+                HeightRequest = 100,
+                CornerRadius = 50,
+                Background = new SolidColorBrush(new Color(0, 0, 0, 90)),
+                HorizontalOptions = LayoutOptions.End,
+                Margin = new Thickness(0, 0, 112, 0),
+                VerticalOptions = LayoutOptions.Center,
+                Padding = 25
+            };
+            nextButton.Clicked += RollNextPageOfBanners;
+            grid.Children.Add(nextButton);
+        }
+
+        mainLayout.Children.Add(grid);
+        mainLayout.Children.Add(new Label
+        {
+            Text = banner.Name,
+            FontAttributes = FontAttributes.Bold,
+            FontSize = fontSize,
+            VerticalOptions = LayoutOptions.End,
+            Margin = new Thickness(10),
+            HorizontalOptions = LayoutOptions.Center
+        });
+
+
+        return mainLayout;
+    }
+
+    public static VerticalStackLayout CreateFavBanner(Title banner, bool isLast = false, int width = 160,
+        int height = 261, int fontSize = 16)
+    {
+        VerticalStackLayout mainLayout = new VerticalStackLayout();
+        mainLayout.WidthRequest = width;
+        mainLayout.HeightRequest = height + 31;
+        mainLayout.HorizontalOptions = LayoutOptions.Center;
+        mainLayout.VerticalOptions = LayoutOptions.Center;
+        mainLayout.Margin = new Thickness(0, 0, 20, 0);
+        Grid grid = new Grid();
+
+        grid.WidthRequest = width;
+        grid.HeightRequest = height;
+        grid.Margin = 15;
+
+        AcrylicView rating = new AcrylicView()
+        {
+            WidthRequest = 50,
+            HeightRequest = 22,
+            CornerRadius = 5,
+            EffectStyle = EffectStyle.Dark,
+            Margin = new Thickness(20, 20, 0, 0),
+            ZIndex = 999,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
+            Padding = 0
+        };
+        HorizontalStackLayout mark = new HorizontalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
+        mark.Add(new Label()
+        {
+            Margin = new Thickness(4, 0, 0, 2),
+            Text = banner.AvarageRate.ToString(),
+            TextColor = Colors.White,
+            FontSize = 14,
+            FontAttributes = FontAttributes.Bold
+        });
+        mark.Add(new Image()
+        {
+            Source = "star.png",
+            WidthRequest = 15,
+            HeightRequest = 15,
+            Margin = new Thickness(5, 0, 0, 0),
+            ZIndex = 999
+        });
+        rating.Content = mark;
+
+        grid.Add(rating);
+
+        AcrylicView year = new AcrylicView()
+        {
+            WidthRequest = 43,
+            HeightRequest = 22,
+            CornerRadius = 5,
+            EffectStyle = EffectStyle.Dark,
+            Margin = new Thickness(80, 20, 0, 0),
+            ZIndex = 999,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
+        };
+        HorizontalStackLayout year_view = new HorizontalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+        };
+        year_view.Add(new Label()
+        {
+            Text = banner.ReleaseDate.ToString(),
             TextColor = Colors.White,
             Padding = new Thickness(4, 0, 0, 2),
             FontSize = 14,
@@ -244,7 +390,7 @@ public class BannerFactory
 
         eventTrigger.Background = Brush.Transparent;
         eventTrigger.BorderWidth = 0;
-        eventTrigger.Text = banner.VideoLink;
+        eventTrigger.Text = banner.AvarageRate.ToString();
         eventTrigger.TextColor = new Color(0, 0, 0, 0);
         eventTrigger.WidthRequest = grid.WidthRequest;
         eventTrigger.HeightRequest = grid.HeightRequest;
@@ -252,7 +398,7 @@ public class BannerFactory
 
         Image bannerImage = new Image
         {
-            Source = banner.Image,
+            Source = Config.IMAGE_LINK + banner.Image.Uri,
             Aspect = Aspect.AspectFill,
             WidthRequest = width,
             HeightRequest = height,
@@ -335,12 +481,14 @@ public class BannerFactory
     private static async void WatchClicked(object sender, EventArgs e)
     {
         Button button = (Button)sender;
-        VideoSource vs = VideoSource.FromUri(button.Text);
-        Dictionary<string, object> sendParams = new Dictionary<string, object>();
-        await Shell.Current.GoToAsync($"///BannerDetails", true, sendParams);
+        string videoId = button.Text;
+        NavigatedBanner = videoId;
+
+
+        await Shell.Current.GoToAsync($"/{nameof(BannerDetailsPage)}");
     }
 
-    public static VerticalStackLayout CreateBannerCollection(string name, List<Banner> banners)
+    public static VerticalStackLayout CreateBannerCollection(string name, List<Title> banners)
     {
         VerticalStackLayout mainLayout = new VerticalStackLayout();
 
@@ -395,7 +543,7 @@ public class BannerFactory
         }, 0, 0);
 
         int bunnerCount = 0;
-        foreach (Banner banner in banners)
+        foreach (Title banner in banners)
         {
             var viewbanner = CreateBanner(banner, bunnerCount == BANNER_ON_PAGE_AMMOUNT - 1);
 
@@ -416,7 +564,7 @@ public class BannerFactory
         return mainLayout;
     }
 
-    public static VerticalStackLayout CreateFavBannerCollection(string collectionName, List<Banner> banners)
+    public static VerticalStackLayout CreateFavBannerCollection(string collectionName, List<Title> banners)
     {
         VerticalStackLayout rootLayout = new VerticalStackLayout()
         {
@@ -444,7 +592,6 @@ public class BannerFactory
             AlignContent = FlexAlignContent.Start,
             Wrap = FlexWrap.Wrap,
             WidthRequest = 772,
-
         };
 
         flexLayout.Background = new LinearGradientBrush(new GradientStopCollection()
@@ -454,7 +601,7 @@ public class BannerFactory
             new GradientStop(Color.FromArgb("032F99"), 1.5f),
         }, new Point(1, 1), new Point(0, 0));
 
-        foreach (Banner banner in banners)
+        foreach (Title banner in banners)
         {
             var viewbanner = CreateFavBanner(banner, false, 160, 230);
             viewbanner.Margin = new Thickness(10, 0, 0, 20);

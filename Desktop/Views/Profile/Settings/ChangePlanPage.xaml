@@ -31,7 +31,7 @@
                                 Margin="0,0,20,0">
                         </Button>
                         <Button Text="Назад" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
-                                FontAttributes="Bold" BackgroundColor="#042678">
+                                FontAttributes="Bold" BackgroundColor="#042678" Clicked="BackButtonClicked">
                         </Button>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>

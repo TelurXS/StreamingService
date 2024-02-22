@@ -113,8 +113,8 @@
                         </Grid>
                     </Border>
 
-                    <Button Text="Назады" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
-                            FontAttributes="Bold" BackgroundColor="#042678">
+                    <Button Text="Назад" WidthRequest="297" HeightRequest="50" CornerRadius="20" FontSize="18"
+                            FontAttributes="Bold" BackgroundColor="#042678" Clicked="BackButtonClicked">
                     </Button>
                 </VerticalStackLayout>
             </Grid>

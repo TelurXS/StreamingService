@@ -17,4 +17,9 @@ public partial class ConfirmNewEmailPage : ContentPage
     {
         await Shell.Current.GoToAsync($"/{nameof(AccountSettingsPage)}");
     }
+
+    private async void CancelClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync($"/{nameof(AccountSettingsPage)}");
+    }
 }

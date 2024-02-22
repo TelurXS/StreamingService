@@ -21,4 +21,8 @@ public partial class ChangePasswordPage : ContentPage
     {
         await Shell.Current.GoToAsync($"/{nameof(ForgotPasswordPersonConfirm)}");
     }
+    private async void CancelClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync($"/{nameof(AccountSettingsPage)}");
+    }
 }

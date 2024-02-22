@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core.Models;
+using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
+using VideoDemos.Core.Backend;
 
 namespace VideoDemos.Views.Auth.Registration;
 
@@ -60,6 +62,15 @@ public partial class GenreChoosePage : ContentPage
     {
         if (RegisterService.AccountModel.Genres.Count > 3)
         {
+            List<string> dbQ = new List<string>();
+            GenreArray genreArray = new GenreArray();
+            foreach (var data in RegisterService.AccountModel.Genres)
+            {
+                dbQ.Add(data.Name);
+            }
+            genreArray.Genres = dbQ;
+            APIExecutor.ExecutePost(Config.API_LINK + "/manage/genres", JsonConvert.SerializeObject(genreArray));
+            
             await Shell.Current.GoToAsync($"/{nameof(ChoosePlanPage)}");
         }
     }
@@ -100,4 +111,9 @@ public partial class GenreChoosePage : ContentPage
             _isFirst = !_isFirst;
         }
     }
+}
+
+class GenreArray
+{
+    [JsonProperty("genres")] public List<string> Genres { get; set; }
 }

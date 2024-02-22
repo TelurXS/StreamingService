@@ -12,6 +12,7 @@ public partial class SuccessPage : ContentPage
     public SuccessPage()
     {
         InitializeComponent();
+        TestLabel.Text = RegisterService.AccountModel.Result;
     }
 
 

@@ -17,4 +17,8 @@ public partial class ForgotPasswordPersonConfirm : ContentPage
     {
         await Shell.Current.GoToAsync($"/{nameof(ResetPasswordPage)}");
     }
+    private async void CancelClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync($"/{nameof(AccountSettingsPage)}");
+    }
 }
