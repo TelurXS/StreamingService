@@ -6,6 +6,14 @@ public static class WebRoutes
 {
 	public const string Home = "/";
 
+	public const string NewAndPopular = "/new-and-popular";
+
+	public const string Series = "/series";
+
+	public const string Films = "/films";
+
+	public const string WatchViaLanguages = "/languages";
+
 	public const string NotAuthorized = "/not-authorized";
 
 	public const string Payment = "/payment";
@@ -20,11 +28,17 @@ public static class WebRoutes
 
 	public const string RegistrationSuccess = "/registration-success";
 
+	public const string ResetCodeSent = "/reset-code-sent";
+
 	public const string Login = "/login";
 
 	public const string Logout = "/logout";
 
 	public const string ConfirmEmail = "/confirm-email";
+
+	public const string ForgotPassword = "/forgot-password";
+
+	public const string ResetPassword = "/reset-password";
 
 	public static class Manage
 	{
@@ -58,6 +72,13 @@ public static class WebRoutes
 
 			public const string Favourites = Base + "/favourites";
 		}
+	}
+
+	public static class Settings
+	{
+		public const string Base = "/settings";
+
+		public const string ChangePassword = Base + "/change-password";
 	}
 
 	public static class Users
@@ -95,5 +116,18 @@ public static class WebRoutes
 		public const string Series = Base + "/series";
 
 		public const string Users = Base + "/users";
+	}
+
+	public static class Info
+	{
+		public const string Base = "";
+
+		public const string HelpCenter = Base + "/help-center";
+
+		public const string Faq = Base + "/faq";
+
+		public const string LegalNotices = Base + "/legal-notices";
+
+		public const string PrivacyPolicy = Base + "/privacy-policy";
 	}
 }

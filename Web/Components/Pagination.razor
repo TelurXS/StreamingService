@@ -1,0 +1,106 @@
+﻿
+@inject NavigationManager NavigationManager
+
+<nav data-bs-theme="dark">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToPreviousAsync()">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        @foreach (var i in Enumerable.Range(0, TotalPages + 1))
+        {
+            if (i == Page)
+            {
+                <li class="page-item active">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i + 1)
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i + 1)
+                    </a>
+                </li>
+            }
+        }
+
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToNextAsync()">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public int? Page { get; set; } = 0;
+
+    [SupplyParameterFromQuery]
+    public int? Count { get; set; } = 10;
+
+    [Parameter]
+    public string Url { get; set; } = string.Empty;
+
+    [Parameter]
+    public Func<int, int, Task> Refresh { get; set; } = default!;
+
+    [Parameter]
+    public int TotalCount { get; set; } = 0;
+
+    [Parameter]
+    public int TotalPages { get; set; } = 0;
+
+    [Parameter]
+    public int DefaultCount { get; set; } = 10;
+
+    [Parameter]
+    public int DefaultPage { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Count ??= DefaultCount;
+        Page ??= DefaultPage;
+
+        await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+    }
+
+    private async Task NavigateToNextAsync()
+    {
+        if (Page >= TotalPages)
+            return;
+
+        Page += 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}");
+
+        await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+    }
+
+    private async Task NavigateToPageAsync(int page)
+    {
+        Page = page;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}");
+
+        await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+    }
+
+    private async Task NavigateToPreviousAsync()
+    {
+        if (Page <= 0)
+            return;
+
+        Page -= 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}");
+
+        await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+    }
+}

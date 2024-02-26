@@ -1,6 +1,7 @@
 html, body {
     font-family: 'Inter', sans-serif;
     background-color: var(--dark);
+    overflow-x: hidden;
 
 }
 
@@ -238,6 +239,14 @@ input::placeholder {
     align-items: center;
 }
 
+.sm-page-container {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .page {
     position: relative;
     display: flex;
@@ -322,12 +331,21 @@ main {
     padding: 10px;
 }
 
-@media(min-height: 1080px) {
-    .page-container {
-        min-height: 1080px;
+.responsive-margin-top {
+    margin-top: 200px;
+}
+
+@media (max-width: 1200px) {
+    .responsive-margin-top {
+        margin-top: 150px;
     }
 }
 
+@media (max-width: 992px) {
+    .responsive-margin-top {
+        margin-top: 120px;
+    }
+}
 
 @media (max-width: 768px) {
     .circle-profile-picture {
@@ -339,7 +357,12 @@ main {
         width: 100%;
         margin: 50px;
     }
+
+    .responsive-margin-top {
+        margin-top: 80px;
+    }
 }
+
 @media (max-width: 400px) {
     .card-form {
         width: 100%;
@@ -348,5 +371,18 @@ main {
     .dashboard-form {
         width: 100%;
         margin: 0px;
+    }
+}
+
+
+@media (max-width: 576px) {
+    .responsive-margin-top {
+        margin-top: 30px;
+    }
+}
+
+@media(min-height: 1080px) {
+    .page-container {
+        min-height: 1080px;
     }
 }

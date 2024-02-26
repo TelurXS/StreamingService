@@ -1,0 +1,167 @@
+﻿@attribute [Route(WebRoutes.Films)]
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Results.Unions
+
+@inject ITitleService TitleService
+@inject IGenreService GenreService
+
+<PageTitle>Films</PageTitle>
+<Background Blur="0" Url="@Title.Image?.Uri" />
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+}
+
+<div class="d-flex justify-content-between">
+	<div class="d-flex">
+		<h3>Films</h3>
+		<button @onclick="() => GenresWindow.Open()" class="button-glass button-fit px-2 py-1 mx-3 dropdown-toggle">Genres</button>
+	</div>
+	<div>
+		<InputSelect ValueExpression="@(() => Sorting)"
+					 Value="@Sorting"
+					 ValueChanged="@((TitleSorting value) => OnSortingChanged(value))"
+					 class="input-glass">
+			@foreach (TitleSorting sorting in Enum.GetValues(typeof(TitleSorting)))
+			{
+				<option value="@sorting">@sorting.GetDescription()</option>
+			}
+		</InputSelect>
+	</div>
+</div>
+
+<GenresSelectWindow @ref="GenresWindow" OnClosed="OnGenresWindowClosed" />
+
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<div class="responsive-margin-top"></div>
+
+<span class="font-md font-gray">@Title.Type</span>
+<h1>@Title.Name</h1>
+
+<div class="d-flex flex-wrap mt-3">
+	<div class="font-gray col-md-6 overflow-hidden">@Title.Description</div>
+	<div class="d-none d-md-block col-md-6"></div>
+</div>
+
+<div class="mt-4 row">
+	<div class="col-sm-5 col-md-4 col-lg-3">
+		<a href="@WebRoutes.Titles.Base/@Title.Slug#player" class="button font-lg font-white">
+			Watch <i class="mx-2 bi bi-play-fill"></i>
+		</a>
+	</div>
+	<div class="col-sm-5 col-md-4 col-lg-3 mt-3 mt-sm-0">
+		<a href="@WebRoutes.Titles.Base/@Title.Slug" class="button-dark font-lg font-white">
+			Info <i class="mx-2 bi bi-info-circle-fill"></i>
+		</a>
+	</div>
+</div>
+
+<div style="height: 60px"></div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+	@foreach (var title in Recomendations)
+	{
+		<div class="col d-flex justify-content-center mt-3">
+			<TitleCard Title="title" />
+		</div>
+	}
+</div>
+
+<div class="mt-3">
+	<Pagination Url="@WebRoutes.Films"
+				Refresh="Refresh"
+				TotalCount="TotalCount"
+				TotalPages="TotalPages"
+				DefaultCount="40" />
+</div>
+
+<div class="m-5"></div>
+
+@code {
+	public Title Title { get; set; } = new()
+		{
+			Id = Guid.NewGuid(),
+			Trailer = string.Empty,
+			Name = string.Empty,
+			Description = string.Empty,
+			Slug = string.Empty,
+			ReleaseDate = DateTime.Now,
+			Director = string.Empty,
+			Type = TitleType.Film,
+			Country = Country.KR,
+			Cast = string.Empty,
+			Views = 1000,
+			AvarageRate = 9.9f,
+			AgeRestriction = AgeRestriction.AdultsOnly,
+			Image = new Image { Uri = "" },
+
+		};
+
+	public List<Title> Recomendations { get; set; } = [];
+
+	public TitleSorting Sorting { get; set; } = default;
+
+	public List<string> Genres { get; set; } = [];
+
+	public int TotalCount { get; set; } = 0;
+
+	public int TotalPages { get; set; } = 0;
+
+	private bool Loaded { get; set; } = false;
+	private bool NotFound { get; set; } = false;
+
+	private GenresSelectWindow GenresWindow { get; set; } = default!;
+
+	private async Task Refresh(int page, int count)
+	{
+		Loaded = false;
+		NotFound = false;
+
+		var recomendationsResult = await TitleService.FilterAllAsync(Genres, TitleType.Film, sorting: Sorting, count: count, page: page);
+
+		if (recomendationsResult.IsFound)
+		{
+			Recomendations = recomendationsResult.AsFound;
+
+			if (Recomendations.Any())
+				Title = Recomendations.First();
+
+			else NotFound = true;
+		}
+		else NotFound = true;
+
+
+		TotalCount = await TitleService.CountByFilter(Genres, TitleType.Film);
+
+		TotalPages = TotalCount / (count);
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private async Task OnGenresWindowClosed()
+	{
+		Genres = GenresWindow.Selected;
+		await Refresh(0, 100);
+		StateHasChanged();
+	}
+
+	private async Task OnSortingChanged(TitleSorting value)
+	{
+		Sorting = value;
+		await Refresh(0, 100);
+	}
+}

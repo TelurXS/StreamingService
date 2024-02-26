@@ -1,23 +1,32 @@
-﻿namespace API.Services;
+﻿using Domain.Models;
+
+namespace API.Services;
 
 public sealed class ClientRoutesService
 {
-	private const string SECTION_NAME = "ClientRoutes";
+	private const string URL_NAME = "Client:Url";
 
-	public ClientRoutesService(IConfiguration configuration)
+	public ClientRoutesService(
+		IConfiguration configuration,
+		IWebHostEnvironment enviroment)
     {
-		var section = configuration.GetSection(SECTION_NAME);
+		Enviroment = enviroment;
 
-		Host = section.GetValue<string>(nameof(Host))!;
-		ConfirmEmail = section.GetValue<string>(nameof(ConfirmEmail))!;
+		Host = configuration.GetValue<string>(URL_NAME)!;
 	}
 
-    private string Host { get; }
-    private string ConfirmEmail { get; }
+	private string Host { get; }
+
+	public IWebHostEnvironment Enviroment { get; }
 
 	public string ToConfirmEmailLink(string hostConfirmationLink)
 	{
 		var query = new UriBuilder(hostConfirmationLink).Query;
-		return $"{Host}{ConfirmEmail}{query}";
+		return $"{Host}{WebRoutes.ConfirmEmail}{query}";
+	}
+
+	public string ToResetPasswordLink(string code, string email)
+	{
+		return $"{Host}{WebRoutes.ResetPassword}?code={code}&email={email}";
 	}
 }

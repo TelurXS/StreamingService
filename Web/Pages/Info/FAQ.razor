@@ -1,0 +1,73 @@
+﻿@attribute [Route(WebRoutes.Info.Faq)]
+@layout InfoLayout
+
+@inject ILocalFilesService LocalFilesService
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<Glow Size="200" Top="-200px" Blur="100" Left="calc(50% - 100px)" ShadowColor="var(--primary)" />
+<Glow Size="80" Top="800px" Blur="100" Left="0" ShadowColor="var(--primary)" />
+
+<div class="position-relative" style="z-index: 30">
+	<a href="@WebRoutes.Info.HelpCenter" class="font-white"><i class="bi bi-chevron-left"></i> Back to Help Center</a>
+
+	<h1 class="mt-5 mb-5">Frequently Asked Questions</h1>
+</div>
+
+<div class="sm-page-container justify-content-start align-items-start">
+	<ol>
+		@foreach (var question in Questions)
+		{
+			<li class="font-white back-dark mt-2 font-lg">
+				<a class="d-flex justify-content-start" data-bs-toggle="collapse" href="#@question.Id">
+					<span class="font-lg">@question.Question</span>
+					<i class="bi bi-chevron-down mx-2"></i>
+				</a>
+				<div class="collapse mt-3" id="@question.Id">
+					<span class="font-md">@((MarkupString)question.Answer)</span>
+				</div>
+			</li>
+		}
+	</ol>
+</div>
+
+@code {
+	private List<QuestionResponse> Questions { get; set; } = new();
+
+	private bool Loaded { get; set; } = false;
+
+	private const string PATH = "/files/faq.json";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await LocalFilesService.ReadFromJsonAsync<List<QuestionResponse>>(PATH);
+
+		if (result.IsFound)
+		{
+			Questions = result.AsFound;
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private sealed class QuestionResponse
+	{
+		public string Id { get; set; } = string.Empty;
+
+		public string Question { get; set; } = string.Empty;
+
+		public string LocalizableQuestion { get; set; } = string.Empty;
+
+		public string Answer { get; set; } = string.Empty;
+
+		public string LocalizableAnswer { get; set; } = string.Empty;
+	}
+}

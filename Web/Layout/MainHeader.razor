@@ -14,22 +14,19 @@
         <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
             <ul class="navbar-nav m-auto">
                 <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">Home</a>
+                    <a href="@WebRoutes.Home" class="nav-link font-white font-sm">Home</a>
                 </li>
                 <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">Series</a>
+                    <a href="@WebRoutes.Series" class="nav-link font-white font-sm">Series</a>
                 </li>   
                 <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">Films</a>
+                    <a href="@WebRoutes.Films" class="nav-link font-white font-sm">Films</a>
                 </li>
                 <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">New & Popular</a>
+                    <a href="@WebRoutes.NewAndPopular" class="nav-link font-white font-sm">New & Popular</a>
                 </li>
                 <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">My List</a>
-                </li>
-                <li class="nav-item mx-3">
-                    <a href="/" class="nav-link font-white font-sm">Watch via languages</a>
+                    <a href="@WebRoutes.WatchViaLanguages" class="nav-link font-white font-sm">Watch via languages</a>
                 </li>
             </ul>
             <form class="d-flex" role="search">
@@ -48,7 +45,7 @@
                             <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="mx-2">@(User?.Name)</span>
                                 <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage) 
-                                    ? "/img/blank-poster.png" 
+                                    ?  "/img/defaults/blank-profile-picture.webp"
                                     : User.ProfileImage)" />
                             </a>
                             <ul class="dropdown-menu dropdown-menu-lg-end back-dark">
@@ -61,7 +58,7 @@
                     </ul>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login?returnUrl=@(NavigationManager.GetCurrentRoute())" class="button font-white font-sm" style="width: 100px">Login</a>
+                    <a href="@WebRoutes.Login?returnUrl=@(NavigationManager.GetCurrentRoute())" class="button font-white font-sm" style="width: 100px">Login</a>
                 </NotAuthorized>
             </AuthorizeView>
      

@@ -10,7 +10,19 @@
 
 @if (Loaded is false)
 {
-	<div>Loading...</div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
 	return;
 }
 
@@ -183,6 +195,8 @@
 
 	private bool Loaded { get; set; } = false;
 
+	private bool NotFound { get; set; } = false;
+
 	private bool IsFollowing { get; set; } = false;
 
 	private ReadersModalWindow ReadersWindow { get; set; } = default!;
@@ -198,68 +212,73 @@
 
 		UserId = userId;
 
-		var userResult = await UserService.GetProfileAsync(UserId);
+		var userTask = UserService.GetProfileAsync(UserId);
+		var genresTask = UserService.GetFavouriteGenresAsync(UserId);
+		var favouriteTitlesTask = UserService.GetFavouriteTitlesAsync(UserId);
+		var viewRecordsTask = UserService.GetViewRecordsAsync(UserId);
+		var titlesListsTask = UserService.GetTitlesListsAsync(UserId);
+		var followersTask = UserService.GetFollowersAsync(UserId);
+		var readersTask = UserService.GetReadersAsync(UserId);
+		var identityFollowersTask = IdentityService.GetReadersAsync();
 
-		if (userResult.IsFound)
+		await Task.WhenAll(
+			userTask,
+			genresTask,
+			favouriteTitlesTask,
+			viewRecordsTask,
+			titlesListsTask,
+			followersTask,
+			readersTask,
+			identityFollowersTask);
+
+		if (userTask.Result.IsFound)
 		{
-			User = userResult.AsFound;
+			User = userTask.Result.AsFound;
+		}
+		else
+		{
+			Loaded = true;
+			NotFound = true;
+			StateHasChanged();
 		}
 
-		var genresResult = await UserService.GetFavouriteGenresAsync(UserId);
-
-		if (genresResult.IsFound)
+		if (genresTask.Result.IsFound)
 		{
-			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+			Genres = genresTask.Result.AsFound.Select(x => x.Name).ToList();
 		}
 
-		var favouriteTitlesResult = await UserService.GetFavouriteTitlesAsync(UserId);
-
-		if (favouriteTitlesResult.IsFound)
+		if (favouriteTitlesTask.Result.IsFound)
 		{
-			FavouriteTitles = favouriteTitlesResult.AsFound;
+			FavouriteTitles = favouriteTitlesTask.Result.AsFound;
 		}
 
-		var viewRecordsResult = await UserService.GetViewRecordsAsync(UserId);
-
-		if (viewRecordsResult.IsFound)
+		if (viewRecordsTask.Result.IsFound)
 		{
-			LastWatched = viewRecordsResult.AsFound.OrderBy(x => x.Time).LastOrDefault();
-			ViewRecords = viewRecordsResult.AsFound.DistinctBy(x => x.Title.Id).ToList();
+			var viewRecords = viewRecordsTask.Result.AsFound;
+
+			LastWatched = viewRecords.OrderBy(x => x.Time).LastOrDefault();
+			ViewRecords = viewRecords.DistinctBy(x => x.Title.Id).ToList();
 		}
 
-		var titlesListsResult = await UserService.GetTitlesListsAsync(UserId);
-
-		if (titlesListsResult.IsFound)
+		if (titlesListsTask.Result.IsFound)
 		{
-			Lists = titlesListsResult.AsFound;
+			Lists = titlesListsTask.Result.AsFound;
 		}
 
-		var followersResult = await UserService.GetFollowersAsync(UserId);
-
-		if (followersResult.IsFound)
+		if (followersTask.Result.IsFound)
 		{
-			Followers = followersResult.AsFound;
+			Followers = followersTask.Result.AsFound;
 		}
 
-		var readersResult = await UserService.GetReadersAsync(UserId);
-
-		if (readersResult.IsFound)
+		if (readersTask.Result.IsFound)
 		{
-			Readers = readersResult.AsFound;
+			Readers = readersTask.Result.AsFound;
 		}
 
-		var identityProfileResult = await IdentityService.GetProfileAsync();
-
-		if (identityProfileResult.IsFound)
+		if (identityFollowersTask.Result.IsFound)
 		{
-			var user = identityProfileResult.AsFound;
-
-			var identityFollowersResult = await IdentityService.GetReadersAsync();
-
-			if (identityFollowersResult.IsFound)
-			{
-				IsFollowing = identityFollowersResult.AsFound.Any(x => x.Id == User.Id);
-			}
+			var identityReaders = identityFollowersTask.Result.AsFound;
+			IsFollowing = identityReaders.Any(x => x.Id == User?.Id);
 		}
 
 		Loaded = true;

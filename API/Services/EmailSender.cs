@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
+using Domain.Models;
 
 namespace API.Services;
 
@@ -10,7 +11,9 @@ public sealed class EmailSender : IEmailSender<User>
 {
 	private const string SECTION_NAME = "Smtp";
 
-    public EmailSender(IConfiguration configuration, ClientRoutesService routesService)
+    public EmailSender(
+		IConfiguration configuration,
+		ClientRoutesService routesService)
     {
 		RoutesService = routesService;
 
@@ -45,10 +48,14 @@ public sealed class EmailSender : IEmailSender<User>
 	public async Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
 	{
 		var subject = "Reset Code";
+		var link = RoutesService.ToResetPasswordLink(resetCode, email);
 		var body =
 			$"""
 				<h1>Hello {user.UserName}</h1>
-				<span>Your code: {resetCode}</span>
+				<span>
+					Your password reset link:
+					<a href="{link}">Reset Password</a>
+				</span>
 			""";
 
 		await SendMailAsync(email, subject, body);

@@ -14,8 +14,19 @@
 
 @if (Loaded is false)
 {
-	<div>Loading...</div>
-	<div class="my-5"></div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
 	return;
 }
 
@@ -225,6 +236,8 @@
 
 	private bool Loaded { get; set; } = false;
 
+	private bool NotFound { get; set; } = false;
+
 	private bool InFavourite { get; set; } = false;
 
 	private string Message { get; set; } = string.Empty;
@@ -235,10 +248,18 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var favouritesTask = IdentityService.GetFavouriteTitlesAsync();
+		var rateTask = RateService.GetRateByTitleAsync(Title);
+
 		var result = await TitleService.FindBySlugAsync(Slug);
 
 		if (result.IsFound is false)
+		{
+			Loaded = true;
+			NotFound = true;
+			StateHasChanged();
 			return;
+		}
 
 		Title = result.AsFound;
 		Loaded = true;

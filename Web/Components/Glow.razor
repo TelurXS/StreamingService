@@ -1,0 +1,34 @@
+﻿
+<div class="glow d-none d-lg-block" 
+	style="width: @(Size)px; 
+	background-color: @(Color);
+	box-shadow: 0 0 10px @(Size)px @(ShadowColor);
+	filter: blur(@(Blur)px);
+	top: @(Top);
+	left: @(Left);
+    z-index: @(ZIndex) !important;
+	"></div>
+
+@code {
+
+	[Parameter]
+	public int Size { get; set; } = 50;
+
+	[Parameter]
+	public int Blur { get; set; } = 25;
+
+	[Parameter]
+	public string Top { get; set; } = "0";
+
+	[Parameter]
+	public string Left { get; set; } = "0";
+
+	[Parameter]
+	public string Color { get; set; } = "var(--primary)";
+
+	[Parameter]
+	public int ZIndex { get; set; } = 20;
+
+	[Parameter]
+	public string ShadowColor { get; set; } = "var(--primary-transparent)";
+}

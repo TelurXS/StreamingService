@@ -35,6 +35,10 @@
     color: var(--white) !important;
 }
 
+.font-primary {
+    color: var(--primary) !important;
+}
+
 .font-xs {
     font-size: 12px;
 }
@@ -104,7 +108,7 @@ h4 {
     font-weight: 400;
 }
 
-.button, .button-glass {
+.button, .button-glass, .button-dark {
     min-height: 40px;
     width: 100%;
     text-decoration: none;
@@ -145,18 +149,48 @@ h4 {
     backdrop-filter: blur(10px);
 }
 
+.button-dark {
+    border: none;
+    background: var(--dark);
+}
+
+.button-dark:hover {
+    background: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(5px);
+}
+
 .input {
     width: 100%;
     height: fit-content;
     border-radius: 20px;
     padding: 5px 10px;
-
     background-color: var(--dark);
     color: var(--white);
     border: 1px solid var(--primary);
 }
 
-select.input {
+.input-glass {
+    width: 100%;
+    height: fit-content;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: var(--dark);
+    color: var(--white);
+    border: 1px solid var(--stroke);
+}
+
+.input-underline {
+    width: 100%;
+    height: fit-content;
+    padding: 5px 10px;
+    background-color: transparent;
+    color: var(--white);
+    border: none;
+    border-bottom: 1px solid var(--gray);
+}
+
+
+select.input, select.input-glass {
     padding: 5px 20px 5px 10px;
 }
 
@@ -247,19 +281,19 @@ a {
     }
 
     .font-xs {
-        font-size: 10px;
-    }
-
-    .font-sm {
         font-size: 12px;
     }
 
-    .font-md {
+    .font-sm {
         font-size: 14px;
     }
 
+    .font-md {
+        font-size: 15px;
+    }
+
     .font-lg {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .font-xl {
@@ -308,22 +342,22 @@ a {
     }
 
     .font-xs {
-        font-size: 8px;
-    }
-
-    .font-sm {
-        font-size: 10px;
-    }
-
-    .font-md {
         font-size: 12px;
     }
 
-    .font-lg {
+    .font-sm {
         font-size: 14px;
     }
 
-    .font-xl {
+    .font-md {
+        font-size: 15px;
+    }
+
+    .font-lg {
         font-size: 16px;
+    }
+
+    .font-xl {
+        font-size: 17px;
     }
 }

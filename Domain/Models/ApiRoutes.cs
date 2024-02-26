@@ -2,21 +2,25 @@
 
 public static class ApiRoutes
 {
-    public const string Base = "/api";
+	public const string Base = "/api";
 
-    public const string Register = Base + "/register";
+	public const string Register = Base + "/register";
 
-    public const string Login = Base + "/login";
+	public const string Login = Base + "/login";
 
-    public const string Logout = Base + "/logout";
+	public const string Logout = Base + "/logout";
 
-    public const string Refresh = Base + "/refresh";
+	public const string Refresh = Base + "/refresh";
 
-    public const string User = Base + "/user";
+	public const string User = Base + "/user";
 
-    public const string ConfirmEmail = Base + "/confirmEmail";
+	public const string ConfirmEmail = Base + "/confirmEmail";
 
-    public const string ResendConfirmationEmail = Base + "/confirmEmail";
+	public const string ResendConfirmationEmail = Base + "/confirmEmail";
+
+	public const string ForgotPassword = Base + "/forgotPassword";
+
+	public const string ResetPassword = Base + "/resetPassword";
 
 	public static class Manage
 	{
@@ -51,7 +55,7 @@ public static class ApiRoutes
 
 		public const string ApplyTrial = Base + "/apply-trial";
 
-		public static class FavouriteTitles 
+		public static class FavouriteTitles
 		{
 			public const string GroupName = "/favourites";
 
@@ -86,15 +90,17 @@ public static class ApiRoutes
 		public const string TitlesLists = Base + GroupNameWithId + "/lists";
 	}
 
-    public static class Titles
-    {
+	public static class Titles
+	{
 		public const string GroupName = "/titles";
-		
-        public const string Route = Base + GroupName;
+
+		public const string Route = Base + GroupName;
 
 		public const string All = Base + GroupName;
 
 		public const string AllPopular = All + "/popular";
+
+		public const string AllByType = All + "/by-type";
 
 		public const string AllByName = All + "/by-name";
 
@@ -102,7 +108,11 @@ public static class ApiRoutes
 
 		public const string AllByGenres = All + "/by-genres";
 
+		public const string AllByFilter = All + "/filter";
+
 		public const string CountAll = All + "/count";
+
+		public const string CountByType = AllByType + "/count";
 
 		public const string CountByName = AllByName + "/count";
 
@@ -110,11 +120,22 @@ public static class ApiRoutes
 
 		public const string CountByGenres = AllByGenres + "/count";
 
+		public const string CountByFilter = AllByFilter + "/count";
+
 		public const string ById = Base + GroupName + "/{id:guid}";
 
-        public const string ByIdImage = ById + "/image";
+		public const string ImageById = ById + "/image";
 
-        public const string BySlug = Base + GroupName + "/{slug}";
+		public const string BySlug = Base + GroupName + "/{slug}";
+	}
+
+	public static class Genres
+	{
+		public const string GroupName = "/genres";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Base + GroupName;
 	}
 
 	public static class TitlesLists

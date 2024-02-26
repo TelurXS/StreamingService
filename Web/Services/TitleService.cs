@@ -77,6 +77,24 @@ public sealed class TitleService : ITitleService
 		}
 	}
 
+	public async Task<GetAllResult<Title>> FindAllByTypeAsync(TitleType type, int count = 10, int page = 0)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.AllByType + $"?type={(int)type}&count={count}&page={page}");
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<Title>>();
+
+			return new NotFound();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
 	public async Task<GetAllResult<Title>> FindAllByNameAsync(string name, int count = 10, int page = 0)
 	{
 		try
@@ -126,6 +144,38 @@ public sealed class TitleService : ITitleService
 				return await response.Content.ReadFromJsonAsync<List<Title>>();
 
 			return new NotFound();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<GetAllResult<Title>> FilterAllAsync(List<string> genres, TitleType? type = null, string? name = null, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0)
+	{
+		try
+		{
+			var query = $"?count={count}&page={page}&";
+
+			if (genres.Any())
+				query += string.Concat(genres.Select(x => "genres=" + x + "&"));
+
+			if (type is not null)
+				query += $"type={(int?)type}&";
+
+			if (name is not null)
+				query += $"name={name}&";
+
+			if (sorting is not TitleSorting.None)
+				query += $"sorting={(int)sorting}";
+
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.AllByFilter + query);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<Title>>();
+
+			return new Failed();
 		}
 		catch (Exception ex)
 		{
@@ -215,6 +265,24 @@ public sealed class TitleService : ITitleService
 		}
 	}
 
+	public async Task<int> CountByTypeAsync(TitleType type)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.CountByType + $"?type={(int)type}");
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<int>();
+
+			return default;
+		}
+		catch
+		{
+			return default;
+		}
+	}
+
 	public async Task<int> CountByNameAsync(string name)
 	{
 		try
@@ -259,6 +327,38 @@ public sealed class TitleService : ITitleService
 
 			var response = await Client
 				.GetAsync(ApiRoutes.Titles.AllByGenres + query);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<int>();
+
+			return default;
+		}
+		catch
+		{
+			return default;
+		}
+	}
+
+	public async Task<int> CountByFilter(List<string> genres, TitleType? type = null, string? name = null, TitleSorting sorting = TitleSorting.None)
+	{
+		try
+		{
+			var query = "?";
+
+			if (genres.Any())
+				query += string.Concat(genres.Select(x => "genres=" + x + "&"));
+
+			if (type is not null)
+				query += $"type={(int?)type}&";
+
+			if (name is not null)
+				query += $"name={name}&";
+
+			if (sorting is not TitleSorting.None)
+				query += $"sorting={(int)sorting}";
+
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.AllByFilter + query);
 
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<int>();

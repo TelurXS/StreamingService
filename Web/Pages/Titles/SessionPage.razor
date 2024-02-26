@@ -15,8 +15,19 @@
 
 @if (Loaded is false)
 {
-	<div>Loading...</div>
-	<div class="page-container"></div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
 	return;
 }
 
@@ -155,6 +166,9 @@
 	private string MessageInput { get; set; } = string.Empty;
 
 	private bool Loaded { get; set; } = false;
+
+	private bool NotFound { get; set; } = false;
+
 	private bool Joined { get; set; } = false;
 
 	private const int DELAY = 500;
@@ -175,10 +189,16 @@
 		{
 			Title = titleResult.AsFound;
 		}
-		else return;
+		else
+		{
+			Loaded = true;
+			NotFound = true;
+			StateHasChanged();
+			return;
+		}
 
 		Connection = new HubConnectionBuilder()
-			.WithUrl($"{Enviroment.BaseAddress}api/sessions")
+			.WithUrl($"{Enviroment.GetHostName()}{ApiRoutes.Hubs.Sessions}")
 			.Build();
 
 		Connection.On<string>(SessionMessages.RECEIVE_MESSAGE, OnRecieveMessage);

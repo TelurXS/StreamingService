@@ -26,7 +26,7 @@
                             <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="mx-2">@(User?.Name)</span>
                                 <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage)
-                                    ? "/img/blank-poster.png"
+                                    ? "/img/defaults/blank-profile-picture.webp"
                                     : User.ProfileImage)" />
                             </a>
                             <ul class="dropdown-menu dropdown-menu-lg-end back-dark">

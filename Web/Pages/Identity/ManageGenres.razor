@@ -5,6 +5,7 @@
 @using Domain.Entities
 
 @inject IIdentityService IdentityService
+@inject IGenreService GenreService
 @inject NavigationManager NavigationManager
 
 <RequireAuthorization />
@@ -51,29 +52,21 @@
 	[SupplyParameterFromQuery]
 	private string? ReturnUrl { get; set; }
 
-	private List<string> Genres { get; set; } =
-	[
-		"Biography", "Genre 1",	  "Long Genre",
-		"Battle",	 "Genre 2",	  "Very long Genre",
-		"Military",	 "Genre 3",	  "Extremely Long Genre",
-		"Horror",	 "Genre 4",	  
-		"Action",	 "Genre 5",	  
-		"Western",	 "Genre 6",	  
-		"Anime",	 "Genre 7",	  
-		"Family",	 "Genre 8",	  
-		"Comedy",	 "Genre 9",	  
-		"Drama",	 "Genre 10",  
-		"Sport",	 "Genre 11",  
-		"Triler",	 "Genre 12",  
-		"Fantasy",	 "Genre 13",  
-		"History",	 "Genre 14",  
-		"Film",		 "Genre 15",  
-	];
+	private List<string> Genres { get; set; } = [];
 
 	private List<string> Selected { get; set; } = [];
 
+	private const int COUNT = 100;
+
 	protected override async Task OnInitializedAsync()
 	{
+		var genresResult = await GenreService.FindAllAsync(COUNT);
+
+		if (genresResult.IsFound)
+		{
+			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+		}
+
 		var result = await IdentityService.GetFavouriteGenresAsync();
 
 		if (result.IsFound is false)
