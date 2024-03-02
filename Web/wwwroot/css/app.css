@@ -331,6 +331,13 @@ main {
     padding: 10px;
 }
 
+.gradient-panel-with-background {
+    background: linear-gradient(35deg, var(--primary) -200%, transparent 100%);
+    border: 2px solid var(--primary);
+    border-radius: 20px;
+    padding: 10px;
+}
+
 .responsive-margin-top {
     margin-top: 200px;
 }

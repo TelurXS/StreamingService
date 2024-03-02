@@ -133,5 +133,13 @@ public static class WebRoutes
 		public const string CorporateInformation = Base + "/corporate-info";
 		
 		public const string TermsOfUse = Base + "/terms-of-use";
+		
+		public const string ContactUs = Base + "/contact-us";
+
+		public const string Mediacenter = Base + "/mediacenter";
+
+		public const string Vacancies = Base + "/vacancies";
+
+		public const string InvestorRelations = Base + "/investor-relations";
 	}
 }
