@@ -129,5 +129,9 @@ public static class WebRoutes
 		public const string LegalNotices = Base + "/legal-notices";
 
 		public const string PrivacyPolicy = Base + "/privacy-policy";
+
+		public const string CorporateInformation = Base + "/corporate-info";
+		
+		public const string TermsOfUse = Base + "/terms-of-use";
 	}
 }
