@@ -1,0 +1,93 @@
+﻿@using Domain.Entities
+
+@inject ILocalFilesService LocalFilesService
+
+<ModalWindow @ref="Window">
+
+	<div class="gradient-panel manage-cookie-panel p-3" @onclick:stopPropagation="true">
+
+		<div class="d-flex justify-content-center">
+			<span class="font-xl font-white mx-auto">Privacy settings center</span>
+		</div>
+
+		<div class="gradient-divider mt-3 mb-3"></div>
+
+		<div class="row" style="min-height: 400px">
+			<div class="col-md-4 h-100 d-flex flex-column">
+				
+				@foreach (var tab in Tabs)
+				{
+					if (Selected == tab)
+					{
+						<div @onclick="() => Select(tab)" class="mt-2">@tab.Name</div>
+						<div class="gradient-divider"></div>
+					}
+					else
+					{
+						<div @onclick="() => Select(tab)" class="mt-2">@tab.Name</div>
+					}
+				}
+
+			</div>
+			<div class="col-md-8 h-100 overflow-auto mt-4 mt-md-0" style="max-height: 400px">
+				@if (Selected is not null)
+				{
+					<h3 class="mb-2">@Selected.Name</h3>
+					@((MarkupString)Selected.Content)
+				}
+			</div>
+		</div>
+
+		<div class="gradient-divider mt-3 mb-3"></div>
+		
+		<button @onclick="() => Close()" class="button button-fit px-3 py-2 mx-auto">Save</button>
+
+	</div>
+
+</ModalWindow>
+
+@code {
+
+	private ModalWindow Window { get; set; } = default!;
+
+	private List<CookieTab> Tabs { get; set; } = new();
+	private CookieTab? Selected { get; set; } = default;
+
+	private const string PATH = "/files/cookie-tabs.json";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await LocalFilesService.ReadFromJsonAsync<List<CookieTab>>(PATH);
+
+		if (result.IsFound)
+		{
+			Tabs = result.AsFound;
+			Selected = Tabs.FirstOrDefault();
+		}
+
+		StateHasChanged();
+	}
+
+	private void Select(CookieTab tab)
+	{
+		Selected = tab;
+		StateHasChanged();
+	}
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+
+	private sealed class CookieTab
+	{
+		public string Id { get; set; } = string.Empty;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string LocalizableName { get; set; } = string.Empty;
+
+		public string Content { get; set; } = string.Empty;
+
+		public string LocalizableContent { get; set; } = string.Empty;
+	}
+}

@@ -88,6 +88,8 @@ public static class WebRoutes
 		public static class Profile
 		{
 			public const string ById = Base + "/{id}";
+
+			public const string Route = Base;
 		}
 	}
 
@@ -141,5 +143,9 @@ public static class WebRoutes
 		public const string Vacancies = Base + "/vacancies";
 
 		public const string InvestorRelations = Base + "/investor-relations";
+
+		public const string SpeedCheck = Base + "/speed-check";
+
+		public const string ViewingMethods = Base + "/viewing-methods";
 	}
 }

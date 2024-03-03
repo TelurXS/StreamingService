@@ -358,7 +358,7 @@ public sealed class TitleService : ITitleService
 				query += $"sorting={(int)sorting}";
 
 			var response = await Client
-				.GetAsync(ApiRoutes.Titles.AllByFilter + query);
+				.GetAsync(ApiRoutes.Titles.CountByFilter + query);
 
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<int>();

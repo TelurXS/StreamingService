@@ -191,16 +191,20 @@
 			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
 				@if (string.IsNullOrEmpty(comment.Author.ProfileImage))
 				{
-					<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+					<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id">
+						<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+					</a>
 				}
 				else
 				{
-					<img class="profile-picture" src="@comment.Author.ProfileImage" />
+					<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id">
+						<img class="profile-picture" src="@comment.Author.ProfileImage" />
+					</a>
 				}
 
 				<div class="w-100">
 					<div class="d-flex justify-content-between">
-						<span class="font-sm font-white">@comment.Author.Name</span>
+						<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id" class="font-sm font-white">@comment.Author.Name</a>
 						<span class="font-sm font-gray">created: @comment.CreationDate.ToShortDateString()</span>
 					</div>
 
