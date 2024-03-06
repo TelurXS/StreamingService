@@ -12,36 +12,51 @@
             <i class="bi bi-list"></i>
         </button>
         <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
-            <ul class="navbar-nav m-auto">
-                <li class="nav-item mx-3">
-                    <a href="@WebRoutes.Home" class="nav-link font-white font-sm">Home</a>
-                </li>
-                <li class="nav-item mx-3">
-                    <a href="@WebRoutes.Series" class="nav-link font-white font-sm">Series</a>
-                </li>   
-                <li class="nav-item mx-3">
-                    <a href="@WebRoutes.Films" class="nav-link font-white font-sm">Films</a>
-                </li>
-                <li class="nav-item mx-3">
-                    <a href="@WebRoutes.NewAndPopular" class="nav-link font-white font-sm">New & Popular</a>
-                </li>
-                <li class="nav-item mx-3">
-                    <a href="@WebRoutes.WatchViaLanguages" class="nav-link font-white font-sm">Watch via languages</a>
-                </li>
-            </ul>
-            <form class="d-flex" role="search">
-                @{
-                    //<input class="form-control me-2 form-control rounded-corners back-dark border-primary font-sm font-gray" type="search" placeholder="Search" aria-label="Search">
-                }
-                
-                <button class="btn" type="submit">
+
+            @if (Search)
+            {
+                <div class="m-auto"></div>
+
+                <form class="d-flex" action="@WebRoutes.Search">
+                    <InputText @bind-Value="SearchName" class="input-underline" name="searchName" type="search" placeholder="Search..." />
+                    
+                    <button class="btn" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button class="btn" type="reset" @onclick="() => Search = false">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <ul class="navbar-nav m-auto">
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Home" class="nav-link font-white font-sm">Home</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Series" class="nav-link font-white font-sm">Series</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Films" class="nav-link font-white font-sm">Films</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.NewAndPopular" class="nav-link font-white font-sm">New & Popular</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.WatchViaLanguages" class="nav-link font-white font-sm">Watch via languages</a>
+                    </li>
+                </ul>
+
+                <button class="btn" type="submit" @onclick="() => Search = true">
                     <i class="bi bi-search"></i>
                 </button>
-            </form>
+            }
+
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav mb-2 mb-lg-0">
-                        <li class="nav-item dropdown mx-3">
+                        <li class="nav-item dropdown">
                             <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="mx-2">@(User?.Name)</span>
                                 <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage) 
@@ -67,7 +82,13 @@
 </nav>
 
 @code {
+
+    [SupplyParameterFromQuery]
+    public string SearchName { get; set; } = string.Empty;
+
     private User? User { get; set; } = default;
+
+    private bool Search { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {

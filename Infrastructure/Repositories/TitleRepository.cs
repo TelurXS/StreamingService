@@ -163,6 +163,35 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.ToList();
 	}
 
+	public List<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0)
+	{
+		IQueryable<Title> query = Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Include(x => x.Descriptions)
+			.Include(x => x.Image)
+			.Include(x => x.Series)
+			.Include(x => x.RequiredSubscription)
+			.Include(x => x.Genres);
+
+		switch (sorting)
+		{
+			case TitleSorting.ByNewness: query = query.OrderByDescending(x => x.ReleaseDate); break;
+			case TitleSorting.ByOldness: query = query.OrderBy(x => x.ReleaseDate); break;
+			case TitleSorting.ByPopularity: query = query.OrderByDescending(x => x.Views); break;
+			case TitleSorting.ByRating: query = query.OrderByDescending(x => x.AvarageRate); break;
+			default: query = query.OrderByDescending(x => x.AvarageRate); break;
+		};
+
+		query = query
+			.Where(x => x.Series.Any(series => series.Language.Equals(language)))
+			.Skip(page * count)
+			.Take(count);
+
+		return query.ToList();
+	}
+
 	public List<Title> FindAllByGenre(string genre, int count = 10, int page = 0)
 	{
 		return Entities
@@ -339,6 +368,16 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 			.AsSplitQuery()
 			.Include(x => x.Names)
 			.Where(x => x.Name.Contains(name) || x.Names.Any(x => x.Value.Contains(name)))
+			.Count();
+	}
+
+	public int CountByLanguage(string language)
+	{
+		return Entities
+			.AsNoTracking()
+			.AsSplitQuery()
+			.Include(x => x.Names)
+			.Where(x => x.Series.Any(series => series.Language.Equals(language)))
 			.Count();
 	}
 

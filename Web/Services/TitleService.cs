@@ -113,6 +113,24 @@ public sealed class TitleService : ITitleService
 		}
 	}
 
+	public async Task<GetAllResult<Title>> FindAllByLanguageAsync(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.AllByLanguage + $"?language={language}&sorting={(int)sorting}&count={count}&page={page}");
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<Title>>();
+
+			return new NotFound();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
 	public async Task<GetAllResult<Title>> FindAllByGenreAsync(string genre, int count = 10, int page = 0)
 	{
 		try
@@ -359,6 +377,24 @@ public sealed class TitleService : ITitleService
 
 			var response = await Client
 				.GetAsync(ApiRoutes.Titles.CountByFilter + query);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<int>();
+
+			return default;
+		}
+		catch
+		{
+			return default;
+		}
+	}
+
+	public async Task<int> CountByLanguageAsync(string language)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Titles.CountByLanguage + $"?language={language}");
 
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<int>();

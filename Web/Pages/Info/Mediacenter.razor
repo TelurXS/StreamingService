@@ -124,7 +124,7 @@
 	{
 		var subject = Input.Name.Replace(" ", "%20");
 
-		NavigationManager.NavigateTo($"https://mail.google.com/mail/?view=cm&fs=1&to=xflick@xflick@ukr.net&bcc=xflick@ukr.net&body=Describe%20your%20problem&su={subject}");
+		NavigationManager.NavigateTo($"{WebRoutes.Search}?name={Input.Name}");
 	}
 
 	private sealed class InputModel

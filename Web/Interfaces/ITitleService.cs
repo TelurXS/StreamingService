@@ -15,6 +15,8 @@ public interface ITitleService : IWebService<Title, CreateTitle.Request, UpdateT
 
 	Task<GetAllResult<Title>> FindAllByNameAsync(string name, int count = 10, int page = 0);
 
+	Task<GetAllResult<Title>> FindAllByLanguageAsync(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0);
+
 	Task<GetAllResult<Title>> FindAllByGenreAsync(string genre, int count = 10, int page = 0);
 
 	Task<GetAllResult<Title>> FindAllByGenresAsync(List<string> genres, int count = 10, int page = 0);
@@ -24,6 +26,8 @@ public interface ITitleService : IWebService<Title, CreateTitle.Request, UpdateT
 	Task<int> CountByTypeAsync(TitleType type);
 
 	Task<int> CountByNameAsync(string name);
+
+	Task<int> CountByLanguageAsync(string language);
 
 	Task<int> CountByGenreAsync(string genre);
 

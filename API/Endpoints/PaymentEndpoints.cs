@@ -1,12 +1,10 @@
 ﻿using API.Extensions;
-using API.Services;
 using Application.Features.Subscriptions;
 using Carter;
 using Domain.Entities;
-using Domain.Interfaces.Services;
-using MailKit.Search;
+using Domain.Interfaces.Mappings;
+using Domain.Models;
 using MediatR;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,13 +14,89 @@ public sealed class PaymentEndpoints : ICarterModule
 {
 	public void AddRoutes(IEndpointRouteBuilder app)
 	{
-		app.MapGet("/api/payment", CaptureOrderAsync)
+		app.MapGet(ApiRoutes.Payment.CaptureOrder, CaptureOrderAsync)
 			.RequireAuthorization();
 
-		app.MapPost("/api/payment/{subscription}", CreateOrderAsync)
+		app.MapPost(ApiRoutes.Payment.CreateOrder, CreateOrderAsync)
 			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.Subscriptions.All, GetAllSubscriptionsAsync);
+
+		app.MapGet(ApiRoutes.Subscriptions.ById, GetSubscriptionByIdAsync);
+
+		app.MapGet(ApiRoutes.Subscriptions.ByName, GetSubscriptionByNameAsync);
 	}
 
+	[ProducesResponseType<Subscription>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetSubscriptionByIdAsync(
+		[FromRoute] Guid id,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper
+		)
+	{
+		var request = new GetSubscriptionById.Request
+		{
+			Id = id,
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			subscription => Results.Ok(mapper.ToResponse(subscription)),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest(failed.Errors)
+			);
+	}
+
+	[ProducesResponseType<Subscription>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetSubscriptionByNameAsync(
+		[FromRoute] string name,
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper
+		)
+	{
+		var request = new GetSubscriptionByName.Request
+		{
+			Name = name,
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			subscription => Results.Ok(mapper.ToResponse(subscription)),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest(failed.Errors)
+			);
+	}
+
+	[ProducesResponseType<List<Subscription>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetAllSubscriptionsAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper
+		)
+	{
+		var request = new GetAllSubscriptions.Request
+		{
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			subscriptions => Results.Ok(subscriptions.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest(failed.Errors)
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> CaptureOrderAsync(
 		[FromQuery] string orderId,
 		[FromServices] IMediator mediator,
@@ -45,6 +119,10 @@ public sealed class PaymentEndpoints : ICarterModule
             );
 	}
 
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> CreateOrderAsync(
 		[FromRoute] string subscription,
 		[FromServices] IMediator mediator

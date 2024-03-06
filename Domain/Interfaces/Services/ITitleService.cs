@@ -17,6 +17,8 @@ public interface ITitleService : IEntityService<Title>
 
 	GetAllResult<Title> FindAllByName(string name, int count = 10, int page = 0);
 
+	GetAllResult<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0);
+
 	GetAllResult<Title> FindAllByGenre(string genre, int count = 10, int page = 0);
 
 	GetAllResult<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0);
@@ -34,6 +36,8 @@ public interface ITitleService : IEntityService<Title>
 	int CountByType(TitleType type);
 
 	int CountByName(string name);
+
+	int CountByLanguage(string language);
 
 	int CountByGenre(string genre);
 

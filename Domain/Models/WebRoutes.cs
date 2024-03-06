@@ -40,6 +40,8 @@ public static class WebRoutes
 
 	public const string ResetPassword = "/reset-password";
 
+	public const string Search = "/search";
+
 	public static class Manage
 	{
 		public const string GroupName = "/manage";

@@ -104,6 +104,8 @@ public static class ApiRoutes
 
 		public const string AllByName = All + "/by-name";
 
+		public const string AllByLanguage = All + "/by-language";
+
 		public const string AllByGenre = All + "/by-genre";
 
 		public const string AllByGenres = All + "/by-genres";
@@ -115,6 +117,8 @@ public static class ApiRoutes
 		public const string CountByType = AllByType + "/count";
 
 		public const string CountByName = AllByName + "/count";
+
+		public const string CountByLanguage = AllByLanguage + "/count";
 
 		public const string CountByGenre = AllByGenre + "/count";
 
@@ -201,6 +205,30 @@ public static class ApiRoutes
 		public const string CountAll = Route + "/count";
 
 		public const string ById = Route + "/{id}";
+	}
+
+	public class Payment
+	{
+		public const string GroupName = "/payment";
+
+		public const string Route = Base + GroupName;
+
+		public const string CaptureOrder = Route;
+
+		public const string CreateOrder = Route + "/{subscription}";
+	}
+
+	public class Subscriptions
+	{
+		public const string GroupName = "/subscriptions";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+		public const string ById = Route + "/{id:guid}";
+
+		public const string ByName = Route + "/{name}";
 	}
 
 	public class Hubs

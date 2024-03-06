@@ -5,6 +5,7 @@ using Domain.Models;
 using Domain.Models.PayPal;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
+using static Domain.Models.ApiRoutes;
 
 namespace Infrastructure.Services;
 
@@ -80,6 +81,11 @@ public sealed class TitleService : ITitleService
 	public GetAllResult<Title> FindAllByName(string name, int count = 10, int page = 0)
 	{
 		return Repository.FindAllByName(name, count, page);
+	}
+
+	public GetAllResult<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByLanguage(language, sorting, count, page);
 	}
 
 	public GetAllResult<Title> FindAllByGenre(string genre, int count = 10, int page = 0)
@@ -196,6 +202,11 @@ public sealed class TitleService : ITitleService
 	public int CountByName(string name)
 	{
 		return Repository.CountByName(name);
+	}
+
+	public int CountByLanguage(string language)
+	{
+		return Repository.CountByLanguage(language);
 	}
 
 	public int CountByGenre(string genre)

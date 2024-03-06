@@ -80,7 +80,7 @@
 
 	private async Task MeterLowQuery()
 	{
-		var metric = new Metrick { Name = "Low Query", Expected = TimeSpan.FromMilliseconds(400) };
+		var metric = new Metrick { Name = "Low Query", Expected = TimeSpan.FromMilliseconds(300) };
 		Metricks.Add(metric);
 		StateHasChanged();
 
@@ -93,7 +93,7 @@
 
 	private async Task MeterBigQuery()
 	{
-		var metric = new Metrick { Name = "Big Query", Expected = TimeSpan.FromMilliseconds(600) };
+		var metric = new Metrick { Name = "Big Query", Expected = TimeSpan.FromMilliseconds(400) };
 		Metricks.Add(metric);
 		StateHasChanged();
 
@@ -106,7 +106,7 @@
 
 	private async Task MeterFilterQuery()
 	{
-		var metric = new Metrick { Name = "Filtered Query", Expected = TimeSpan.FromMilliseconds(1300) };
+		var metric = new Metrick { Name = "Filtered Query", Expected = TimeSpan.FromMilliseconds(500) };
 		Metricks.Add(metric);
 		StateHasChanged();
 

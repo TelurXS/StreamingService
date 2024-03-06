@@ -15,6 +15,8 @@ public interface ITitleRepository : IRepository<Title>
 
 	List<Title> FindAllByName(string name, int count = 10, int page = 0);
 
+	List<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0);
+
 	List<Title> FindAllByGenre(string genre, int count = 10, int page = 0);
 
 	List<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0);
@@ -32,6 +34,8 @@ public interface ITitleRepository : IRepository<Title>
 	int CountByType(TitleType type);
 
 	int CountByName(string name);
+
+	int CountByLanguage(string language);
 
 	int CountByGenre(string genre);
 

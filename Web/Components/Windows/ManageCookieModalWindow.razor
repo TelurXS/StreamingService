@@ -19,12 +19,12 @@
 				{
 					if (Selected == tab)
 					{
-						<div @onclick="() => Select(tab)" class="mt-2">@tab.Name</div>
+						<div @onclick="() => Select(tab)" class="mt-2 user-select-none">@tab.Name</div>
 						<div class="gradient-divider"></div>
 					}
 					else
 					{
-						<div @onclick="() => Select(tab)" class="mt-2">@tab.Name</div>
+						<div @onclick="() => Select(tab)" class="mt-2 user-select-none">@tab.Name</div>
 					}
 				}
 
