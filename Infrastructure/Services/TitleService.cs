@@ -1,9 +1,11 @@
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
+using Domain.Models;
 using Domain.Models.PayPal;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
+using static Domain.Models.ApiRoutes;
 
 namespace Infrastructure.Services;
 
@@ -71,9 +73,19 @@ public sealed class TitleService : ITitleService
 		return Repository.FindAllPopular(count, page);
 	}
 
+	public GetAllResult<Title> FindAllByType(TitleType type, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByType(type, count, page);
+	}
+
 	public GetAllResult<Title> FindAllByName(string name, int count = 10, int page = 0)
 	{
 		return Repository.FindAllByName(name, count, page);
+	}
+
+	public GetAllResult<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByLanguage(language, sorting, count, page);
 	}
 
 	public GetAllResult<Title> FindAllByGenre(string genre, int count = 10, int page = 0)
@@ -84,6 +96,11 @@ public sealed class TitleService : ITitleService
 	public GetAllResult<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0)
 	{
 		return Repository.FindAllByGenres(genres, count, page);
+	}
+
+	public GetAllResult<Title> FilterAll(TitleType? type, string? name, List<string> genres, TitleSorting sorting, int count, int page)
+	{
+		return Repository.FilterAll(type, name, genres, sorting, count, page);
 	}
 
 	public UpdateResult<Success> AddView(Guid id, int count = 1)
@@ -177,9 +194,19 @@ public sealed class TitleService : ITitleService
 		return Repository.Count();
 	}
 
+	public int CountByType(TitleType type)
+	{
+		return Repository.CountByType(type);
+	}
+
 	public int CountByName(string name)
 	{
 		return Repository.CountByName(name);
+	}
+
+	public int CountByLanguage(string language)
+	{
+		return Repository.CountByLanguage(language);
 	}
 
 	public int CountByGenre(string genre)
@@ -190,5 +217,10 @@ public sealed class TitleService : ITitleService
 	public int CountByGenres(List<string> genres)
 	{
 		return Repository.CountByGenres(genres);
+	}
+
+	public int CountByFilter(TitleType? type, string? name, List<string> genres, TitleSorting sorting)
+	{
+		return Repository.CountByFilter(type, name, genres, sorting);
 	}
 }

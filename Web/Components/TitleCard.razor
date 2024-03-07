@@ -1,6 +1,8 @@
 ﻿@using Domain.Entities
 
-<a class="title-card" href="@WebRoutes.Titles.Base/@Title.Slug">
+@inject NavigationManager NavigationManager
+
+<a class="title-card" @onclick="() => OnClick()">
 	<div class="title-card-background" style="background-image: url(@Title.Image?.Uri)">
 		<span class="title-card-info font-sm">@Title.AvarageRate.ToString("0.0") <i class="bi bi-star-fill"></i></span>
 		<span class="title-card-info font-sm">@Title.ReleaseDate.Year</span>
@@ -12,4 +14,9 @@
 
 	[Parameter]
 	public Title Title { get; set; } = default!;
+
+	private void OnClick()
+	{
+		NavigationManager.NavigateTo($"{WebRoutes.Titles.Base}/{Title.Slug}", true);
+	}
 }

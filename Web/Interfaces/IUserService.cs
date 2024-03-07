@@ -1,9 +1,10 @@
-﻿using Domain.Entities;
+﻿using Application.Features.Users;
+using Domain.Entities;
 using Domain.Models.Results.Unions;
 
 namespace Web.Interfaces;
 
-public interface IUserService
+public interface IUserService : IWebService<User, User, UpdateUser.Request>
 {
 	Task<GetResult<User>> GetProfileAsync(Guid id);
 

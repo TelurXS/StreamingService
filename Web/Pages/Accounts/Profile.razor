@@ -9,7 +9,10 @@
 
 @if (Loaded is false)
 {
-	<div>Loading...</div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
 	return;
 }
 
@@ -65,7 +68,7 @@
 	<div class="col-md-6">
 		<div class="row">
 
-			<div class="col-md-10 d-flex mt-2 mt-md-0">
+			<div class="col-md-10 d-flex mt-2 mt-md-0 d-flex justify-content-center">
 				<div class="info-card" @onclick="() => ReadersWindow.Open()">
 					<span class="font-md">@Readers.Count</span>
 					<span class="font-sm font-gray">Readers</span>
@@ -80,7 +83,11 @@
 				</div>
 			</div>
 
-			<div class="col-md-2"></div>
+			<div class="col-md-2 d-flex mt-2 mt-md-0">
+				<a href="@WebRoutes.Settings.Base" class="d-flex align-items-center">
+					<img class="h-50 m-2 m-md-0" src="/img/pencil.svg" />
+				</a>
+			</div>
 
 			<div class="col-md-12 mt-2">
 				<div class="row">
@@ -185,54 +192,59 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		var userResult = await IdentityService.GetProfileAsync();
+		var userTask = IdentityService.GetProfileAsync();
+		var genresTask = IdentityService.GetFavouriteGenresAsync();
+		var favouriteTitlesTask = IdentityService.GetFavouriteTitlesAsync();
+		var viewRecordsTask = IdentityService.GetViewRecordsAsync();
+		var titlesListsTask = IdentityService.GetTitlesListsAsync();
+		var followersTask = IdentityService.GetFollowersAsync();
+		var readersTask = IdentityService.GetReadersAsync();
 
-		if (userResult.IsFound)
+		await Task.WhenAll(
+			userTask,
+			genresTask,
+			favouriteTitlesTask,
+			viewRecordsTask,
+			titlesListsTask,
+			followersTask,
+			readersTask);
+
+		if (userTask.Result.IsFound)
 		{
-			User = userResult.AsFound;
+			User = userTask.Result.AsFound;
 		}
 
-		var genresResult = await IdentityService.GetFavouriteGenresAsync();
-
-		if (genresResult.IsFound)
+		if (genresTask.Result.IsFound)
 		{
-			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+			Genres = genresTask.Result.AsFound.Select(x => x.Name).ToList();
 		}
 
-		var favouriteTitlesResult = await IdentityService.GetFavouriteTitlesAsync();
-
-		if (favouriteTitlesResult.IsFound)
+		if (favouriteTitlesTask.Result.IsFound)
 		{
-			FavouriteTitles = favouriteTitlesResult.AsFound;
+			FavouriteTitles = favouriteTitlesTask.Result.AsFound;
 		}
 
-		var viewRecordsResult = await IdentityService.GetViewRecordsAsync();
-
-		if (viewRecordsResult.IsFound)
+		if (viewRecordsTask.Result.IsFound)
 		{
-			LastWatched = viewRecordsResult.AsFound.OrderBy(x => x.Time).LastOrDefault();
-			ViewRecords = viewRecordsResult.AsFound.DistinctBy(x => x.Title.Id).ToList();
+			var viewRecords = viewRecordsTask.Result.AsFound;
+
+			LastWatched = viewRecords.OrderBy(x => x.Time).LastOrDefault();
+			ViewRecords = viewRecords.DistinctBy(x => x.Title.Id).ToList();
 		}
 
-		var titlesListsResult = await IdentityService.GetTitlesListsAsync();
-
-		if (titlesListsResult.IsFound)
+		if (titlesListsTask.Result.IsFound)
 		{
-			Lists = titlesListsResult.AsFound;
+			Lists = titlesListsTask.Result.AsFound;
 		}
 
-		var followersResult = await IdentityService.GetFollowersAsync();
-
-		if (followersResult.IsFound)
+		if (followersTask.Result.IsFound)
 		{
-			Followers = followersResult.AsFound;
+			Followers = followersTask.Result.AsFound;
 		}
 
-		var readersResult = await IdentityService.GetReadersAsync();
-
-		if (readersResult.IsFound)
+		if (readersTask.Result.IsFound)
 		{
-			Readers = readersResult.AsFound;
+			Readers = readersTask.Result.AsFound;
 		}
 
 		Loaded = true;

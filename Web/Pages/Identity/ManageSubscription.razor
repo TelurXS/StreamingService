@@ -1,6 +1,6 @@
-﻿@using Domain.Entities
-@attribute [Route(WebRoutes.Manage.Subscription)]
+﻿@attribute [Route(WebRoutes.Manage.Subscription)]
 @layout MinimalisticLayout
+@using Domain.Entities
 
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
@@ -58,10 +58,13 @@
 
 	private async Task OnSubmit()
 	{
-		if (ReturnUrl is not null)
-			NavigationManager.NavigateTo(ReturnUrl);
+		if (Selected == Subscription.Trial.Name)
+		{
+			NavigationManager.NavigateTo($"{WebRoutes.ApplyTrial}?returnUrl={ReturnUrl}");
+			return;
+		}
 
-		else NavigationManager.NavigateTo(WebRoutes.RegistrationSuccess);
+		NavigationManager.NavigateTo($"{WebRoutes.Payment}/{Selected}");
 	}
 
 	private void Select(string value)

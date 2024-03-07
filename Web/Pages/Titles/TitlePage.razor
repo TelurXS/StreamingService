@@ -14,8 +14,19 @@
 
 @if (Loaded is false)
 {
-	<div>Loading...</div>
-	<div class="my-5"></div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
 	return;
 }
 
@@ -97,7 +108,14 @@
 </div>
 
 <div class="mt-5">
-	<h4 class="mb-3">Watch:</h4>
+	<div class="mb-3 d-flex justify-content-between">
+		<h4>Watch:</h4>
+		<div>
+			<button class="button button-fit" style="width: 30px; height: 30px" @onclick="() => CreateSessionWindow.Open()">
+				<img height="22" src="/img/peoples.svg" />
+			</button>
+		</div>
+	</div>
 
 	<VideoPlayer Series="Title.Series.ToList()" OnLeaveSeries="OnLeaveSeries" />
 </div>
@@ -173,16 +191,20 @@
 			<div class="d-flex mt-2 p-2" id="comment-@comment.Id">
 				@if (string.IsNullOrEmpty(comment.Author.ProfileImage))
 				{
-					<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+					<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id">
+						<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+					</a>
 				}
 				else
 				{
-					<img class="profile-picture" src="@comment.Author.ProfileImage" />
+					<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id">
+						<img class="profile-picture" src="@comment.Author.ProfileImage" />
+					</a>
 				}
 
 				<div class="w-100">
 					<div class="d-flex justify-content-between">
-						<span class="font-sm font-white">@comment.Author.Name</span>
+						<a href="@WebRoutes.Users.Profile.Route/@comment.Author.Id" class="font-sm font-white">@comment.Author.Name</a>
 						<span class="font-sm font-gray">created: @comment.CreationDate.ToShortDateString()</span>
 					</div>
 
@@ -202,6 +224,7 @@
 <div class="mt-5"></div>
 
 <TitlesListModalWindow @ref="TitlesListWindow" Title="Title"/>
+<CreateSessionModalWindow @ref="CreateSessionWindow" Title="Title"/>
 
 @code {
 	[Parameter]
@@ -217,18 +240,30 @@
 
 	private bool Loaded { get; set; } = false;
 
+	private bool NotFound { get; set; } = false;
+
 	private bool InFavourite { get; set; } = false;
 
 	private string Message { get; set; } = string.Empty;
 
 	private TitlesListModalWindow TitlesListWindow { get; set; } = default!;
 
+	private CreateSessionModalWindow CreateSessionWindow { get; set; } = default!;
+
 	protected override async Task OnInitializedAsync()
 	{
+		var favouritesTask = IdentityService.GetFavouriteTitlesAsync();
+		var rateTask = RateService.GetRateByTitleAsync(Title);
+
 		var result = await TitleService.FindBySlugAsync(Slug);
 
 		if (result.IsFound is false)
+		{
+			Loaded = true;
+			NotFound = true;
+			StateHasChanged();
 			return;
+		}
 
 		Title = result.AsFound;
 		Loaded = true;

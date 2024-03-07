@@ -1,0 +1,135 @@
+﻿@using Domain.Entities
+@attribute [Route(WebRoutes.Info.Mediacenter)]
+@layout InfoLayout
+
+@inject NavigationManager NavigationManager
+@inject ITitleService TitleService
+@inject IGenreService GenreService
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<Glow Size="200" Top="-200px" Blur="100" Left="calc(50% - 100px)" ShadowColor="var(--primary)" />
+<Glow Size="80" Top="800px" Blur="100" Left="0" ShadowColor="var(--primary)" />
+
+<div class="position-relative d-flex flex-column" style="z-index: 30; min-height: 800px">
+	<a href="@WebRoutes.Info.HelpCenter" class="font-white"><i class="bi bi-chevron-left"></i> Back to Help Center</a>
+
+	<h2 class="mt-5 mb-5 text-center">Discover stories and experiences that can be shared with Ukraine.</h2>
+
+	<EditForm Model="Input" OnValidSubmit="OnSubmit">
+
+		<div class="row">
+			<div class="col-lg-5 d-flex mx-auto">
+
+				<InputText @bind-Value="Input.Name" class="input-underline mx-2" placeholder="Search film or series" />
+
+				<button class="button-glass button-fit px-2 py-1"><i class="bi bi-chevron-right"></i></button>
+			
+			</div>
+		</div>
+
+	</EditForm>
+
+	<div class="mt-5"></div>
+
+	<div class="d-flex flex-nowrap overflow-auto">
+		@foreach(var genre in Genres)
+		{
+			if (Selected == genre)
+			{
+				<div @onclick="() => Select(genre)" class="font-primary font-sm mx-2 my-2" style="white-space: nowrap; user-select: none;">@genre</div>
+			}
+			else
+			{
+				<div @onclick="() => Select(genre)" class="font-white font-sm mx-2 my-2" style="white-space: nowrap; user-select: none;">@genre</div>
+			}
+		}
+	</div>
+
+	<div class="gradient-divider mt-3 mb-3"></div>
+
+	<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+		@foreach (var title in Titles)
+		{
+			<div class="col mt-3">
+				<ResponsiveTitleCard Title="title" />
+			</div>
+		}
+	</div>
+
+	<div class="mt-5 mb-5"></div>
+</div>
+
+@code {
+
+	private InputModel Input { get; set; } = new();
+
+	private string Selected { get; set; } = string.Empty;
+
+	private List<Title> Titles { get; set; } = [];
+	private List<string> Genres { get; set; } = [];
+
+	private bool Loaded { get; set; } = false;
+
+	private const int GENRES_COUNT = 100;
+	private const int TITLES_COUNT = 10;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var genresTask = GenreService.FindAllAsync(GENRES_COUNT);
+		var titlesTask = TitleService.FindAllPopularAsync(TITLES_COUNT);
+
+		await Task.WhenAll(genresTask, titlesTask);
+
+		if (genresTask.Result.IsFound)
+		{
+			Genres = genresTask
+			.Result
+			.AsFound
+			.Select(x => x.Name)
+			.ToList();
+		}
+
+		if (titlesTask.Result.IsFound)
+		{
+			Titles = titlesTask.Result.AsFound;
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private async Task Select(string genre)
+	{
+		Selected = genre;
+
+		var titlesResult = await TitleService.FindAllByGenreAsync(Selected, TITLES_COUNT);
+
+		if (titlesResult.IsFound)
+		{
+			Titles = titlesResult.AsFound;
+		}
+
+		StateHasChanged();
+	}
+
+	private void OnSubmit()
+	{
+		var subject = Input.Name.Replace(" ", "%20");
+
+		NavigationManager.NavigateTo($"{WebRoutes.Search}?name={Input.Name}");
+	}
+
+	private sealed class InputModel
+	{
+		[Required]	
+		public string Name { get; set; } = string.Empty;
+	}
+}

@@ -1,0 +1,299 @@
+﻿@using Application.Features.Titles
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Responses
+@using Infrastructure.Configurations
+
+@inject ITitleService TitleService
+
+<ModalWindow @ref="Window">
+	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
+		<h2>Title</h2>
+		
+		<EditForm Model="Input">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+			
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Name</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Name" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Description</span>
+				</div>
+				<div class="col-md-9">
+					<InputTextArea @bind-Value="Input.Description" rows="4" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Description" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Slug</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Slug" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Slug" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">AvarageRate</span>
+				</div>
+				<div class="col-md-9">
+					<InputNumber @bind-Value="Input.AvarageRate" min="0" max="10" step="0.1" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.AvarageRate" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">ReleaseDate</span>
+				</div>
+				<div class="col-md-9">
+					<InputDate @bind-Value="Input.ReleaseDate" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.ReleaseDate" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Type</span>
+				</div>
+				<div class="col-md-9">
+					<InputSelect @bind-Value="Input.Type" class="input font-md font-gray">
+						@foreach (var value in Enum.GetValues(typeof(TitleType)))
+						{
+							<option value="@value">@value</option>
+						}
+					</InputSelect>
+				</div>
+
+				<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.Type" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Country</span>
+				</div>
+				<div class="col-md-9">
+					<InputSelect @bind-Value="Input.Country" class="input font-md font-gray">
+						@foreach (Country value in Enum.GetValues(typeof(Country)))
+						{
+							<option value="@value">@value.GetDescription()</option>
+						}
+					</InputSelect>
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Country" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Country</span>
+				</div>
+				<div class="col-md-9">
+					<InputSelect @bind-Value="Input.Country" class="input font-md font-gray">
+						@foreach (AgeRestriction value in Enum.GetValues(typeof(AgeRestriction)))
+						{
+							<option value="@value">@value (@value.GetDescription())</option>
+						}
+					</InputSelect>
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Country" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Director</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Director" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Director" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Cast</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Cast" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Cast" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Views</span>
+				</div>
+				<div class="col-md-9">
+					<InputNumber @bind-Value="Input.Views" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Views" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Trailer</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Trailer" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Trailer" />
+				</div>
+			</div>
+
+			<div class="mt-3 d-flex">
+				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
+				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
+			</div>
+		</EditForm>
+	</div>
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public Func<Title, Task> OnChanged { get; set; } = default!;
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	public Guid Id { get; set; } = default;
+
+	private ModalWindow Window { get; set; } = default!;
+
+
+	public async void Open(Guid id)
+	{
+		var titleResult = await TitleService.FindByIdAsync(id);
+
+		if (titleResult.IsFound)
+		{
+			var title = titleResult.AsFound;
+
+			Id = title.Id;
+
+			Input = new InputModel
+				{
+					Id = title.Id,
+					Name = title.Name,
+					Description = title.Description,
+					Slug = title.Slug,
+					AvarageRate = title.AvarageRate,
+					ReleaseDate = title.ReleaseDate,
+					Type = title.Type,
+					Country = title.Country,
+					AgeRestriction = title.AgeRestriction,
+					Director = title.Director,
+					Cast = title.Cast,
+					Views = title.Views,
+					Trailer = title.Trailer,
+				};
+		}
+
+		Window.Open();
+	}
+
+	public void Close() => Window.Close();
+
+	private async Task Save()
+	{
+		var request = new UpdateTitle.Request
+			{
+				Id = Input.Id,
+				Name = Input.Name,
+				Description = Input.Description,
+				Slug = Input.Slug,
+				AvarageRate = Input.AvarageRate,
+				ReleaseDate = Input.ReleaseDate,
+				Type = Input.Type,
+				Country = Input.Country,
+				AgeRestriction = Input.AgeRestriction,
+				Director = Input.Director,
+				Cast = Input.Cast,
+				Views = Input.Views,
+				Trailer = Input.Trailer,
+			};
+
+		var result = await TitleService.UpdateAsync(Id, request);
+
+		if (result.IsUpdated)
+		{
+			OnChanged?.Invoke(result.AsUpdated);
+			Close();
+		}
+	}
+
+	private class InputModel
+	{
+		public Guid Id { get; set; } = default;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string Description { get; set; } = string.Empty;
+
+		public string Slug { get; set; } = string.Empty;
+
+		public float AvarageRate { get; set; } = default;
+
+		public DateTime ReleaseDate { get; set; } = default;
+
+		public TitleType Type { get; set; } = default;
+
+		public Country Country { get; set; } = default;
+
+		public AgeRestriction AgeRestriction { get; set; } = default;
+
+		public string Director { get; set; } = string.Empty;
+
+		public string Cast { get; set; } = string.Empty;
+
+		public int Views { get; set; } = default;
+
+		public string Trailer { get; set; } = string.Empty;
+	}
+}

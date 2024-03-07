@@ -36,6 +36,7 @@ window.initializePlayer = (dotnet) => {
     const fullscreenButton = document.getElementById("button-fullscreen");
 
     let timer;
+    let ready = false;
     let muted = false;
     let volume = localStorage.getItem(PLAYER_VOLUME) ?? DEFAULT_VOLUME;
 
@@ -180,6 +181,7 @@ window.initializePlayer = (dotnet) => {
 
     const onVideoDataLoaded = () => {
         durationSpan.innerText = formatTime(video.duration);
+        ready = true;
 
         if (retrievedProgress > 0) {
             setProgress(retrievedProgress)
@@ -205,6 +207,7 @@ window.initializePlayer = (dotnet) => {
         video.currentTime = progress * video.duration;
 
         window.notifyProgressChanged(progress);
+        setSavedProgress(progress);
     }
 
     const onTimelineDrag = (e) => {
@@ -215,6 +218,7 @@ window.initializePlayer = (dotnet) => {
         currentTimeSpan.innerText = formatTime(video.currentTime);
 
         window.notifyProgressChanged(progress);
+        setSavedProgress(progress);
     }
 
     const hideControls = () => {
@@ -246,6 +250,8 @@ window.initializePlayer = (dotnet) => {
     videoTimeline.addEventListener("mousedown", () => videoTimeline.addEventListener("mousemove", onTimelineDrag));
     document.addEventListener("mouseup", () => videoTimeline.removeEventListener("mousemove", onTimelineDrag));
 
+    window.addEventListener('beforeunload', () => { dotnet.invokeMethodAsync("OnBeforeUnload"); });
+
     fullscreenButton.addEventListener("click", toggleFullscreen);
 
     container.addEventListener("mousemove", onContainerMouseMove);
@@ -254,6 +260,7 @@ window.initializePlayer = (dotnet) => {
         video.setAttribute("src", url);
         video.currentTime = 0;
         progressBar.style.width = `0%`;
+        ready = false;
         changeToPlayButtonIcon();
     }
 
@@ -276,6 +283,14 @@ window.initializePlayer = (dotnet) => {
 
     window.stop = (notifyChanged = true) => {
         stop(notifyChanged);
+    }
+
+    window.isPlaying = () => {
+        return video.paused == false;
+    }
+
+    window.isReady = () => {
+        return ready;
     }
 
     window.invokeSaveProgress = (value) => {

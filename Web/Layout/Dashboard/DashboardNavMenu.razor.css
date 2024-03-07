@@ -1,0 +1,87 @@
+﻿.navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row {
+    height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand {
+    font-size: 1.1rem;
+}
+
+.bi {
+    padding: 10px;
+    margin-right: 5px !important;
+    margin-left: 5px !important;
+    font-size: 20px;
+    margin: 5px;
+}
+
+.nav-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0px;
+    padding: 10px;
+    padding-bottom: 5px;
+}
+
+.navigation {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly
+}
+
+.nav-item {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .nav-item:first-of-type {
+        margin-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        margin-bottom: 1rem;
+    }
+
+    .nav-item ::deep a {
+        color: #d7d7d7;
+        opacity: 0.5;
+    }
+
+        .nav-item ::deep a.active {
+            opacity: 1;
+        }
+
+            .nav-item ::deep a.active::after {
+                display: block;
+                content: "";
+                background-color: #0044E9;
+                width: 25px;
+                height: 5px;
+                margin: auto;
+                border-radius: 2px;
+            }
+
+@media (max-width: 640px) {
+    .navigation {
+        height: auto;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    .nav-item:first-of-type {
+        margin-top: 0;
+    }
+
+    .nav-item:last-of-type {
+        margin-bottom: 0;
+    }
+}

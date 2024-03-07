@@ -1,0 +1,126 @@
+﻿
+<div class="footer">
+	<div class="container py-3">
+		<span>Have a question? Call 0800-509-416 </span>
+		<div class="row mt-3">
+
+			<div class="col-md-6">
+				<div class="row">
+
+					<div class="col-sm-6">
+						<ul class="navbar-nav">
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.Faq" class="font-white font-sm">
+									FAQ
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.InvestorRelations" class="font-white font-sm">
+									Investor relations
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.PrivacyPolicy" class="font-white font-sm">
+									Privacy
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.SpeedCheck" class="font-white font-sm">
+									Speed ​​check
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="col-sm-6">
+						<ul class="navbar-nav">
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.HelpCenter" class="font-white font-sm">
+									Help center
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.Vacancies" class="font-white font-sm">
+									Vacancies
+								</a>
+							</li>
+							<li class="mt-2">
+								<a @onclick="() => Window.Open()" class="font-white font-sm">
+									Cookie settings
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.LegalNotices" class="font-white font-sm">
+									Legal notices
+								</a>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="row">
+
+					<div class="col-sm-6">
+						<ul class="navbar-nav">
+							<li class="mt-2">
+								<a href="@WebRoutes.Settings.Base" class="font-white font-sm">
+									Account
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.ViewingMethods" class="font-white font-sm">
+									Viewing methods
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.CorporateInformation" class="font-white font-sm">
+									Corporate information
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.NewAndPopular" class="font-white font-sm">
+									Only on Xflick
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="col-sm-6">
+						<ul class="navbar-nav">
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.Mediacenter" class="font-white font-sm">
+									Media center
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.TermsOfUse" class="font-white font-sm">
+									Terms of use
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Info.ContactUs" class="font-white font-sm">
+									Contact us
+								</a>
+							</li>
+							<li class="mt-2">
+								<a href="@WebRoutes.Home" class="font-white font-sm">
+									Home
+								</a>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<ManageCookieModalWindow @ref="Window" />
+
+@code {
+	private ManageCookieModalWindow Window { get; set; } = default!;
+}

@@ -424,4 +424,63 @@ public sealed class IdentityService : IIdentityService
 			return new Failed(ex.Message);
 		}
 	}
+
+	public async Task<UpdateResult<Success>> AppyTrialSubscription()
+	{
+		try
+		{
+			var response = await Client
+				.PostAsync(ApiRoutes.IdentityUsers.ApplyTrial, default);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> ForgotPassword(string email)
+	{
+		try
+		{
+			var request = new ForgorPasswordRequest() { Email = email };
+
+			var response = await Client
+				.PostAsJsonAsync(ApiRoutes.ForgotPassword, request);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> ResetPassword(ResetPasswordRequest request)
+	{
+		try
+		{
+			var response = await Client
+				.PostAsJsonAsync(ApiRoutes.ResetPassword, request);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			var validationFailed = await response.Content
+				.ReadFromJsonAsync<ValidationProblemDetails>();
+
+			return new ValidationFailed(validationFailed!.Errors);
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
 }

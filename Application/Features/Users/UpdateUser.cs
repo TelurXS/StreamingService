@@ -1,0 +1,116 @@
+﻿using Application.Models;
+using Domain.Entities;
+using Domain.Interfaces.Services;
+using Domain.Models.Results;
+using Domain.Models.Results.Unions;
+using FluentValidation;
+using Infrastructure.Configurations;
+using MediatR;
+using System.Text.Json.Serialization;
+
+namespace Application.Features.Users;
+
+public static class UpdateUser
+{
+	public class Request : IRequest<UpdateResult<User>>
+	{
+		[JsonIgnore]
+		public Guid Id { get; set; } = default;
+
+		public string Email { get; set; } = string.Empty;
+
+		public string PhoneNumber { get; set; } = string.Empty;
+
+		public string UserName { get; set; } = string.Empty;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string FirstName { get; set; } = string.Empty;
+
+		public string SecondName { get; set; } = string.Empty;
+
+		public string ProfileImage { get; set; } = string.Empty;
+
+		public DateTime BirthDate { get; set; } = default;
+
+		public bool IsTrialSubscriptionUsed { get; set; } = default;
+
+		public DateTime? SubscriptionExpiresIn { get; set; } = default;
+	}
+
+	public class RequestValidator : AbstractValidator<Request>
+	{
+		private DateTime MinDate => DateTime.Now.AddYears(-100);
+
+		private DateTime MaxDate => DateTime.Now.AddYears(-10);
+
+		public RequestValidator()
+		{
+			RuleFor(x => x.Email)
+				.NotEmpty()
+				.EmailAddress();
+
+			RuleFor(x => x.PhoneNumber)
+				.NotNull();
+
+			RuleFor(x => x.UserName)
+				.NotEmpty();
+
+			RuleFor(x => x.Name)
+				.NotEmpty()
+				.MaximumLength(UserConfiguration.NAME_MAX_LENGTH);
+
+			RuleFor(x => x.FirstName)
+				.NotEmpty()
+				.MaximumLength(UserConfiguration.FIRSTNAME_MAX_LENGTH);
+
+			RuleFor(x => x.SecondName)
+				.NotEmpty()
+				.MaximumLength(UserConfiguration.SECONDNAME_MAX_LENGTH);
+
+			RuleFor(x => x.BirthDate)
+				.NotNull()
+				.LessThan(x => MaxDate)
+				.GreaterThan(x => MinDate);
+		}
+	}
+
+	public class Handler : SyncRequestHandler<Request, UpdateResult<User>>
+	{
+		public Handler(IUserService userService, IValidator<Request> validator)
+		{
+			UserService = userService;
+			Validator = validator;
+		}
+
+		private IUserService UserService { get; }
+		private IValidator<Request> Validator { get; }
+
+		protected override UpdateResult<User> Handle(Request request)
+		{
+			var validationResult = Validator.Validate(request);
+
+			if (validationResult.IsValid is false)
+				return new ValidationFailed(validationResult.Errors);
+
+			var userResult = UserService.FindById(request.Id);
+
+			if (userResult.IsFound is false)
+				return new NotFound();
+
+			var user = userResult.AsFound;
+
+			user.Email = request.Email;
+			user.PhoneNumber = request.PhoneNumber;
+			user.UserName = request.UserName;
+			user.Name = request.Name;
+			user.FirstName = request.FirstName;
+			user.SecondName = request.SecondName;
+			user.BirthDate = request.BirthDate;
+			user.IsTrialSubscriptionUsed = request.IsTrialSubscriptionUsed;
+			user.SubscriptionExpiresIn = request.SubscriptionExpiresIn;
+
+			return UserService.Update(request.Id, user);
+		}
+	}
+}

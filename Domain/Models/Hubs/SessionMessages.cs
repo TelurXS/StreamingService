@@ -14,6 +14,10 @@ public class SessionMessages
 
 	public const string CHANGE_SERIES = nameof(ISessionClient.ChangeSeries);
 
+	public const string SYNCRONIZE = nameof(ISessionClient.Syncronize);
+
+	public const string REQUST_STATE = nameof(ISessionClient.RequestState);
+
 	public const string PLAYBACK_STARTED = "PlaybackStarted";
 
 	public const string PLAYBACK_STOPED = "PlaybackStoped";
@@ -25,4 +29,8 @@ public class SessionMessages
 	public const string JOIN_SESSION = "JoinSession";
 
 	public const string LEAVE_SESSION = "LeaveSession";
+
+	public const string SYNCRONIZE_CONNECTION = "SyncronizeConnection";
+
+	public const string SEND_SESSION_MESSAGE = "SendSessionMessage";
 }

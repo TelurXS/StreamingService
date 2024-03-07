@@ -1,0 +1,123 @@
+﻿@attribute [Route(WebRoutes.WatchViaLanguages)]
+
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Results.Unions
+
+@inject ITitleService TitleService;
+
+<PageTitle>Watch via Languages</PageTitle>
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+}
+
+<div style="min-height: 90vh">
+	<div class="row align-items-center">
+		<div class="col-lg-6">
+			<h2>Watch via Languages</h2>
+		</div>
+
+		<div class="col-lg-2 text-start text-lg-end">
+			<span class="mt-2 mt-lg-0">Select options:</span>
+		</div>
+
+		<div class="col-lg-2">
+			<InputSelect 
+					Value="Language" 
+					ValueExpression="() => Language" 
+					ValueChanged="(string value) => OnLanguageChanged(value)"
+					class="input font-white mt-2 mt-lg-0">
+				<option value="uk-Ua">Ukrainian</option>
+				<option value="en-Us">English</option>
+				<option value="pl-Pl">Polish</option>
+				<option value="de-De">German</option>
+				<option value="es-Es">Spanish</option>
+			</InputSelect>
+		</div>
+
+		<div class="col-lg-2">
+			<InputSelect 
+					Value="@Sorting"
+					ValueExpression="@(() => Sorting)"
+					ValueChanged="@((TitleSorting value) => OnSortingChanged(value))"
+					class="input-glass mt-2 mt-lg-0">
+				@foreach (TitleSorting sorting in Enum.GetValues(typeof(TitleSorting)))
+				{
+					<option value="@sorting">@sorting.GetDescription()</option>
+				}
+			</InputSelect>
+		</div>
+
+	</div>
+
+	<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+		@foreach (var title in Titles)
+		{
+			<div class="col d-flex justify-content-center mt-3">
+				<ResponsiveTitleCard Title="title" />
+			</div>
+		}
+	</div>
+
+	<div class="mt-3">
+		<Pagination Url="@WebRoutes.WatchViaLanguages"
+					Query='() => $"language={Language}&sorting={(int)Sorting}"'
+					Refresh="Refresh"
+					TotalCount="TotalCount"
+					TotalPages="TotalPages"
+					DefaultCount="40" />
+	</div>
+</div>
+
+@code {
+
+	public string Language { get; set; } = DEFAULT_LANGUAGE;
+
+	public TitleSorting Sorting { get; set; } = default;
+
+	public List<Title> Titles { get; set; } = new();
+
+	public int TotalCount { get; set; } = 0;
+
+	public int TotalPages { get; set; } = 0;
+
+	private bool Loaded { get; set; } = false;
+
+	private const string DEFAULT_LANGUAGE = "uk-Ua";
+
+	private async Task Refresh(int page, int count)
+	{
+		Loaded = false;
+
+		var recomendationsResult = await TitleService.FindAllByLanguageAsync(Language, Sorting, count, page);
+
+		if (recomendationsResult.IsFound)
+		{
+			Titles = recomendationsResult.AsFound;
+		}
+
+		TotalCount = await TitleService.CountByLanguageAsync(Language);
+
+		TotalPages = TotalCount / (count);
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private async Task OnLanguageChanged(string value)
+	{
+		Language = value;
+		await Refresh(0, 40);
+	}
+
+	private async Task OnSortingChanged(TitleSorting value)
+	{
+		Sorting = value;
+		await Refresh(0, 40);
+	}
+}

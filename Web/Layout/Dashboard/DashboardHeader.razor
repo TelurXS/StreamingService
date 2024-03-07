@@ -1,0 +1,62 @@
+﻿@using Domain.Entities
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+
+<nav class="navbar navbar-expand-lg dark-bg-on-mobile">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/img/dashboard-logo.png" />
+        </a>
+        <button class="navbar-toggler btn btn-outline-primary rounded-corners" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
+            <ul class="navbar-nav m-auto">
+            </ul>
+            <form class="d-flex" role="search">
+                <button class="btn" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+            <AuthorizeView>
+                <Authorized>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item dropdown mx-3">
+                            <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mx-2">@(User?.Name)</span>
+                                <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage)
+                                    ? "/img/defaults/blank-profile-picture.webp"
+                                    : User.ProfileImage)" />
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-lg-end back-dark">
+                                <li><a class="dropdown-item" href="">Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login?returnUrl=@(NavigationManager.GetCurrentRoute())" class="button font-white font-sm" style="width: 100px">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+@code {
+    private User? User { get; set; } = default;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userResult = await IdentityService.GetProfileAsync();
+
+        if (userResult.IsFound)
+        {
+            User = userResult.AsFound;
+        }
+    }
+}

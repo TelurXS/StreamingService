@@ -1,74 +1,255 @@
-﻿@page "/session"
+﻿@attribute [Route(WebRoutes.Sessions.ByTitleAndId)]
 @implements IAsyncDisposable
+
 @using Application.Features.Users
 @using Domain.Entities
+@using Domain.Extensions
 @using Domain.Interfaces.Hubs
+@using Domain.Models.Hubs
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @using Microsoft.AspNetCore.SignalR.Client
 
 @inject IWebAssemblyHostEnvironment Enviroment
+@inject ITitleService TitleService
 @inject IIdentityService IdentityService
 
-<div class="page-container align-items-start">
-	<div class="row w-100 mh-100">
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
 
-		<div class="col-lg-9 h-100">
-			<VideoPlayer 
-				@ref="Player"
-				Series="Series" 
-				OnPlaybackStarted="OnPlayerPlaybackStarted"
-				OnPlaybackStoped="OnPlayerPlaybackStopped"
-				OnProgressChanged="OnPlayerProgressChanged"
-				OnSeriesChanged="OnPlayerSeriesChanged"
-				OnLeaveSeries="OnPlayerLeaveSeries"
-				/>
+@if (NotFound)
+{
+	<div class="sm-page-container">
+		<NotFound />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<Background Blur="15" Url="@Title.Image?.Uri" />
+
+<div class="d-flex align-items-center">
+	<a href="@WebRoutes.Home" class="font-sm font-gray page-link">Home</a>
+	<span class="mx-2 font-gray"> > </span>
+	@Title.Name
+</div>
+
+<div class="row mt-3 mb-5">
+	<div class="col-md-4">
+		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
+		<div class="poster p-3" style="background-image: url('@Title.Image?.Uri')">
+		</div>
+		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+	</div>
+
+	<div class="col-md-8">
+		<span class="font-lg font-gray">@Title.Type.ToString()</span>
+		<h1>@Title.Name</h1>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Raiting:</div>
+			<div class="col-sm-9 font-gray">@Title.AvarageRate.ToString("0.0")</div>
 		</div>
 
-		<div class="col-lg-3 h-auto">
-			<h3>Chat:</h3>
-
-			<div class="mh-100 overflow-auto">
-				@foreach (var message in Messages)
-				{
-					<div class="gradient-panel mb-1 p-3">@message</div>
-				}
-			</div>
+		<div class="row mt-3">
+			<div class="col-sm-3">Release Date:</div>
+			<div class="col-sm-9 font-gray">@Title.ReleaseDate.ToShortDateString()</div>
 		</div>
 
+		<div class="row mt-3">
+			<div class="col-sm-3">Country:</div>
+			<div class="col-sm-9 font-gray">@Title.Country.GetDescription()</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Genres:</div>
+			<div class="col-sm-9 font-gray">@string.Join(", ", Title.Genres.Select(x => x.Name))</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Director:</div>
+			<div class="col-sm-9 font-gray">@Title.Director</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-sm-3">Cast:</div>
+			<div class="col-sm-9 font-gray">@Title.Cast</div>
+		</div>
+
+		<div class="row mt-2">
+			<div class="col-sm-3">Age:</div>
+			<div class="col-sm-9 font-gray">@Title.AgeRestriction.GetDescription()</div>
+		</div>
+
+		<div class="d-flex mt-2 screenshot-panel">
+			@foreach (var screenshot in Title.Screenshots)
+			{
+				<img src="@screenshot.Uri" class="screenshot" />
+			}
+		</div>
 	</div>
 </div>
 
+<div>
+	<h3>What is the "@Title.Name" about:</h3>
+	<p class="font-gray mt-3">@Title.Description</p>
+</div>
+
+<h4 class="mt-5 mb-3">Watch:</h4>
+
+<div class="row">
+
+	<div class="col-lg-9 h-100">
+		<VideoPlayer @ref="Player"
+					 Series="Title.Series.ToList()"
+					 OnPlaybackStarted="OnPlayerPlaybackStarted"
+					 OnPlaybackStoped="OnPlayerPlaybackStopped"
+					 OnProgressChanged="OnPlayerProgressChanged"
+					 OnSeriesChanged="OnPlayerSeriesChanged"
+					 OnLeaveSeries="OnPlayerLeaveSeries"
+					 BeforeUnload="OnBeforeUnload" />
+	</div>
+
+	<div class="col-lg-3 mh-100 mt-3 mt-lg-0 d-flex flex-column">
+		<h4>Chat:</h4>
+
+		<div class="messages-panel">
+			@foreach (var message in Messages)
+			{
+				<div class="gradient-panel mt-1 px-3 py-2">
+					<span class="text-wrap text-break overflow-hidden mw-100">@message</span>
+				</div>
+			}
+		</div>
+
+		<div class="row mt-2">
+			<div class="col-10 col-lg-8">
+				<InputText @bind-Value="MessageInput" class="form-control rounded-corners back-dark border-primary font-sm font-gray h-100" />
+			</div>
+			<div class="col-2 col-lg-4 d-flex justify-content-end">
+				<button class="button button-fit p-2" @onclick="() => SendMessage()">Send</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div class="mt-5"></div>
+
+<JoinSessionModalWindow @ref="Window" OnJoin="OnJoinClicked" />
+
 @code {
+
+	[Parameter]
+	public string SessionId { get; set; } = string.Empty;
+
+	[Parameter]
+	public string Slug { get; set; } = string.Empty;
 
 	private VideoPlayer Player { get; set; } = default!;
 
-	private List<Series> Series { get; set; } = [
-		new Series { Id = Guid.Parse("36562b22-1c20-44b5-9547-237ee198803f"), Name = "Ep1", Uri = "/series/eb2aa1a2-ff3e-4b4e-a9a4-702cd7ae51cc.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 0, },
-		new Series { Id = Guid.Parse("ac10ed07-848c-4eb8-9ea2-659c755e69d6"), Name = "Ep2", Uri = "/series/ca80ff3a-7d78-4ce1-b969-b85d38c54605.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 1, },
-		new Series { Id = Guid.Parse("d4af58e0-0c4a-40b4-9965-d0c66d2616f6"), Name = "Ep3", Uri = "/series/520d2021-86d9-412a-a747-313b187d7012.mp4", Language = "uk-Ua", Dubbing = "Default", Index = 2, },
-	];
+	private Title Title { get; set; } = default!;
 
 	private List<string> Messages { get; set; } = new();
 
+	private User? User { get; set; } = default;
+
+	private JoinSessionModalWindow Window { get; set; } = default!;
+
 	private HubConnection? Connection { get; set; } = default;
+
+	private string MessageInput { get; set; } = string.Empty;
+
+	private bool Loaded { get; set; } = false;
+
+	private bool NotFound { get; set; } = false;
+
+	private bool Joined { get; set; } = false;
+
+	private const int DELAY = 500;
+	private const string ANONYMOUS = "Anonymous";
 
 	protected override async Task OnInitializedAsync()
 	{
+		var userResult = await IdentityService.GetProfileAsync();
+
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
+
+		var titleResult = await TitleService.FindBySlugAsync(Slug);
+
+		if (titleResult.IsFound)
+		{
+			Title = titleResult.AsFound;
+		}
+		else
+		{
+			Loaded = true;
+			NotFound = true;
+			StateHasChanged();
+			return;
+		}
+
 		Connection = new HubConnectionBuilder()
-			.WithUrl($"{Enviroment.BaseAddress}api/sessions")
+			.WithUrl($"{Enviroment.GetHostName()}{ApiRoutes.Hubs.Sessions}")
 			.Build();
 
-		Connection.On<string>(nameof(ISessionClient.ReceiveMessage), OnRecieveMessage);
+		Connection.On<string>(SessionMessages.RECEIVE_MESSAGE, OnRecieveMessage);
 
-		Connection.On(nameof(ISessionClient.StartPlayback), OnStartPlayback);
+		Connection.On(SessionMessages.START_PLAYBACK, OnStartPlayback);
 
-		Connection.On(nameof(ISessionClient.StopPlayback), OnStopPlayback);
+		Connection.On(SessionMessages.STOP_PLAYBACK, OnStopPlayback);
 
-		Connection.On<float>(nameof(ISessionClient.ChangeProgress), OnChangeProgress);
+		Connection.On<float>(SessionMessages.CHANGE_PROGRESS, OnChangeProgress);
 
-		Connection.On<Guid>(nameof(ISessionClient.ChangeSeries), OnChangeSeries);
+		Connection.On<Guid>(SessionMessages.CHANGE_SERIES, OnChangeSeries);
+
+		Connection.On<Guid, float, bool>(SessionMessages.SYNCRONIZE, OnSyncronize);
+
+		Connection.On<string>(SessionMessages.REQUST_STATE, OnRequestState);
 
 		await Connection.StartAsync();
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	protected override Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (Title is not null && Joined is false)
+			Window.Open();
+
+		return Task.CompletedTask;
+	}
+
+	private async Task OnJoinClicked()
+	{
+		Joined = true;
+		await Connection!.SendAsync(
+			SessionMessages.JOIN_SESSION,
+			SessionId,
+			Title.Id,
+			Title.Series.FirstOrDefault()?.Id);
+	}
+
+	private async Task SendMessage()
+	{
+		if (string.IsNullOrWhiteSpace(MessageInput))
+			return;
+
+		await Connection!.SendAsync(
+			SessionMessages.SEND_SESSION_MESSAGE,
+			SessionId,
+			$"{(User?.Name ?? ANONYMOUS)}: {MessageInput}");
+
+		MessageInput = string.Empty;
 	}
 
 	private async Task OnRecieveMessage(string message)
@@ -81,56 +262,76 @@
 	private async Task OnStartPlayback()
 	{
 		await Player.Play(false);
-		Console.WriteLine("Received StartPlayback message");
 	}
 
 	private async Task OnStopPlayback()
 	{
 		await Player.Stop(false);
-		Console.WriteLine("Received StopPlayback message");
 	}
 
 	private async Task OnChangeProgress(float value)
 	{
 		await Player.SetProgress(value);
-		Console.WriteLine($"Received ChangeProgress ({value}) message");
 	}
 
 	private async Task OnChangeSeries(Guid value)
 	{
 		await Player.ChangeSeries(value, false);
-		Console.WriteLine($"Received ChangeSeries ({value}) message");
+	}
+
+	private async Task OnSyncronize(Guid seriesId, float progress, bool isPlaying)
+	{
+		await Player.ChangeSeries(seriesId, false);
+
+		while (await Player.IsReady() is false)
+			await Task.Delay(DELAY);
+
+		await Player.SetProgress(progress);
+
+		if (isPlaying)
+			await Player.Play(false);
+	}
+
+	private async Task OnRequestState(string connection)
+	{
+		await Connection!.SendAsync(
+			SessionMessages.SYNCRONIZE_CONNECTION,
+			connection,
+			Player.Selected.Id,
+			await Player.GetProgress(),
+			await Player.IsPlaying()
+		);
 	}
 
 	private async Task OnPlayerPlaybackStarted()
 	{
-		await Connection.SendAsync("PlaybackStarted");
-		Console.WriteLine($"Sending PlaybackStarted message");
+		await Connection!.SendAsync(SessionMessages.PLAYBACK_STARTED, SessionId);
 	}
 
 	private async Task OnPlayerPlaybackStopped()
 	{
-		await Connection.SendAsync("PlaybackStoped");
-		Console.WriteLine($"Sending PlaybackStoped message");
+		await Connection!.SendAsync(SessionMessages.PLAYBACK_STOPED, SessionId);
 	}
 
 	private async Task OnPlayerProgressChanged(float value)
 	{
-		await Connection.SendAsync("ProgressChanged", value);
-		Console.WriteLine($"Sending ProgressChanged ({value}) message");
+		await Connection!.SendAsync(SessionMessages.PROGRESS_CHANGED, SessionId, value);
 	}
 
 	private async Task OnPlayerSeriesChanged(Series series)
 	{
-		await Connection.SendAsync("SeriesChanged", series.Id);
-		Console.WriteLine($"Sending SeriesChanged ({series.Id}) message");
+		await Connection!.SendAsync(SessionMessages.SERIES_CHANGED, SessionId, series.Id);
+	}
+
+	private async Task OnBeforeUnload()
+	{
+		await Connection!.SendAsync(SessionMessages.LEAVE_SESSION, SessionId);
 	}
 
 	private async Task OnPlayerLeaveSeries(Series series, float progress)
 	{
 		if (progress <= 0 || progress > 1)
 			return;
-		
 
 		var request = new RegisterViewRecordToUser.Request
 			{
@@ -144,6 +345,8 @@
 	{
 		if (Connection is null)
 			return;
+
+		await Connection.SendAsync(SessionMessages.LEAVE_SESSION, SessionId);
 
 		await Connection.DisposeAsync();
 	}

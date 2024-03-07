@@ -1,0 +1,118 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (TotalPages <= 1)
+{
+	return;
+}
+
+<nav>
+	<div class="pagination-list my-5">
+		<div class="pagination-item" @onclick="() => NavigateToPreviousAsync()">
+			<a class="page-link">
+				<i class="bi bi-arrow-left"></i>
+			</a>
+		</div>
+
+		@{
+			Page ??= DefaultPage;
+
+			foreach (var i in Enumerable.Range(0, TotalPages + 1))
+			{
+				if (i == Page)
+				{
+					<div class="pagination-item active" @onclick="() => NavigateToPageAsync(i)">
+						<a class="page-link font-white">
+							@(i + 1)
+						</a>
+					</div>
+				}
+				else
+				{
+					<div class="pagination-item" @onclick="() => NavigateToPageAsync(i)">
+						<a class="page-link font-white">
+							@(i + 1)
+						</a>
+					</div>
+				}
+			}
+		}
+
+		<div class="pagination-item" @onclick="() => NavigateToNextAsync()">
+			<a class="page-link">
+				<i class="bi bi-arrow-right"></i>
+			</a>
+		</div>
+	</div>
+</nav>
+
+@code {
+
+	[SupplyParameterFromQuery]
+	public int? Page { get; set; } = 0;
+
+	[SupplyParameterFromQuery]
+	public int? Count { get; set; } = 10;
+
+	[Parameter]
+	public string Url { get; set; } = string.Empty;
+
+	[Parameter]
+	public Func<int, int, Task> Refresh { get; set; } = default!;
+
+	[Parameter]
+	public int TotalCount { get; set; } = 0;
+
+	[Parameter]
+	public int TotalPages { get; set; } = 0;
+
+	[Parameter]
+	public int DefaultCount { get; set; } = 10;
+
+	[Parameter]
+	public int DefaultPage { get; set; } = 0;
+
+	[Parameter]
+	public Func<string> Query { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Count ??= DefaultCount;
+		Page ??= DefaultPage;
+
+		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+		StateHasChanged();
+	}
+
+	private async Task NavigateToNextAsync()
+	{
+		if (Page >= TotalPages)
+			return;
+
+		Page += 1;
+
+		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
+
+		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+	}
+
+	private async Task NavigateToPageAsync(int page)
+	{
+		Page = page;
+
+		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
+
+		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+	}
+
+	private async Task NavigateToPreviousAsync()
+	{
+		if (Page <= 0)
+			return;
+
+		Page -= 1;
+
+		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
+
+		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+	}
+}

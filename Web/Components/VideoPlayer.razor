@@ -73,7 +73,7 @@
 
 @code {
 
-	private Series Selected { get; set; } = default!;
+	public Series Selected { get; private set; } = default!;
 
 	[SupplyParameterFromQuery]
 	public Guid SeriesId { get; set; } = default;
@@ -99,6 +99,8 @@
 	[Parameter]
 	public Func<Series, Task> OnSeriesChanged { get; set; } = default!;
 
+	[Parameter]
+	public Func<Task> BeforeUnload { get; set; } = default!;
 
 	protected override void OnInitialized()
 	{
@@ -171,6 +173,11 @@
 		await JS.InvokeVoidAsync("setProgress", value);
 	}
 
+	public async Task<float> GetProgress()
+	{
+		return await JS.InvokeAsync<float>("getProgress");
+	}
+
 	public async Task Play(bool notifyChanged = true)
 	{
 		await JS.InvokeVoidAsync("play", notifyChanged);
@@ -179,6 +186,16 @@
 	public async Task Stop(bool notifyChanged = true)
 	{
 		await JS.InvokeVoidAsync("stop", notifyChanged);
+	}
+
+	public async Task<bool> IsPlaying()
+	{
+		return await JS.InvokeAsync<bool>("isPlaying");
+	}
+
+	public async Task<bool> IsReady()
+	{
+		return await JS.InvokeAsync<bool>("isReady");
 	}
 
 	public async Task ChangeSeries(Guid id, bool notifyChanged = true)
@@ -219,6 +236,13 @@
 	public Task NotifyProgressChanged(float value)
 	{
 		OnProgressChanged?.Invoke(value);
+		return Task.CompletedTask;
+	}
+
+	[JSInvokableAttribute(nameof(OnBeforeUnload))]
+	public Task OnBeforeUnload()
+	{
+		BeforeUnload?.Invoke();
 		return Task.CompletedTask;
 	}
 

@@ -1,0 +1,157 @@
+﻿@attribute [Route(WebRoutes.Dashboard.Users)]
+@layout DashboardLayout
+
+@using Domain.Entities
+@using Domain.Extensions
+
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<table class="table table-dark table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>FullName</th>
+            <th>BirthDate</th>
+            <th>Subscription</th>
+            <th>SubscriptionExpiresIn</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var users in Users)
+        {
+            <tr @onclick="() => UpdateWindow.Open(users.Id)">
+                <td>@users.Id</td>
+                <td>@users.Email</td>
+                <td>@users.Name</td>
+                <td>@users.FullName</td>
+                <td>@users.BirthDate</td>
+                <td>@users.Subscription?.Name</td>
+                <td>@users.SubscriptionExpiresIn</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav data-bs-theme="dark">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToPreviousAsync()">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        @foreach (var i in Enumerable.Range(0, TotalPages + 1))
+        {
+            if (i == Page)
+            {
+                <li class="page-item active">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
+                        @(i)
+                    </a>
+                </li>
+            }
+        }
+
+        <li class="page-item">
+            <a class="page-link" @onclick="() => NavigateToNextAsync()">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<UpdateUserModalWindow @ref="UpdateWindow" OnChanged="OnUpdated" />
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public int? Page { get; set; } = 0;
+
+    [SupplyParameterFromQuery]
+    public int? Count { get; set; } = 10;
+
+    private List<User> Users { get; set; } = new();
+
+    private int TotalCount { get; set; } = 0;
+
+    private int TotalPages { get; set; } = 0;
+
+    private string Url { get; set; } = WebRoutes.Dashboard.Users;
+
+    private UpdateUserModalWindow UpdateWindow { get; set; } = default!;
+
+    private const int DEFAULT_COUNT = 10;
+    private const int DEFAULT_PAGE = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Count ??= DEFAULT_COUNT;
+        Page ??= DEFAULT_PAGE;
+
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        var titlesResult = await UserService.FindAllAsync(Count ?? DEFAULT_COUNT, Page ?? DEFAULT_PAGE);
+
+        if (titlesResult.IsFound)
+        {
+            Users = titlesResult.AsFound;
+        }
+
+        TotalCount = await UserService.CountAsync();
+
+        TotalPages = TotalCount / (Count ?? DEFAULT_COUNT);
+    }
+
+    private async Task OnUpdated()
+    {
+        await Refresh();
+        StateHasChanged();
+    }
+
+    private async Task NavigateToNextAsync()
+    {
+        if (Page >= TotalPages)
+            return;
+
+        Page += 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPageAsync(int page)
+    {
+        Page = page;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+
+    private async Task NavigateToPreviousAsync()
+    {
+        if (Page <= 0)
+            return;
+
+        Page -= 1;
+
+        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
+
+        await Refresh();
+    }
+}

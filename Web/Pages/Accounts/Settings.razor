@@ -1,0 +1,84 @@
+﻿@attribute [Route(WebRoutes.Settings.Base)]
+@layout ProfileLayout
+
+@using Domain.Entities
+
+@inject IIdentityService IdentityService
+
+<RequireAuthorization />
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<h2>Account</h2>
+
+<div class="mt-3 row">
+	<div class="col-md-6 d-flex flex-column">
+		<span class="font-md">@User.Email</span>
+		<span class="font-sm">Password: *******</span>
+	</div>
+
+	<div class="col-md-6 mt-3 mt-md-0">
+		<span class="font-sm d-flex justify-content-start justify-content-md-end">
+			<a href="@WebRoutes.ResetCodeSent?returnUrl=/settings">Change Password</a>
+		</span>
+	</div>
+</div>
+
+<div class="mt-3 mb-3 gradient-divider"></div>
+
+<h2>Subscriptions and Payment</h2>
+
+<div class="mt-3 row">
+	<div class="col-md-6 d-flex flex-column">
+		<span class="font-md font-gray">Expires: @User.SubscriptionExpiresIn</span>
+		<a class="button button-fit py-1 px-2 mt-2 font-sm font-white">Cancel Subscription</a>
+	</div>
+
+	<div class="col-md-6 mt-3 mt-md-0">
+
+	</div>
+</div>
+
+<div class="mt-4 mb-4 gradient-divider"></div>
+
+<h2>Current Subscription</h2>
+
+<div class="mt-3 row">
+	<div class="col-md-6 d-flex flex-column">
+		<span class="font-md font-gray">@User.Subscription?.Name</span>
+	</div>
+
+	<div class="col-md-6 mt-3 mt-md-0">
+		<span class="font-sm d-flex justify-content-start justify-content-md-end">
+			<a href="@WebRoutes.Manage.Subscription">Manage Subscription</a>
+		</span>
+	</div>
+</div>
+
+
+@code {
+	private User User { get; set; } = default!;
+
+	private bool Loaded { get; set; } = false;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		var userResult = await IdentityService.GetProfileAsync();
+
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
+}

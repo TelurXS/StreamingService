@@ -1,0 +1,102 @@
+﻿@using Domain.Entities
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+
+<nav class="navbar navbar-expand-lg dark-bg-on-mobile">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="img/logo.svg" />
+        </a>
+        <button class="navbar-toggler btn btn-outline-primary rounded-corners" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
+
+            @if (Search)
+            {
+                <div class="m-auto"></div>
+
+                <form class="d-flex" action="@WebRoutes.Search">
+                    <InputText @bind-Value="SearchName" class="input-underline" name="searchName" type="search" placeholder="Search..." />
+                    
+                    <button class="btn" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button class="btn" type="reset" @onclick="() => Search = false">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <ul class="navbar-nav m-auto">
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Home" class="nav-link font-white font-sm">Home</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Series" class="nav-link font-white font-sm">Series</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.Films" class="nav-link font-white font-sm">Films</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.NewAndPopular" class="nav-link font-white font-sm">New & Popular</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a href="@WebRoutes.WatchViaLanguages" class="nav-link font-white font-sm">Watch via languages</a>
+                    </li>
+                </ul>
+
+                <button class="btn" type="submit" @onclick="() => Search = true">
+                    <i class="bi bi-search"></i>
+                </button>
+            }
+
+            <AuthorizeView>
+                <Authorized>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link font-white dropdown-toggle font-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mx-2">@(User?.Name)</span>
+                                <img class="profile-picture" src="@(string.IsNullOrEmpty(User?.ProfileImage) 
+                                    ?  "/img/defaults/blank-profile-picture.webp"
+                                    : User.ProfileImage)" />
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-lg-end back-dark">
+                                <li><a class="dropdown-item" href="">Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="@WebRoutes.Login?returnUrl=@(NavigationManager.GetCurrentRoute())" class="button font-white font-sm" style="width: 100px">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+     
+        </div>
+    </div>
+</nav>
+
+@code {
+
+    [SupplyParameterFromQuery]
+    public string SearchName { get; set; } = string.Empty;
+
+    private User? User { get; set; } = default;
+
+    private bool Search { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userResult = await IdentityService.GetProfileAsync();
+
+        if (userResult.IsFound)
+        {
+            User = userResult.AsFound;
+        }
+    }
+}

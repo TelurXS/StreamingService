@@ -1,0 +1,51 @@
+[
+    {
+        "id": "services_in_subscription",
+        "question": "What services are included in the subscription to your streaming service?",
+        "localizable_question": "SERVICES_IN_SUBSCRIPTION_QUESTION",
+        "answer": "Our subscription includes access to all of our streaming services, including movies, TV shows, sports, music and original content.",
+        "localizable_answer": "SERVICES_IN_SUBSCRIPTION_ANSWER"
+    },
+    {
+        "id": "supported_devcies",
+        "question": "What devices support your streaming service?",
+        "localizable_question": "SUPPORTED_DEVCIES_QUESTION",
+        "answer": "Our streaming service supports all modern device types, regardless of system and platform.",
+        "localizable_answer": "SUPPORTED_DEVCIES_ANSWER"
+    },
+    {
+        "id": "offline_view",
+        "question": "Is it possible to view the content offline?",
+        "localizable_question": "OFFLINE_VIEW_QUESTION",
+        "answer": "Currently, there is no online viewing on our streaming service. But you can freely download your favorite movies and series and watch them offline on your device.",
+        "localizable_answer": "OFFLINE_VIEW_ANSWER"
+    },
+    {
+        "id": "collaboration_capabilities",
+        "question": "What capabilities does your streaming service have for collaboration with other services or devices?",
+        "localizable_question": "COLLABORATION_CAPABILITIES_QUESTION",
+        "answer": "Our company is open for cooperation. If you are interested in cooperation with us, you can write to <a href='https://mail.google.com/mail/?view=cm&fs=1&to=xflick@xflick@ukr.net&su=SUBJECT&body=BODY&bcc=xflick@ukr.net'>our e-mail</a>.",
+        "localizable_answer": "COLLABORATION_CAPABILITIES_ANSWER"
+    },
+    {
+        "id": "watch_together_posibillity",
+        "question": "Is it possible to watch content together with other users on your streaming service?",
+        "localizable_question": "WATCH_TOGETHER_POSIBILLITY_QUESTION",
+        "answer": "Yes! We currently support sharing content with your friends. To learn more, you can look at the page of the <a href='/help-center'>help center</a>",
+        "localizable_answer": "WATCH_TOGETHER_POSIBILLITY_ANSWER"
+    },
+    {
+        "id": "subscription_changing_posibillity",
+        "question": "Is it possible to cancel or change a subscription in your streaming service?",
+        "localizable_question": "SUBSCRIPTION_CHANGING_POSIBILLITY_QUESTION",
+        "answer": "Yes, you are free to change your subscription at any time. To do this, you can visit your <a href='/settings'>account settings page</a>. You can also cancel your current subscription on this page.",
+        "localizable_answer": "SUBSCRIPTION_CHANGING_POSIBILLITY_ANSWER"
+    },
+    {
+        "id": "privacy_and_security",
+        "question": "How do you ensure the security and privacy of user data on your streaming service?",
+        "localizable_question": "PRIVACY_AND_SECURITY_QUESTION",
+        "answer": "We ensure your complete privacy. To do this, we store important data in encrypted form. Criminals or our collaborators will not have access to your data. We do not store information about payment data or payment history.",
+        "localizable_answer": "PRIVACY_AND_SECURITY_ANSWER"
+    }
+]

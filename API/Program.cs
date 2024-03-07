@@ -38,8 +38,11 @@ builder.Services.AddSingleton<IEmailSender<User>, EmailSender>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>,
 		AdditionalUserClaimsPrincipalFactory>();
 
-builder.Services.AddHostedService<RolesSeeder>();
-builder.Services.AddHostedService<GenresSeeder>();
+if (builder.Environment.IsProduction()) 
+{
+	builder.Services.AddHostedService<RolesSeeder>();
+	builder.Services.AddHostedService<GenresSeeder>();
+}
 
 builder.Services
     .AddAuthentication(options =>

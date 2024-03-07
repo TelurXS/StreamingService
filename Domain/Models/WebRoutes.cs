@@ -1,10 +1,26 @@
-﻿namespace Domain.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace Domain.Models;
 
 public static class WebRoutes
 {
 	public const string Home = "/";
 
+	public const string NewAndPopular = "/new-and-popular";
+
+	public const string Series = "/series";
+
+	public const string Films = "/films";
+
+	public const string WatchViaLanguages = "/languages";
+
 	public const string NotAuthorized = "/not-authorized";
+
+	public const string Payment = "/payment";
+
+	public const string PaymentByName = Payment + "/{selected}";
+
+	public const string ApplyTrial = "/apply-trial";
 
 	public const string Register = "/register";
 
@@ -12,11 +28,19 @@ public static class WebRoutes
 
 	public const string RegistrationSuccess = "/registration-success";
 
+	public const string ResetCodeSent = "/reset-code-sent";
+
 	public const string Login = "/login";
 
 	public const string Logout = "/logout";
 
 	public const string ConfirmEmail = "/confirm-email";
+
+	public const string ForgotPassword = "/forgot-password";
+
+	public const string ResetPassword = "/reset-password";
+
+	public const string Search = "/search";
 
 	public static class Manage
 	{
@@ -52,6 +76,13 @@ public static class WebRoutes
 		}
 	}
 
+	public static class Settings
+	{
+		public const string Base = "/settings";
+
+		public const string ChangePassword = Base + "/change-password";
+	}
+
 	public static class Users
 	{
 		public const string Base = "/users";
@@ -59,6 +90,8 @@ public static class WebRoutes
 		public static class Profile
 		{
 			public const string ById = Base + "/{id}";
+
+			public const string Route = Base;
 		}
 	}
 
@@ -67,5 +100,54 @@ public static class WebRoutes
 		public const string Base = "/lists";
 
 		public const string ById = Base + "/{id}";
+	}
+
+	public static class Sessions
+	{
+		public const string Base = "/sessions";
+
+		public const string ByTitleAndId = Base + "/{slug}/{sessionId}";
+	}
+
+	public static class Dashboard
+	{
+		public const string Base = "/dashboard";
+
+		public const string Home = Base + "/home";
+
+		public const string Titles = Base + "/titles";
+
+		public const string Series = Base + "/series";
+
+		public const string Users = Base + "/users";
+	}
+
+	public static class Info
+	{
+		public const string Base = "";
+
+		public const string HelpCenter = Base + "/help-center";
+
+		public const string Faq = Base + "/faq";
+
+		public const string LegalNotices = Base + "/legal-notices";
+
+		public const string PrivacyPolicy = Base + "/privacy-policy";
+
+		public const string CorporateInformation = Base + "/corporate-info";
+		
+		public const string TermsOfUse = Base + "/terms-of-use";
+		
+		public const string ContactUs = Base + "/contact-us";
+
+		public const string Mediacenter = Base + "/mediacenter";
+
+		public const string Vacancies = Base + "/vacancies";
+
+		public const string InvestorRelations = Base + "/investor-relations";
+
+		public const string SpeedCheck = Base + "/speed-check";
+
+		public const string ViewingMethods = Base + "/viewing-methods";
 	}
 }

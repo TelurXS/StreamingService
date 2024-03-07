@@ -1,0 +1,119 @@
+﻿@attribute [Route(WebRoutes.Info.SpeedCheck)]
+@layout InfoLayout
+
+@inject ITitleService TitleService
+
+<Glow Size="200" Top="-200px" Blur="100" Left="calc(50% - 100px)" ShadowColor="var(--primary)" />
+<Glow Size="80" Top="800px" Blur="100" Left="0" ShadowColor="var(--primary)" />
+
+<div class="position-relative" style="z-index: 30; min-height: 80vh">
+	<a href="@WebRoutes.Info.HelpCenter" class="font-white"><i class="bi bi-chevron-left"></i> Back to Help Center</a>
+
+	<h1 class="mt-5 mb-5">Speed Check</h1>
+
+	<p>Please note that measurements are not exact and may vary due to various factors (server load, technical work, etc.). The scale shows how much the obtained result differs from the expected one.</p>
+
+	<div class="row mt-5">
+
+		@foreach (var metric in Metricks)
+		{
+			<div class="col-md-4 mt-3 mt-md-0">
+
+				<div class="w-100 h-100 py-5 gradient-panel d-flex flex-column justify-content-center align-items-center">
+
+
+					<div class="gauge">
+						<div class="gauge-body">
+							<div class="gauge-fill" 
+							style="transform: rotate(@(metric.Measured ? CalculateProgress(metric).ToString().Replace(",", ".") : "0")turn);"></div>
+							<div class="gauge-cover">@(metric.Measured ? metric.Difference.TotalMilliseconds : 0)ms</div>
+						</div>
+					</div>
+
+					<div class="mt-2">
+						<span class="font-lg">@metric.Name (Expected: @(metric.Expected.TotalMilliseconds)ms)</span>
+					</div>
+				</div>
+
+			</div>
+		}
+
+	</div>
+
+	<div class="mt-5 mb-5"></div>
+</div>
+
+@code {
+
+	private List<Metrick> Metricks { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.WhenAll(
+			MeterLowQuery(),
+			MeterBigQuery(),
+			MeterFilterQuery()
+			);
+	}
+
+	private sealed class Metrick
+	{
+		public string Name { get; set; } = string.Empty;
+
+		public bool Measured { get; set; } = false;
+
+		public DateTime Before { get; set; } = DateTime.Now;
+
+		public DateTime After { get; set; } = DateTime.Now;
+
+		public TimeSpan Expected { get; set; } = TimeSpan.FromSeconds(1);
+
+		public TimeSpan Difference => After - Before;
+
+		public double Evaluated => Difference / Expected;
+	}
+
+	private double CalculateProgress(Metrick metrick)
+	{
+		return Math.Clamp(1 - (metrick.Evaluated * 0.5), 0.05, 0.5);
+	}
+
+	private async Task MeterLowQuery()
+	{
+		var metric = new Metrick { Name = "Low Query", Expected = TimeSpan.FromMilliseconds(300) };
+		Metricks.Add(metric);
+		StateHasChanged();
+
+		await TitleService.FindBySlugAsync("/squid-game");
+
+		metric.After = DateTime.Now;
+		metric.Measured = true;
+		StateHasChanged();
+	}
+
+	private async Task MeterBigQuery()
+	{
+		var metric = new Metrick { Name = "Big Query", Expected = TimeSpan.FromMilliseconds(400) };
+		Metricks.Add(metric);
+		StateHasChanged();
+
+		await TitleService.FindAllPopularAsync();
+
+		metric.After = DateTime.Now;
+		metric.Measured = true;
+		StateHasChanged();
+	}
+
+	private async Task MeterFilterQuery()
+	{
+		var metric = new Metrick { Name = "Filtered Query", Expected = TimeSpan.FromMilliseconds(500) };
+		Metricks.Add(metric);
+		StateHasChanged();
+
+		await TitleService.FilterAllAsync(["Comedy"], TitleType.Series, null, TitleSorting.ByOldness, 100, 0);
+
+		metric.After = DateTime.Now;
+		metric.Measured = true;
+		StateHasChanged();
+	}
+}

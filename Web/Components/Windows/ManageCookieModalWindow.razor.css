@@ -1,0 +1,24 @@
+﻿
+.manage-cookie-panel {
+    width: 800px;
+    max-height: 600px;
+    overflow: auto;
+}
+
+@media (max-width: 992px) {
+    .manage-cookie-panel {
+        width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-cookie-panel {
+        width: 600px;
+    }
+}
+
+@media (max-width: 576px) {
+    .manage-cookie-panel {
+        width: 100%;
+    }
+}

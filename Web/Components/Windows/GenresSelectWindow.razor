@@ -1,0 +1,66 @@
+﻿@using Domain.Entities
+
+@inject IGenreService GenreService
+
+<ModalWindow @ref="Window" OnClosed="OnClosed">
+
+	<div class="gradient-panel genres-select-panel p-3" @onclick:stopPropagation="true">
+
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 px-3 px-sm-0">
+			@foreach (var genre in Genres)
+			{
+				if (Selected.Contains(genre))
+				{
+					<div @onclick="() => ToggleGenre(genre)" class="col mt-1 font-primary">@genre</div>
+				}
+				else
+				{
+					<div @onclick="() => ToggleGenre(genre)" class="col mt-1 font-white">@genre</div>
+				}
+			}
+		</div>
+
+	</div>
+
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public Func<Task> OnClosed { get; set; } = default!;
+
+	public List<string> Genres { get; set; } = [];
+
+	public List<string> Selected { get; set; } = [];
+
+	private ModalWindow Window { get; set; } = default!;
+
+	private const int COUNT = 100;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var genresResult = await GenreService.FindAllAsync(COUNT);
+
+		if (genresResult.IsFound)
+		{
+			Genres = genresResult.AsFound.Select(x => x.Name).ToList();
+		}
+
+		StateHasChanged();
+	}
+
+	private void ToggleGenre(string value)
+	{
+		if (Selected.Contains(value))
+		{
+			Selected.Remove(value);
+			return;
+		}
+
+		Selected.Add(value);
+	}
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+}

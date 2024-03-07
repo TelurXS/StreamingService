@@ -1,0 +1,166 @@
+﻿@using Application.Features.Serieses
+@using Application.Features.Titles
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Responses
+@using Infrastructure.Configurations
+
+@inject ISeriesService SeriesService
+
+<ModalWindow @ref="Window">
+	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
+		<h2>Title</h2>
+
+		<EditForm Model="Input">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Name</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Name" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Uri</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Uri" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Uri" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Dubbing</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Dubbing" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Dubbing" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Language</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Language" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Language" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Index</span>
+				</div>
+				<div class="col-md-9">
+					<InputNumber @bind-Value="Input.Index" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Index" />
+				</div>
+			</div>
+
+			<div class="mt-3 d-flex">
+				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
+				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
+			</div>
+		</EditForm>
+	</div>
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public Func<Task> OnChanged { get; set; } = default!;
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	public Guid Id { get; set; } = default;
+
+	private ModalWindow Window { get; set; } = default!;
+
+
+	public async void Open(Guid id)
+	{
+		var seriesResult = await SeriesService.FindByIdAsync(id);
+		
+		if (seriesResult.IsFound)
+		{
+			var series = seriesResult.AsFound;
+		
+			Id = series.Id;
+		
+			Input = new InputModel
+				{
+					Id = series.Id,
+					Name = series.Name,
+					Uri = series.Uri,
+					Dubbing = series.Dubbing,
+					Language = series.Language,
+					Index = series.Index,
+				};
+		}
+		
+		Window.Open();
+	}
+
+	public void Close() => Window.Close();
+
+	private async Task Save()
+	{
+		var request = new UpdateSeries.Request
+			{
+				Id = Input.Id,
+				Name = Input.Name,
+				Uri = Input.Uri,
+				Dubbing = Input.Dubbing,
+				Language = Input.Language,
+				Index = Input.Index,
+			};
+		
+		var result = await SeriesService.UpdateAsync(Id, request);
+		
+		if (result.IsUpdated)
+		{
+			OnChanged?.Invoke();
+			Close();
+		}
+	}
+
+	private class InputModel
+	{
+		public Guid Id { get; set; } = default;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string Uri { get; set; } = string.Empty;
+
+		public string Dubbing { get; set; } = string.Empty;
+
+		public string Language { get; set; } = string.Empty;
+
+		public int Index { get; set; } = default;
+	}
+}

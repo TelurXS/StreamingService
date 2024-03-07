@@ -1,19 +1,23 @@
-﻿@page "/"
+﻿@attribute [Route(WebRoutes.Home)]
 @using Domain.Entities
+@using Domain.Models.Results.Unions
 
-@inject ITitleService TitleService;
+@inject IIdentityService IdentityService
+@inject ITitleService TitleService
 
 <PageTitle>Home</PageTitle>
 <Background Blur="0" Url="@Title.Image?.Uri" />
 
 @if (Loaded is false)
 {
-	<span>Loading...</span>
-	<div class="page-container"></div>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
 	return;
 }
 
-<div class="mt-5 mb-5"></div>
+<div class="responsive-margin-top"></div>
 
 <span class="font-md font-gray">Series</span>
 <h1>@Title.Name</h1>
@@ -23,32 +27,42 @@
 	<div class="d-none d-md-block col-md-6"></div>
 </div>
 
-<div class="mt-4 d-flex">
-	<a href="/titles/@Title.Slug#player" class="button-md button font-lg font-white mx-2">Watch <i class="mx-2 bi bi-play-fill"></i></a>
-	<a href="/titles/@Title.Slug" class="button-md button-glass font-lg font-white mx-2 back-dark">Info <i class="mx-2 bi bi-info-circle-fill"></i></a>
+<div class="mt-4 row">
+	<div class="col-sm-5 col-md-4 col-lg-3">
+		<a href="@WebRoutes.Titles.Base/@Title.Slug#player" class="button font-lg font-white">
+			Watch <i class="mx-2 bi bi-play-fill"></i>
+		</a>
+	</div>
+	<div class="col-sm-5 col-md-4 col-lg-3 mt-3 mt-sm-0">
+		<a href="@WebRoutes.Titles.Base/@Title.Slug" class="button-dark font-lg font-white">
+			Info <i class="mx-2 bi bi-info-circle-fill"></i>
+		</a>
+	</div>
 </div>
 
-<div class="mt-5 mb-5"></div>
+<div style="height: 60px"></div>
 
-<div class="mt-3">
-	<Slider Header="Recomendations" Titles="Recomendations"/>
+<div class="mt-4">
+	<Slider Header="Recomendations" Titles="Recomendations" />
 </div>
 
 @foreach (var byGenreRecomedations in GenresRecomedations)
 {
-	<div class="mt-3">
+	<div class="mt-4">
 		<Slider Header="@byGenreRecomedations.Key" Titles="@byGenreRecomedations.Value" />
 	</div>
 }
+
+<div class="m-5"></div>
 
 @code {
 	public Title Title { get; set; } = new()
 		{
 			Id = Guid.NewGuid(),
 			Trailer = string.Empty,
-			Name = "Гра в кальмара",
-			Description = "47-річний Сон Гі-Хун, залежний від азартних ігор, живе на доходи своєї хворої матері. Через його пристрасть до азартних ігор і невимушене ставлення до грошей він опинився у фінансовій ямі, і не може отримати опіку над своєю донькою Га-Єн. Коли кредитори погрожують Сону фізичною розправою, якщо чоловік не поверне гроші до кінця місяця, загадковий незнайомець пропонує йому взяти участь у секретній грі на виживання. 456 учасникам доведеться вести боротьбу за солідний грошовий приз, граючи в дитячі ігри...",
-			Slug = "squid-game",
+			Name = string.Empty,
+			Description = string.Empty,
+			Slug = string.Empty,
 			ReleaseDate = DateTime.Now,
 			Director = string.Empty,
 			Type = TitleType.Film,
@@ -71,6 +85,22 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var favouriteGenresResult = await IdentityService.GetFavouriteGenresAsync();
+
+		if (favouriteGenresResult.IsFound)
+		{
+			var genres = favouriteGenresResult
+				.AsFound;
+
+			if (genres.Count > 0)
+			{
+				GenresForRecomendation = genres
+					.Take(10)
+					.Select(x => x.Name)
+					.ToList();
+			}
+		}
+
 		var recomendationsResult = await TitleService.FindAllPopularAsync();
 
 		if (recomendationsResult.IsFound)
@@ -79,13 +109,20 @@
 			Title = Recomendations.First();
 		}
 
+		Dictionary<string, Task<GetAllResult<Title>>> tasks = [];
+
 		foreach (var genre in GenresForRecomendation)
 		{
-			var recomendationsByGenreResult = await TitleService.FindAllByGenreAsync(genre);
+			tasks.Add(genre, TitleService.FindAllByGenreAsync(genre));
+		}
 
-			if (recomendationsByGenreResult.IsFound)
+		await Task.WhenAll(tasks.Values);
+
+		foreach (var (genre, task) in tasks)
+		{
+			if (task.Result.IsFound)
 			{
-				GenresRecomedations.Add(genre, recomendationsByGenreResult.AsFound);
+				GenresRecomedations.Add(genre, task.Result.AsFound);
 			}
 		}
 

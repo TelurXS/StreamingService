@@ -1,0 +1,46 @@
+﻿
+
+@if (IsOpened)
+{
+	<div class="full-screen" @onclick="() => InternalClose()">
+		@ChildContent
+	</div>
+}
+
+
+@code {
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; } = default!;
+
+	[Parameter]
+	public Func<Task> OnClosed { get; set; } = default!;
+
+	[Parameter]
+	public Func<Task> OnOpened { get; set; } = default!;
+
+	[Parameter]
+	public bool CloseOnBackgroundClick { get; set; } = true;
+
+	private bool IsOpened { get; set; } = false;
+
+	public void Open()
+	{
+		IsOpened = true;
+		OnOpened?.Invoke();
+		StateHasChanged();
+	}
+
+	public void Close()
+	{
+		IsOpened = false;
+		OnClosed?.Invoke();
+		StateHasChanged();
+	}
+
+	private void InternalClose()
+	{
+		if (CloseOnBackgroundClick)
+			Close();
+	}
+}

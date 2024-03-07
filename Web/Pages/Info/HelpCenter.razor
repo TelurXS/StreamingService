@@ -1,0 +1,140 @@
+﻿@attribute [Route(WebRoutes.Info.HelpCenter)]
+@layout InfoLayout
+
+@inject ILocalFilesService LocalFilesService
+
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<Glow Size="200" Top="-200px" Blur="100" Left="calc(50% - 100px)" ShadowColor="var(--primary)" />
+<Glow Size="50" Top="600px" Blur="100" Left="calc(25% - 25px)" ShadowColor="var(--primary)" />
+<Glow Size="80" Top="800px" Blur="100" Left="calc(90% - 40px)" ShadowColor="var(--primary)" />
+
+<div class="mt-5 mb-5 position-relative d-flex flex-column justify-content-center align-items-center" style="z-index: 30">
+	<h1 class="text-center">How can we help you?</h1>
+	<div>
+		<InputText class="mt-3 input-underline" placeholder="Input your question..."
+			ValueExpression="@(() => Filter)"
+			Value="@Filter"
+			ValueChanged="(value) => OnFilterChanged(value)" />
+	</div>
+</div>
+
+@if (string.IsNullOrEmpty(Filter) is false)
+{
+	<div class="row mt-3">
+		<div class="col-md-6 mx-auto font-white">
+			<ul class="list-group list-group-flush p-2" style="--bs-list-group-border-color: var(--primary); border: 2px solid var(--primary); border-radius: 20px">
+				<li class="list-group-item font-white back-dark">
+					<h3>Results: @Filter</h3>
+				</li>
+
+				@foreach (var question in QuestionGroups
+											.SelectMany(x => x.Questions)
+											.Where(x => x.Question.Contains(Filter)))
+				{
+					<li class="list-group-item font-white back-dark">
+						<a class="d-flex justify-content-between" data-bs-toggle="collapse" href="#@question.Id">
+							<span class="font-md">@question.Question</span>
+							<i class="bi bi-chevron-down"></i>
+						</a>
+						<div class="collapse mt-3" id="@question.Id">
+							<span class="font-md">@((MarkupString)question.Answer)</span>
+						</div>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+}
+else
+{
+	foreach (var group in QuestionGroups)
+	{
+		<div class="row mt-3">
+			<div class="col-md-6 mx-auto font-white">
+				<ul class="list-group list-group-flush p-2" style="--bs-list-group-border-color: var(--primary); border: 2px solid var(--primary); border-radius: 20px">
+					<li class="list-group-item font-white back-dark">
+						<h3>@group.Name</h3>
+					</li>
+
+					@foreach (var question in group.Questions)
+					{
+						<li class="list-group-item font-white back-dark">
+							<a class="d-flex justify-content-between" data-bs-toggle="collapse" href="#@question.Id">
+								<span class="font-md">@question.Question</span>
+								<i class="bi bi-chevron-down"></i>
+							</a>
+							<div class="collapse mt-3" id="@question.Id">
+								<span class="font-md">@((MarkupString)question.Answer)</span>
+							</div>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
+	}
+}
+
+<div class="mt-5 mb-5 position-relative d-flex flex-column justify-content-center align-items-center">
+	<h2 class="text-center">Need Help?</h2>
+	<a href="@WebRoutes.Info.ContactUs" class="mt-3 button button-fit py-1 px-3 font-white font-xl shadow-primary">Contact Us</a>
+</div>
+
+@code {
+
+	private List<QuestionsGroup> QuestionGroups { get; set; } = new();
+
+	private string Filter { get; set; } = string.Empty;
+
+	private bool Loaded { get; set; } = false;
+
+	private const string PATH = "/files/help-questions.json";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await LocalFilesService.ReadFromJsonAsync<List<QuestionsGroup>>(PATH);
+
+		if (result.IsFound)
+		{
+			QuestionGroups = result.AsFound;
+		}
+
+		Loaded = true;
+		StateHasChanged();
+	}
+
+	private void OnFilterChanged(string value)
+	{
+		Filter = value;
+		StateHasChanged();
+	}
+
+	private sealed class QuestionsGroup
+	{
+		public string Name { get; set; } = string.Empty;
+
+		public string LocalizableName { get; set; } = string.Empty;
+
+		public List<QuestionResponse> Questions { get; set; } = new();
+	}
+
+	private sealed class QuestionResponse
+	{
+		public string Id { get; set; } = string.Empty;
+
+		public string Question { get; set; } = string.Empty;
+
+		public string LocalizableQuestion { get; set; } = string.Empty;
+
+		public string Answer { get; set; } = string.Empty;
+
+		public string LocalizableAnswer { get; set; } = string.Empty;
+	}
+}

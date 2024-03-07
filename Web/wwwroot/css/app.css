@@ -1,6 +1,7 @@
 html, body {
     font-family: 'Inter', sans-serif;
     background-color: var(--dark);
+    overflow-x: hidden;
 
 }
 
@@ -92,14 +93,14 @@ input {
 
     .loading-progress circle {
         fill: none;
-        stroke: #e0e0e0;
+        stroke: var(--stroke);
         stroke-width: 0.6rem;
         transform-origin: 50% 50%;
         transform: rotate(-90deg);
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
+            stroke: var(--primary);
             stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
             transition: stroke-dasharray 0.05s ease-in-out;
         }
@@ -238,6 +239,14 @@ input::placeholder {
     align-items: center;
 }
 
+.sm-page-container {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .page {
     position: relative;
     display: flex;
@@ -250,6 +259,10 @@ main {
 
 .card-form {
     width: 400px;
+}
+
+.dashboard-form {
+    width: 700px;
 }
 
 .dropdown-item {
@@ -318,9 +331,26 @@ main {
     padding: 10px;
 }
 
-@media (max-width: 400px) {
-    .card-form {
-        width: 100%;
+.gradient-panel-with-background {
+    background: linear-gradient(35deg, var(--primary) -200%, transparent 100%);
+    border: 2px solid var(--primary);
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.responsive-margin-top {
+    margin-top: 200px;
+}
+
+@media (max-width: 1200px) {
+    .responsive-margin-top {
+        margin-top: 150px;
+    }
+}
+
+@media (max-width: 992px) {
+    .responsive-margin-top {
+        margin-top: 120px;
     }
 }
 
@@ -328,6 +358,33 @@ main {
     .circle-profile-picture {
         width: 60%;
         margin: auto;
+    }
+
+    .dashboard-form {
+        width: 100%;
+        margin: 50px;
+    }
+
+    .responsive-margin-top {
+        margin-top: 80px;
+    }
+}
+
+@media (max-width: 400px) {
+    .card-form {
+        width: 100%;
+    }
+
+    .dashboard-form {
+        width: 100%;
+        margin: 0px;
+    }
+}
+
+
+@media (max-width: 576px) {
+    .responsive-margin-top {
+        margin-top: 30px;
     }
 }
 

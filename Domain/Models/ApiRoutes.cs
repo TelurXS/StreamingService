@@ -2,21 +2,25 @@
 
 public static class ApiRoutes
 {
-    public const string Base = "/api";
+	public const string Base = "/api";
 
-    public const string Register = Base + "/register";
+	public const string Register = Base + "/register";
 
-    public const string Login = Base + "/login";
+	public const string Login = Base + "/login";
 
-    public const string Logout = Base + "/logout";
+	public const string Logout = Base + "/logout";
 
-    public const string Refresh = Base + "/refresh";
+	public const string Refresh = Base + "/refresh";
 
-    public const string User = Base + "/user";
+	public const string User = Base + "/user";
 
-    public const string ConfirmEmail = Base + "/confirmEmail";
+	public const string ConfirmEmail = Base + "/confirmEmail";
 
-    public const string ResendConfirmationEmail = Base + "/confirmEmail";
+	public const string ResendConfirmationEmail = Base + "/confirmEmail";
+
+	public const string ForgotPassword = Base + "/forgotPassword";
+
+	public const string ResetPassword = Base + "/resetPassword";
 
 	public static class Manage
 	{
@@ -49,7 +53,9 @@ public static class ApiRoutes
 
 		public const string ReadersById = Base + "/readers/{userId}";
 
-		public static class FavouriteTitles 
+		public const string ApplyTrial = Base + "/apply-trial";
+
+		public static class FavouriteTitles
 		{
 			public const string GroupName = "/favourites";
 
@@ -62,6 +68,10 @@ public static class ApiRoutes
 	public class Users
 	{
 		public const string GroupName = "/users";
+
+		public const string All = Base + GroupName;
+
+		public const string CountAll = All + "/count";
 
 		public const string GroupNameWithId = GroupName + "/{id}";
 
@@ -80,35 +90,56 @@ public static class ApiRoutes
 		public const string TitlesLists = Base + GroupNameWithId + "/lists";
 	}
 
-    public static class Titles
-    {
+	public static class Titles
+	{
 		public const string GroupName = "/titles";
-		
-        public const string Route = Base + GroupName;
+
+		public const string Route = Base + GroupName;
 
 		public const string All = Base + GroupName;
 
 		public const string AllPopular = All + "/popular";
 
+		public const string AllByType = All + "/by-type";
+
 		public const string AllByName = All + "/by-name";
+
+		public const string AllByLanguage = All + "/by-language";
 
 		public const string AllByGenre = All + "/by-genre";
 
 		public const string AllByGenres = All + "/by-genres";
 
+		public const string AllByFilter = All + "/filter";
+
 		public const string CountAll = All + "/count";
 
+		public const string CountByType = AllByType + "/count";
+
 		public const string CountByName = AllByName + "/count";
+
+		public const string CountByLanguage = AllByLanguage + "/count";
 
 		public const string CountByGenre = AllByGenre + "/count";
 
 		public const string CountByGenres = AllByGenres + "/count";
 
-		public const string ById = Base + GroupName + "/{id}";
+		public const string CountByFilter = AllByFilter + "/count";
 
-        public const string ByIdImage = ById + "/image";
+		public const string ById = Base + GroupName + "/{id:guid}";
 
-        public const string BySlug = Base + GroupName + "/{slug}";
+		public const string ImageById = ById + "/image";
+
+		public const string BySlug = Base + GroupName + "/{slug}";
+	}
+
+	public static class Genres
+	{
+		public const string GroupName = "/genres";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Base + GroupName;
 	}
 
 	public static class TitlesLists
@@ -161,6 +192,43 @@ public static class ApiRoutes
 		public const string Route = Base + GroupName;
 
 		public const string ByTitle = Route + "/{titleId}";
+	}
+
+	public static class Series
+	{
+		public const string GroupName = "/series";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+		public const string CountAll = Route + "/count";
+
+		public const string ById = Route + "/{id}";
+	}
+
+	public class Payment
+	{
+		public const string GroupName = "/payment";
+
+		public const string Route = Base + GroupName;
+
+		public const string CaptureOrder = Route;
+
+		public const string CreateOrder = Route + "/{subscription}";
+	}
+
+	public class Subscriptions
+	{
+		public const string GroupName = "/subscriptions";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+		public const string ById = Route + "/{id:guid}";
+
+		public const string ByName = Route + "/{name}";
 	}
 
 	public class Hubs

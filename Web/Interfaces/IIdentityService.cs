@@ -13,6 +13,10 @@ public interface IIdentityService
 
 	Task<UpdateResult<Success>> ConfirmEmailAsync(string userId, string code);
 
+	Task<UpdateResult<Success>> ForgotPassword(string email);
+
+	Task<UpdateResult<Success>> ResetPassword(ResetPasswordRequest request);
+
 	Task<GetAllResult<Genre>> GetFavouriteGenresAsync();
 
 	Task<UpdateResult<Success>> SetFavouriteGenresAsync(SetFavouriteGenresToUser.Request request);
@@ -46,4 +50,6 @@ public interface IIdentityService
 	Task<UpdateResult<Success>> FollowAsync(Guid userId);
 
 	Task<UpdateResult<Success>> UnfollowAsync(Guid userId);
+
+	Task<UpdateResult<Success>> AppyTrialSubscription();
 }

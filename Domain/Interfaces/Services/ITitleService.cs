@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Models;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 
@@ -12,11 +13,17 @@ public interface ITitleService : IEntityService<Title>
 
 	GetAllResult<Title> FindAllPopular(int count = 10, int page = 0);
 
+	GetAllResult<Title> FindAllByType(TitleType type, int count = 10, int page = 0);
+
 	GetAllResult<Title> FindAllByName(string name, int count = 10, int page = 0);
+
+	GetAllResult<Title> FindAllByLanguage(string language, TitleSorting sorting = TitleSorting.None, int count = 10, int page = 0);
 
 	GetAllResult<Title> FindAllByGenre(string genre, int count = 10, int page = 0);
 
 	GetAllResult<Title> FindAllByGenres(List<string> genres, int count = 10, int page = 0);
+
+	GetAllResult<Title> FilterAll(TitleType? type, string? name, List<string> genres, TitleSorting sorting, int count, int page);
 
 	UpdateResult<Success> AddView(Guid id, int count = 1);
 
@@ -26,9 +33,16 @@ public interface ITitleService : IEntityService<Title>
 
     UpdateResult<Success> RemoveScreenshot(Guid id, Image screenshot);
 
+	int CountByType(TitleType type);
+
 	int CountByName(string name);
+
+	int CountByLanguage(string language);
 
 	int CountByGenre(string genre);
 
 	int CountByGenres(List<string> genres);
+
+	int CountByFilter(TitleType? type, string? name, List<string> genres, TitleSorting sorting);
+
 }

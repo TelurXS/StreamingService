@@ -1,0 +1,48 @@
+﻿@attribute [Route(WebRoutes.Info.ViewingMethods)]
+@layout InfoLayout
+
+@inject NavigationManager NavigationManager
+
+<Glow Size="200" Top="-200px" Blur="100" Left="calc(50% - 100px)" ShadowColor="var(--primary)" />
+<Glow Size="80" Top="800px" Blur="100" Left="0" ShadowColor="var(--primary)" />
+
+<div class="position-relative d-flex flex-column" style="z-index: 30">
+	<a href="@WebRoutes.Info.HelpCenter" class="font-white"><i class="bi bi-chevron-left"></i> Back to Help Center</a>
+
+	<h1 class="mt-5 mb-5">Viewing Methods</h1>
+
+	<p>
+		Xflick - Your unique space for movies and TV series, where you can not only enjoy high-quality content but also watch together with your friends. Our website offers a variety of ways to make your cinematic experience even more exciting and social.
+	</p>
+
+	<ol>
+		<li>
+			<span class="fw-bold">Movie and TV Series Overview: </span>
+			<p>Xflick provides you with countless opportunities to explore new cinematic worlds. Search for your favorite movies and TV series, read reviews, watch trailers, and choose what you like.</p>
+		</li>
+		<li>
+			<span class="fw-bold">Recommendations and Ratings: </span>
+			<p>Share your impressions and thoughts about watched content, leave reviews, and give ratings. This helps other users find quality content and make their own choices.</p>
+		</li>
+		<li>
+			<span class="fw-bold">Joint Viewing with Friends:</span>
+			<p>Xflick allows you not only to enjoy movies and TV series on your own but also to share this experience with friends. Joint viewing becomes easy and interesting - discuss events, comment, and feel connected even at a distance.</p>
+		</li>
+		<li>
+			<span class="fw-bold">Creating Playlists: </span>
+			<p>Organize your cinematic space with playlists. Create thematic playlists, choose movies for parties or small gatherings with friends.</p>
+		</li>
+		<li>
+			<span class="fw-bold">Personalized Recommendations:</span>
+			<p>Xflick takes into account your preferences and viewing habits, providing personalized recommendations. This allows you to discover new gems that match your style and taste.</p>
+		</li>
+		<li>
+			<span class="fw-bold">Synchronization Technology for Joint Viewing:</span>
+			<p>Synchronized viewing with friends becomes easy thanks to synchronization technology. No more issues with starting playback simultaneously - enjoy the movie magic together.</p>
+		</li>
+	</ol>
+
+	<p>Xflick is not just a website for watching movies and TV series but also a whole community of cinephiles that brings enthusiasts together for quality and social cinematic experiences. Join our community and make your screen time even more captivating!</p>
+	
+	<div class="mt-5 mb-5"></div>
+</div>

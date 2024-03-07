@@ -3,14 +3,9 @@
 
 @using Domain.Entities
 
-<h1>Hello</h1>
 
-<form method="post" action="/api/files">
-	<input type="file"/>
-	<button>Upload</button>
-</form>
-
-<img src="/api/users/images/7066983d-7a25-4813-a71d-b865027b06fb.png" />
-
-@code {
-}
+<svg class="loading-progress">
+    <circle r="40%" cx="50%" cy="50%" />
+    <circle r="40%" cx="50%" cy="50%" />
+</svg>
+<div class="loading-progress-text"></div>

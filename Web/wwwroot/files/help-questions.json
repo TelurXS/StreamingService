@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Accounts and Payments",
+        "localizable_name": "ACCOUNTS_AND_PAYMENTS",
+        "questions": [
+            {
+                "id": "account_settings",
+                "question": "Account settings",
+                "localizable_question": "ACCOUNT_SETTINGS_QUESTION",
+                "answer": "<p>On Xflick, you have the ability to customize your account in a way that suits you best. Modify personal information, upload an avatar, choose privacy settings, and set preferences for personalized recommendations. Manage your movie platform as it suits you, and enjoy the unique features of our service. Also you can edit your password and change subscription plan on <a href='/settings'>Settings Page</a><p>",
+                "localizable_answer": "ACCOUNT_SETTINGS_ANSWER"
+            },
+            {
+                "id": "subscription_payment",
+                "question": "Subscription Payment",
+                "localizable_question": "SUBSCRIPTION_PAYMENT_QUESTION",
+                "answer": "<p>Discover the full spectrum of entertainment by subscribing to Xflick! Choose from our Trial, Basic, and Premium plans to unlock an immersive viewing experience. Whether you're looking for a taste of our offerings or seeking premium features, we have a plan tailored for you. Conveniently pay with your card or through PayPal to enjoy seamless access to a world of movies and TV series. Elevate your entertainment journey with <a href='/manage/subscription'>Xflick subscriptions</a> today!<p>",
+                "localizable_answer": "SUBSCRIPTION_PAYMENT_ANSWER"
+            }
+        ]
+    },
+    {
+        "name": "Solving Problems",
+        "localizable_name": "SOLVING_PROBLEMS",
+        "questions": [
+            {
+                "id": "account_problems",
+                "question": "Account problems",
+                "localizable_question": "ACCOUNT_PROBLEMS_QUESTION",
+                "answer": "<p>If you have forgotten your password, you can change it on the <a href='/forgot-password'></a> page. </p><p>If you have any other problems with your account, you can write to us on the <a href='/contact-us'>Contact us page</a>. </p><p>You can change any of your profile settings on your <a href='/profile'>profile page</a> or <a href='/settings'>settings page</a></p>",
+                "localizable_answer": "ACCOUNT_PROBLEMS_ANSWER"
+            },
+            {
+                "id": "payment_problems",
+                "question": "Payment Problems",
+                "localizable_question": "PAYMENT_PROBLEMS_QUESTION",
+                "answer": "<p>If you encounter any payment problem, please try again later. Most likely, these are internal problems of the PayPal payment system. Payments on the Xflick website are linked to the PayPal payment system.</p>",
+                "localizable_answer": "PAYMENT_PROBLEMS_ANSWER"
+            },
+            {
+                "id": "error_codes",
+                "question": "Error Codes",
+                "localizable_question": "ERROR_CODES_QUESTION",
+                "answer": "<p>The Xflick site system uses an HTTP error code system.</p><p>Example:</p><p>404 - The resource was not found</p><p>401 - Access to the resource is prohibited</p><p>500 - Internal server error</p>",
+                "localizable_answer": "ERROR_CODES_ANSWER"
+            },
+            {
+                "id": "watching_problems",
+                "question": "Problems With Watching",
+                "localizable_question": "WATHING_PROBLEMS_QUESTION",
+                "answer": "<p>If you have problems watching a movie or series, write to us via the <a>Contact us</a> page.</p><p>If you tried to go to the title page and there is no player, it means that the viewing of series has been temporarily disabled or the series has not been added yet. It often happens that the title preview page is created before the title becomes available for viewing, so just wait, in the near future series will be added.</p>r",
+                "localizable_answer": "WATHING_PROBLEMS_ANSWER"
+            }
+        ]
+    },
+    {
+        "name": "Viewing Content",
+        "localizable_name": "VIEWING_CONTENT",
+        "questions": [
+            {
+                "id": "profiles",
+                "question": "Profiles",
+                "localizable_question": "PROFILES_QUESTION",
+                "answer": "<p>Explore the vibrant community on Xflick by discovering user profiles! Dive into the world of fellow cinephiles, where you can view their profiles, subscribe to stay updated on their watchlist, and explore their curated playlists. Connect with like-minded individuals, share your movie preferences, and make your Xflick experience a social cinematic journey. Join us now and discover the joy of connecting through the love of movies!</p>",
+                "localizable_answer": "PROFILES_ANSWER"
+            },
+            {
+                "id": "features_and_settings",
+                "question": "Features And Settings",
+                "localizable_question": "FEATURES_AND_SETTINGS_QUESTION",
+                "answer": "Example answer",
+                "localizable_answer": "FEATURES_AND_SETTINGS_ANSWER"
+            },
+            {
+                "id": "series_and_films",
+                "question": "Series And Films",
+                "localizable_question": "SERIES_AND_FILMS_QUESTION",
+                "answer": "Example answer",
+                "localizable_answer": "SERIES_AND_FILMS_ANSWER"
+            }
+        ]
+    },
+    {
+        "name": "Getting Started",
+        "localizable_name": "GETTING_STARTED",
+        "questions": [
+            {
+                "id": "registration",
+                "question": "Registration",
+                "localizable_question": "REGISTRATION_QUESTION",
+                "answer": "Example answer",
+                "localizable_answer": "REGISTRATION_ANSWER"
+            }
+        ]
+    }
+]
