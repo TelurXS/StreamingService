@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Auth.Register.SuccessfullyEndMobilePage">
+    <ContentPage.Content>
+                    <VerticalStackLayout
+                        Padding="40"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        HeightRequest="597"
+                        WidthRequest="415"
+                        BackgroundColor="Black">
+                        <Image WidthRequest="108" HeightRequest="24" Source="logo_inverted_color.png" Margin="19, 0, 18, 25"/>
+                        <Label Text="Ви успішно зареєструвалися!" x:Name="TitleLabel" FontSize="22" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                        <HorizontalStackLayout Margin="11, 25, 11, 0">
+                            <Image Source="card_icon_white.png" WidthRequest="28" VerticalOptions="Center" HeightRequest="28" Margin="0,0,5,0"></Image>
+                            <Label x:Name="TestLabel" Text="Картка підтверджена" FontSize="18" TextColor="White" FontAttributes="Bold"/>
+                            <Image Source="success.png" WidthRequest="40" HeightRequest="40" Margin="20,0,0, 0"></Image>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Margin="11, 25, 11, 0">
+                            <Image Source="timer.png" WidthRequest="28" HeightRequest="28" Margin="0,0,5,0"></Image>
+                            <Label Text="Ваші кошти знімуть через 7д." FontSize="18" TextColor="White"  FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+        
+                        <Button
+                            Text="Вхід"
+                            SemanticProperties.Hint="Вхід"
+                            CornerRadius="20"
+                            BackgroundColor="#0042E2"
+                            TextColor="White"
+                            WidthRequest="315"
+                            HeightRequest="39"
+                            HorizontalOptions="Center"
+                            VerticalOptions="End"
+                            FontSize="18" 
+                            Clicked="LoginButton_OnClick" Margin="0,170,0,0" />
+                    </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

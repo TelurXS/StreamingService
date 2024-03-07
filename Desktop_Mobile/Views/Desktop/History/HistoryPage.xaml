@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.HistoryPage">
+    <ContentPage.Content>
+        <VerticalStackLayout Margin="110">
+            <Label FontSize="22" Text="Історія перегляду" Margin="0, 40, 0,0" />
+            <ScrollView VerticalScrollBarVisibility="Always">
+                <FlexLayout x:Name="MainContainer" AlignContent="Start" JustifyContent="Start" AlignItems="Start" Wrap="Wrap"/>
+            </ScrollView>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

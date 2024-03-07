@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Main.CollapseMobilePage">
+    <ContentPage.Content>
+        <VerticalStackLayout>
+            <HorizontalStackLayout>
+                <Grid ColumnDefinitions="0.2*, *" WidthRequest="400" HeightRequest="70" HorizontalOptions="StartAndExpand" VerticalOptions="Center">
+                    <ImageButton Clicked="ImageButton_OnClicked" Margin="21" Source="back_arrow.png" Grid.Column="0" WidthRequest="26" HeightRequest="26"/> 
+                    <HorizontalStackLayout HorizontalOptions="End" Grid.Column="1">
+                        <ImageButton Source="arrow_down.png" WidthRequest="26" HeightRequest="26" Margin="0,0,18,0"
+                                     VerticalOptions="Center"/>
+                        <Label Text="Temp" VerticalOptions="Center" />
+                        <Image Source="navbar.png" Aspect="Fill" HeightRequest="50" WidthRequest="50" VerticalOptions="Center" Margin="10" />
+                    </HorizontalStackLayout>
+                </Grid>
+            </HorizontalStackLayout>
+            <VerticalStackLayout>
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="TextColor" Value="White"></Setter>
+                        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                        <Setter Property="BorderWidth" Value="0"></Setter>
+                        <Setter Property="FontAttributes" Value="Bold"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="Opacity" Value="0.5"></Setter>
+                        <Setter Property="HorizontalOptions" Value="Start"></Setter>
+                        <Setter Property="Margin" Value="20,30,0,0"></Setter>
+                    </Style>
+                </VerticalStackLayout.Resources>
+                <Button Clicked="MainButton_OnClicked" x:Name="MainButton" Text="Головна"></Button>
+                <Button Clicked="TVButton_OnClicked" x:Name="TVButton" Text="Телесеріали"></Button>
+                <Button Clicked="FilmsButton_OnClicked" x:Name="FilmsButton" Text="Фільми"></Button>
+                <Button Clicked="NewsButton_OnClicked" x:Name="NewsButton" Text="Новинки й популярне"></Button>
+                <Button Clicked="MyListButton_OnClicked" x:Name="MyListButton" Text="Мій список"></Button>
+                <Button Clicked="WatchViaLanguagesButton_OnClicked" x:Name="WatchViaLanguagesButton" Text="Перегляд за мовами"></Button>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

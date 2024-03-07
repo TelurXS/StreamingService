@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" BackgroundColor="#080808"
+             x:Class="VideoDemos.Views.Mobile.Main.MainMobilePage">
+    <ContentPage.Content>
+        <Grid>
+            <AbsoluteLayout>
+                <ScrollView AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Margin="0,70,0,0"
+                            AbsoluteLayout.LayoutFlags="All">
+                    <StackLayout>
+                        <StackLayout VerticalOptions="Start" Padding="10">
+                            <Grid>
+                                <Image Source="wallpapers.jpg" Aspect="AspectFit"
+                                       HorizontalOptions="CenterAndExpand"
+                                       Margin="0" />
+                                <Frame Padding="0" Margin="0" CornerRadius="0" HasShadow="True">
+                                    <Frame.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="Transparent" Offset="0" />
+                                            <GradientStop Offset="0.2" Color="#080808" />
+                                        </LinearGradientBrush>
+                                    </Frame.Background>
+                                </Frame>
+                            </Grid>
+                            <Label Text="Серіал" FontSize="16" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="Гра в кальмара" FontSize="32" TextColor="White" Margin="0,0,0,20"
+                                   FontAttributes="Bold" />
+                            <Label
+                                Text="Сотні гравців, яким потрібні гроші, приймають дивне запрошення взяти участь у дитячих іграх. На переможця чекає привабливий приз, але ставки тут смертельні."
+                                FontSize="16" TextColor="White" />
+                            <Button Text="Переглянути" x:Name="WatchGlassBgButton" TextColor="White"
+                                    BackgroundColor="#0044E9" VerticalOptions="CenterAndExpand" HeightRequest="50"
+                                    FontAttributes="Bold" ImageSource="main_page_play.png"
+                                    ContentLayout="Right, 14"
+                                    Margin="20" CornerRadius="20" Padding="10,12" BorderWidth="0" />
+                            <Button Text="Докладніше" x:Name="DetailsGlassBgButton" BorderWidth="0"
+                                    TextColor="White"
+                                    VerticalOptions="CenterAndExpand" BackgroundColor="Black"
+                                    ImageSource="info.png"
+                                    Margin="20,0" HeightRequest="50" FontAttributes="Bold"
+                                    ContentLayout="Right, 16"
+                                    CornerRadius="20" Padding="10,12" />
+                        </StackLayout>
+                        <StackLayout x:Name="MainContentLayout" Orientation="Vertical" HorizontalOptions="Center"
+                                     Margin="0,20,0,0" ZIndex="2" />
+                    </StackLayout>
+                </ScrollView>
+                <Grid AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0,1,0"
+                      x:Name="NavBarGird" HeightRequest="70" VerticalOptions="Start" ZIndex="9999">
+                </Grid>
+                <Grid ZIndex="9999"
+                      AbsoluteLayout.LayoutFlags="All"
+                      HeightRequest="100"
+                      AbsoluteLayout.LayoutBounds="0.5,1,1,0" 
+                      x:Name="FooterLayout">
+                </Grid>
+            </AbsoluteLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

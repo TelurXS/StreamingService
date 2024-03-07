@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Main.MainMyListPage">
+    <ContentPage.Content>
+        <Grid>
+            <AbsoluteLayout>
+                <ScrollView AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Margin="0,70,0,0"
+                            AbsoluteLayout.LayoutFlags="All">
+                    <VerticalStackLayout Margin="5" HorizontalOptions="Center">
+                        <Label FontSize="22" Text="Ваше" Margin="0, 40, 0,0" />
+                        <FlexLayout x:Name="MainContainer" AlignContent="Center" JustifyContent="Center" AlignItems="Center"
+                                    Wrap="Wrap" />
+                        <Button Clicked="LoadMoreButton_OnClicked" x:Name="LoadMoreButton" Text="More"
+                                HorizontalOptions="Center" WidthRequest="100">
+                        </Button>
+                    </VerticalStackLayout>
+                </ScrollView>
+                <Grid AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0,1,0"
+                      x:Name="NavBarGird" HeightRequest="70" VerticalOptions="Start" ZIndex="9999">
+                </Grid>
+                <Grid ZIndex="9999"
+                      AbsoluteLayout.LayoutFlags="All"
+                      HeightRequest="100"
+                      AbsoluteLayout.LayoutBounds="0.5,1,1,0" 
+                      x:Name="FooterLayout">
+                </Grid>
+            </AbsoluteLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

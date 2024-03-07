@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Main.NewAndPopularPage">
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Always">
+            <VerticalStackLayout Margin="115">
+                <Label FontSize="22" Text="Популярно" Margin="0, 40, 0,0" />
+                <FlexLayout x:Name="MainContainer" AlignContent="Start" JustifyContent="Start" AlignItems="Start"
+                            Wrap="Wrap" />
+                <Button Clicked="LoadMoreButton_OnClicked" x:Name="LoadMoreButton" Text="More"
+                        HorizontalOptions="Center" WidthRequest="100">
+                </Button>
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

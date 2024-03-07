@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:VideoDemos.Controls"
+             x:Name="VideoPlayer"
+             x:Class="VideoDemos.Views.VideoPlayerPage"
+             Unloaded="OnContentPageUnloaded"
+             Title="Metflix">
+    <Grid RowDefinitions="*,Auto,Auto">
+        <controls:Video x:Name="video"
+                        AreTransportControlsEnabled="False"
+                        Source="{StaticResource ElephantsDream}" />
+        <ActivityIndicator Color="Gray"
+                           IsVisible="False">
+            <ActivityIndicator.Triggers>
+                <DataTrigger TargetType="ActivityIndicator"
+                             Binding="{Binding Source={x:Reference video}, 
+                                               Path=Status}"
+                             Value="{x:Static controls:VideoStatus.NotReady}">
+                    <Setter Property="IsVisible"
+                            Value="True" />
+                    <Setter Property="IsRunning"
+                            Value="True" />
+                </DataTrigger>
+            </ActivityIndicator.Triggers>
+        </ActivityIndicator>
+        <StackLayout VerticalOptions="End">
+            <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Start">
+                <Label Grid.Column="0" Margin="0"
+                       BindingContext="{x:Reference video}"
+                       Text="{Binding Path=Position,
+                                  StringFormat='{0:hh\\:mm\\:ss}'}"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center" />
+                <controls:PositionSlider Grid.Column="1" VerticalOptions="Start"
+                                         BackgroundColor="#454545" MaximumTrackColor="#454545"
+                                         MinimumTrackColor="#0044E9"
+                                         ThumbColor="#0044E9"
+                                         Margin="10,0,10,20"
+                                         BindingContext="{x:Reference video}"
+                                         Duration="{Binding Duration}"
+                                         Position="{Binding Position}">
+
+                    <controls:PositionSlider.Triggers>
+                        <DataTrigger TargetType="controls:PositionSlider"
+                                     Binding="{Binding Status}"
+                                     Value="{x:Static controls:VideoStatus.NotReady}">
+                            <Setter Property="IsEnabled"
+                                    Value="False" />
+                        </DataTrigger>
+                    </controls:PositionSlider.Triggers>
+                </controls:PositionSlider>
+                <Label Grid.Column="2" Margin="0"
+                       BindingContext="{x:Reference video}"
+                       Text="{Binding Path=Duration,
+                                  StringFormat='{0:hh\\:mm\\:ss}'}"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center" />
+            </Grid>
+            <Grid
+                Margin="10,0"
+                ColumnDefinitions="0.33*,0.33*,0.33*"
+                HeightRequest="50"
+                BindingContext="{x:Reference video}"
+                VerticalOptions="End">
+                <Grid.Resources>
+                    <Style TargetType="ImageButton">
+                        <Setter Property="WidthRequest" Value="30"></Setter>
+                        <Setter Property="HeightRequest" Value="30"></Setter>
+                        <Setter Property="VerticalOptions" Value="Center"></Setter>
+                        <Setter Property="Margin" Value="0,0,40,0"></Setter>
+                    </Style>
+                </Grid.Resources>
+                <HorizontalStackLayout Grid.Column="0">
+                    <ImageButton Source="backward_10.png"
+                                 HorizontalOptions="Center"
+                                 Clicked="OnMinus10SecondsButtonClicked">
+                    </ImageButton>
+                    <ImageButton Source="play.png"
+                                 HorizontalOptions="Center"
+                                 Clicked="OnPlayPauseButtonClicked">
+                        <ImageButton.Triggers>
+                            <DataTrigger TargetType="ImageButton"
+                                         Binding="{Binding Status}"
+                                         Value="{x:Static controls:VideoStatus.Playing}">
+                                <Setter Property="Source"
+                                        Value="pause.png" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="ImageButton"
+                                         Binding="{Binding Status}"
+                                         Value="{x:Static controls:VideoStatus.NotReady}">
+                                <Setter Property="IsEnabled"
+                                        Value="False" />
+                            </DataTrigger>
+                        </ImageButton.Triggers>
+                    </ImageButton>
+                    <ImageButton Source=" forward_10.png"
+                                 HorizontalOptions="Center"
+                                 Clicked="OnPlus10SecondsButtonClicked">
+                    </ImageButton>
+                    <HorizontalStackLayout VerticalOptions="Center">
+                        <Image WidthRequest="30" Source="volume.png" HeightRequest="30"
+                               VerticalOptions="Center" Margin="10" />
+                        <Slider x:Name="AudioSlider" WidthRequest="150" Value="{x:Binding Volume}"
+                                VerticalOptions="Center"
+                                Maximum="1"
+                                Minimum="0" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Label x:Name="TitleNameLabel"></Label>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="2" HorizontalOptions="End">
+                    <ImageButton Source="next.png" Clicked="OnNextEpisodeClicked" />
+                    <ImageButton Source="episodes.png" Clicked="OnEpisodesButtonClicked" />
+                    <ImageButton Source="subtitles.png" Clicked="OnSubtitleButtonClicked" />
+                    <ImageButton Source="speed.png" Clicked="OnPlaySpeedButtonClicked" />
+                    <ImageButton Source="fullscreen.png" Clicked="OnFullScreenButtonClicked" />
+                </HorizontalStackLayout>
+
+
+            </Grid>
+        </StackLayout>
+
+    </Grid>
+</ContentPage>

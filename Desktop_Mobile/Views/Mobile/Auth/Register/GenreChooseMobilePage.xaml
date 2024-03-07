@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Auth.Register.GenreChooseMobilePage" Loaded="GenreChooseMobilePage_OnLoaded">
+    <ContentPage.Content>
+        <VerticalStackLayout Margin="30">
+            <Label Text="Вибір улюблених жанрів" x:Name="TitleLabel" FontSize="22" TextColor="White" HorizontalOptions="Center" />
+            <ScrollView VerticalScrollBarVisibility="Always" VerticalOptions="StartAndExpand" HorizontalOptions="Center" HeightRequest="350">
+                <FlexLayout x:Name="GenreFlexLayout" JustifyContent="Start" Wrap="Wrap">
+                    <FlexLayout.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="CornerRadius" Value="20"></Setter>
+                            <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                            <Setter Property="BorderColor" Value="#0042E2"></Setter>
+                            <Setter Property="TextColor" Value="White"></Setter>
+                            <Setter Property="FontSize" Value="14"></Setter>
+                            <Setter Property="Margin" Value="5,5,0,0"></Setter>
+                            <Setter Property="BorderWidth" Value="1.2"></Setter>
+                            <Setter Property="HeightRequest" Value="35"></Setter>
+                            <Setter Property="Padding" Value="5,2"></Setter>
+                        </Style>
+                    </FlexLayout.Resources>
+                </FlexLayout>
+            </ScrollView>
+
+            <Button
+                Text="Продовжити"
+                SemanticProperties.Hint="Continue"
+                Clicked="Button_OnClicked"
+                CornerRadius="20"
+                BackgroundColor="#0042E2"
+                TextColor="White" VerticalOptions="End"
+                WidthRequest="315"
+                HeightRequest="45"
+                FontSize="18" />
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Auth.Register.ChoosePlanMobilePage">
+    <ContentPage.Content>
+      
+    <Grid x:Name="View">
+
+       
+            <VerticalStackLayout
+                Spacing="25"
+                Padding="40"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                HeightRequest="597"
+                WidthRequest="415"
+                BackgroundColor="Black">
+                <Label Text="Вибір підписки" x:Name="TitleLabel" FontSize="22" HorizontalOptions="Center" TextColor="White" />
+                <ScrollView>
+                    <VerticalStackLayout x:Name="PlansContenierLayout" HeightRequest="400"/>
+                </ScrollView>
+                
+                
+                <Button
+                    Text="Продовжити"
+                    SemanticProperties.Hint="Continue"
+                    Clicked="OnContinueClicked"
+                    CornerRadius="30"
+                    BackgroundColor="#0042E2"
+                    TextColor="White"
+                    WidthRequest="335"
+                    HeightRequest="49"
+                    FontSize="18"/>
+            </VerticalStackLayout>
+
+
+    </Grid>  
+    </ContentPage.Content>
+</ContentPage>

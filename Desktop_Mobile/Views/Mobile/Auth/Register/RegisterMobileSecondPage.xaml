@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.Mobile.Auth.Register.RegisterMobileSecondPage">
+    <ContentPage.Content>
+        <Grid x:Name="View">
+            <VerticalStackLayout
+                Spacing="0"
+                Padding="40"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                HeightRequest="597"
+                WidthRequest="415"
+                BackgroundColor="Black">
+                
+                <ScrollView x:Name="ErrorsContainer"></ScrollView>
+
+                <Label Text="Реєстрація" x:Name="TitleLabel" FontSize="22" TextColor="White" HorizontalOptions="Center"
+                       Margin="0,0,0,30" />
+                <Border Stroke="#0044E9"
+                        StrokeShape="RoundRectangle 30,30,30,30"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        StrokeThickness="1"
+                        Padding="0"
+                        Margin="0">
+                    <Entry x:Name="NicknameEntry" Margin="15,5"
+                           Placeholder="Нікнейм"
+                           MaxLength="50"
+                           WidthRequest="315"
+                           HeightRequest="39" FontSize="12" />
+                </Border>
+                <HorizontalStackLayout Margin="0" Padding="0">
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 30,30,30,30"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            StrokeThickness="1"
+                            Padding="0"
+                            Margin="0, 15,0,15">
+                        <Entry x:Name="NameEntry" Margin="10,5"
+                               Placeholder="Імʼя"
+                               IsPassword="True"
+                               MaxLength="20"
+                               WidthRequest="140"
+                               HeightRequest="39" />
+                    </Border>    
+                    <Border Stroke="#0044E9"
+                            StrokeShape="RoundRectangle 30,30,30,30"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            StrokeThickness="1"
+                            Padding="0"
+                            Margin="20, 15,0,15">
+                        <Entry x:Name="SurnameEntry" Margin="10,5"
+                               Placeholder="Фамілія"
+                               IsPassword="True"
+                               MaxLength="20"
+                               WidthRequest="140"
+                               HeightRequest="39" />
+                    </Border>    
+                </HorizontalStackLayout>
+                <Border Stroke="#0044E9"
+                        StrokeShape="RoundRectangle 20,20,20,20"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        StrokeThickness="1"
+                        Padding="0"
+                        Margin="0">
+                    <DatePicker x:Name="BirthDateEntry"
+                                WidthRequest="315"
+                                HeightRequest="39" />
+                </Border> 
+                <StackLayout x:Name="LoginFields" IsVisible="True" Margin="0">
+                    <Button
+                        Text="Продовжити"
+                        SemanticProperties.Hint="Enter"
+                        Clicked="OnContinueClicked"
+                        CornerRadius="20"
+                        BackgroundColor="#0042E2"
+                        TextColor="White"
+                        WidthRequest="315" Margin="0,41,0,10"
+                        FontSize="20" />
+                    <Button Text="У вас вже є обліковий запис?" Opacity="0.5" BackgroundColor="Transparent" BorderWidth="0" TextColor="White"
+                            HorizontalOptions="Center" Margin="0,0,0,30">
+                    </Button>
+                    <Button x:Name="LoginButton" Text="Увійти" BorderWidth="0"
+                            BackgroundColor="Transparent"
+                            FontSize="16"
+                            TextColor="#0042E2"
+                            Clicked="LoginButton_OnClick" HorizontalOptions="Center" Padding="0"
+                            VerticalOptions="Start"/>
+                </StackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
