@@ -8,6 +8,10 @@ public static class ApiRoutes
 
 	public const string Login = Base + "/login";
 
+	public const string ExternalLogin = Base + "/external-login";
+
+	public const string ExternalLoginCallback = Base + "/external-login-callback";
+
 	public const string Logout = Base + "/logout";
 
 	public const string Refresh = Base + "/refresh";
