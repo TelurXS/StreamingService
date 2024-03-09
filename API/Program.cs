@@ -50,7 +50,7 @@ builder.Services
     {
         options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = IdentityConstants.ExternalScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
         options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
     })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
@@ -64,12 +64,13 @@ builder.Services
     .AddBearerToken(IdentityConstants.BearerScheme, options =>
     {
     })
-    .AddGoogle(IdentityConstants.ExternalScheme, x =>
+    .AddCookie(IdentityConstants.ExternalScheme)
+    .AddGoogle(x =>
 
     {
 		x.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
 		x.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-        x.SignInScheme = IdentityConstants.ApplicationScheme;
+        x.SignInScheme = IdentityConstants.ExternalScheme;
     });
 
 builder.Services.AddAuthorization(o => o.DefaultPolicy =
