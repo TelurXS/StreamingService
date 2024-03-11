@@ -10,300 +10,317 @@
 
 @if (Loaded is false)
 {
-	<div class="sm-page-container">
-		<Loading />
-	</div>
-	<LargeMargin />
-	return;
+    <div class="sm-page-container">
+        <Loading />
+    </div>
+    <LargeMargin />
+    return;
 }
 
 @if (NotFound)
 {
-	<div class="sm-page-container">
-		<NotFound />
-	</div>
-	<LargeMargin />
-	return;
+    <div class="sm-page-container">
+        <NotFound />
+    </div>
+    <LargeMargin />
+    return;
 }
 
 <div class="row">
-	<div class="col-md-6">
-		<div class="row">
+    <div class="col-md-6">
+        <div class="row">
 
-			<div class="col-sm-5 col-md-3">
+            <div class="col-sm-5 col-md-3">
 
-				@if (string.IsNullOrEmpty(User.ProfileImage))
-				{
-					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
-						 style="background-image: url('/img/defaults/blank-profile-picture.webp');">
-					</div>
-				}
-				else
-				{
-					<div class="circle-profile-picture d-flex align-items-end justify-content-end"
-						 style="background-image: url('@User.ProfileImage');">
-					</div>
-				}
+                @if (string.IsNullOrEmpty(User.ProfileImage))
+                {
+                    <div class="circle-profile-picture d-flex align-items-end justify-content-end"
+                         style="background-image: url('/img/defaults/blank-profile-picture.webp');">
+                    </div>
+                }
+                else
+                {
+                    <div class="circle-profile-picture d-flex align-items-end justify-content-end"
+                         style="background-image: url('@User.ProfileImage');">
+                    </div>
+                }
 
-			</div>
+            </div>
 
-			<div class="col-sm-7 col-md-9 d-flex flex-column">
-				<span class="font-xl d-flex align-items-center">
-					@User.Name
-				</span>
-				<span class="font-md mt-1">@User.FirstName @User.SecondName</span>
-				<span class="font-sm mt-2 font-gray">Favourite Genres:</span>
-				<div class="d-flex flex-wrap align-items-center">
-					@foreach (var genre in Genres)
-					{
-						<span class="button button-fit font-xs m-1 px-2 py-1">@genre</span>
-					}
-				</div>
-			</div>
+            <div class="col-sm-7 col-md-9 d-flex flex-column">
+                <span class="font-xl d-flex align-items-center">
+                    @User.Name
+                </span>
+                <span class="font-md mt-1">@User.FirstName @User.SecondName</span>
+                <span class="font-sm mt-2 font-gray">Favourite Genres:</span>
+                <div class="d-flex flex-wrap align-items-center">
+                    @foreach (var genre in Genres)
+                    {
+                        <span class="button button-fit font-xs m-1 px-2 py-1">@genre</span>
+                    }
+                </div>
+            </div>
 
-		</div>
-	</div>
-	<div class="col-md-6">
-		<div class="row">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
 
-			<div class="col-md-10 d-flex mt-2 mt-md-0 d-flex justify-content-center">
-				<div class="info-card" @onclick="() => ReadersWindow.Open()">
-					<span class="font-md">@Readers.Count</span>
-					<span class="font-sm font-gray">Readers</span>
-				</div>
-				<div class="info-card" @onclick="() => FollowersWindow.Open()">
-					<span class="font-md">@Followers.Count</span>
-					<span class="font-sm font-gray">Folowers</span>
-				</div>
-				<div class="info-card">
-					<span class="font-md">@FavouriteTitles.Count</span>
-					<span class="font-sm font-gray">Favourite</span>
-				</div>
-			</div>
+            <div class="col-md-10 d-flex mt-2 mt-md-0 d-flex justify-content-center">
+                <div class="info-card" @onclick="() => ReadersWindow.Open()">
+                    <span class="font-md">@Readers.Count</span>
+                    <span class="font-sm font-gray">Readers</span>
+                </div>
+                <div class="info-card" @onclick="() => FollowersWindow.Open()">
+                    <span class="font-md">@Followers.Count</span>
+                    <span class="font-sm font-gray">Folowers</span>
+                </div>
+                <div class="info-card">
+                    <span class="font-md">@FavouriteTitles.Count</span>
+                    <span class="font-sm font-gray">Favourite</span>
+                </div>
+            </div>
 
-			<div class="col-md-2 d-flex mt-2 mt-md-0">
-				<a class="d-flex align-items-center">
-					@if (IsFollowing)
-					{
-						<img class="h-50 m-2 m-md-0" src="/img/followed.svg" @onclick="() => UnfollowAsync()" />
-					}
-					else
-					{
-						<img class="h-50 m-2 m-md-0" src="/img/follow.svg" @onclick="() => FollowAsync()" />
-					}
-				</a>
-			</div>
+            <div class="col-md-2 d-flex mt-2 mt-md-0">
 
-		</div>
-		<div class="row">
+                @if (User.Id != IdentityProfile.Id)
+                {
+                    <a class="d-flex align-items-center">
+                        @if (IsFollowing)
+                        {
+                            <img class="h-50 m-2 m-md-0" src="/img/followed.svg" @onclick="() => UnfollowAsync()" />
+                        }
+                        else
+                        {
+                            <img class="h-50 m-2 m-md-0" src="/img/follow.svg" @onclick="() => FollowAsync()" />
+                        }
+                    </a>
+                }
 
-			<div class="col-md-12 mt-2">
-				<div class="row">
+            </div>
 
-					<div class="col-md-6 d-flex overflow-hidden mt-2 mt-md-0">
-						@foreach (var i in Enumerable.Range(0, ViewRecords.Count))
-						{
-							<MiniTitleCard Title="ViewRecords[i].Title" Shift="@(i * -10)" Index="@(5 - i)" />
-						}
-					</div>
+        </div>
+        <div class="row">
 
-					<div class="col-md-6 mt-2 mt-md-0">
+            <div class="col-md-12 mt-2">
+                <div class="row">
 
-						@if (LastWatched is not null)
-						{
-							<a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@(LastWatched.PercentProgress)">
-								<div style="pointer-events: none;">
-									<MiniTitleCard Title="LastWatched.Title" />
-								</div>
+                    <div class="col-md-6 d-flex overflow-hidden mt-2 mt-md-0">
+                        @foreach (var i in Enumerable.Range(0, ViewRecords.Count))
+                        {
+                            <MiniTitleCard Title="ViewRecords[i].Title" Shift="@(i * -10)" Index="@(5 - i)" />
+                        }
+                    </div>
 
-								<div class="d-flex w-100 px-3 flex-column">
-									<span class="font-xs font-gray">Latest Watched:</span>
-									<span class="font-md">@LastWatched.Title.Name</span>
-									<span class="font-sm">@LastWatched.Series.Name</span>
-									<progress class="mt-2" min="0" max="100" value="@(LastWatched.PercentProgress)"></progress>
-								</div>
-							</a>
-						}
+                    <div class="col-md-6 mt-2 mt-md-0">
 
-					</div>
+                        @if (LastWatched is not null)
+                        {
+                            <a class="d-flex" href="@WebRoutes.Titles.Base/@LastWatched.Title.Slug?seriesId=@LastWatched.Series.Id&progress=@(LastWatched.PercentProgress)">
+                                <div style="pointer-events: none;">
+                                    <MiniTitleCard Title="LastWatched.Title" />
+                                </div>
 
-				</div>
-			</div>
+                                <div class="d-flex w-100 px-3 flex-column">
+                                    <span class="font-xs font-gray">Latest Watched:</span>
+                                    <span class="font-md">@LastWatched.Title.Name</span>
+                                    <span class="font-sm">@LastWatched.Series.Name</span>
+                                    <progress class="mt-2" min="0" max="100" value="@(LastWatched.PercentProgress)"></progress>
+                                </div>
+                            </a>
+                        }
 
-		</div>
-	</div>
+                    </div>
 
-	<div class="gradient-divider mt-1"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="gradient-divider mt-1"></div>
 </div>
 
 <div class="row mt-4">
-	<div class="col-lg-6 mt-2 mt-md-0 h-100">
-		<a href="@WebRoutes.My.Profile.Favourites">
-			<h4>Favourite</h4>
+    <div class="col-lg-6 mt-2 mt-md-0 h-100">
+        <a href="@WebRoutes.My.Profile.Favourites">
+            <h4>Favourite</h4>
 
-			<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
-				@foreach (var title in FavouriteTitles)
-				{
-					<div class="col mt-2 px-1">
-						<ResponsiveTitleCard Title="title" />
-					</div>
-				}
-			</div>
-		</a>
-	</div>
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+                @foreach (var title in FavouriteTitles)
+                {
+                    <div class="col mt-2 px-1">
+                        <ResponsiveTitleCard Title="title" />
+                    </div>
+                }
+            </div>
+        </a>
+    </div>
 
-	<div class="col-lg-6 mt-2 mt-md-0">
-		<h4>Lists</h4>
+    <div class="col-lg-6 mt-2 mt-md-0">
+        <h4>Lists</h4>
 
-		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
-			@foreach (var list in Lists.Where(x => x.Availability is Availability.Public))
-			{
-				<div class="col mt-2 p-2">
-					<a href="/lists/@list.Id">
-						<MiniTitlesListCard List="list" />
-					</a>
-				</div>
-			}
-		</div>
-	</div>
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 p-3 profile-content-background">
+            @foreach (var list in Lists.Where(x => x.Availability is Availability.Public))
+            {
+                <div class="col mt-2 p-2">
+                    <a href="/lists/@list.Id">
+                        <MiniTitlesListCard List="list" />
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
 </div>
 
 <ReadersModalWindow @ref="ReadersWindow" Readers="Readers" />
 <FollowersModalWindow @ref="FollowersWindow" Followers="Followers" />
 
 @code {
-	[Parameter]
-	public string Id { get; set; } = string.Empty;
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
 
-	private Guid UserId { get; set; } = default;
+    private Guid UserId { get; set; } = default;
 
-	private User User { get; set; } = default!;
+    private User User { get; set; } = default!;
 
-	private List<string> Genres { get; set; } = new();
+    private User IdentityProfile { get; set; } = default!;
 
-	private List<Title> FavouriteTitles { get; set; } = new();
+    private List<string> Genres { get; set; } = new();
 
-	private List<ViewRecord> ViewRecords { get; set; } = new();
+    private List<Title> FavouriteTitles { get; set; } = new();
 
-	private List<User> Followers { get; set; } = new();
+    private List<ViewRecord> ViewRecords { get; set; } = new();
 
-	private List<User> Readers { get; set; } = new();
+    private List<User> Followers { get; set; } = new();
 
-	private List<TitlesList> Lists { get; set; } = new();
+    private List<User> Readers { get; set; } = new();
 
-	private ViewRecord? LastWatched { get; set; } = default;
+    private List<TitlesList> Lists { get; set; } = new();
 
-	private bool Loaded { get; set; } = false;
+    private ViewRecord? LastWatched { get; set; } = default;
 
-	private bool NotFound { get; set; } = false;
+    private bool Loaded { get; set; } = false;
 
-	private bool IsFollowing { get; set; } = false;
+    private bool NotFound { get; set; } = false;
 
-	private ReadersModalWindow ReadersWindow { get; set; } = default!;
+    private bool IsFollowing { get; set; } = false;
 
-	private FollowersModalWindow FollowersWindow { get; set; } = default!;
+    private ReadersModalWindow ReadersWindow { get; set; } = default!;
 
-	protected override async Task OnInitializedAsync()
-	{
-		if (Guid.TryParse(Id, out var userId) is false)
-		{
-			return;
-		}
+    private FollowersModalWindow FollowersWindow { get; set; } = default!;
 
-		UserId = userId;
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(Id, out var userId) is false)
+        {
+            return;
+        }
 
-		var userTask = UserService.GetProfileAsync(UserId);
-		var genresTask = UserService.GetFavouriteGenresAsync(UserId);
-		var favouriteTitlesTask = UserService.GetFavouriteTitlesAsync(UserId);
-		var viewRecordsTask = UserService.GetViewRecordsAsync(UserId);
-		var titlesListsTask = UserService.GetTitlesListsAsync(UserId);
-		var followersTask = UserService.GetFollowersAsync(UserId);
-		var readersTask = UserService.GetReadersAsync(UserId);
-		var identityFollowersTask = IdentityService.GetReadersAsync();
+        UserId = userId;
 
-		await Task.WhenAll(
-			userTask,
-			genresTask,
-			favouriteTitlesTask,
-			viewRecordsTask,
-			titlesListsTask,
-			followersTask,
-			readersTask,
-			identityFollowersTask);
+        var userTask = UserService.GetProfileAsync(UserId);
+        var genresTask = UserService.GetFavouriteGenresAsync(UserId);
+        var favouriteTitlesTask = UserService.GetFavouriteTitlesAsync(UserId);
+        var viewRecordsTask = UserService.GetViewRecordsAsync(UserId);
+        var titlesListsTask = UserService.GetTitlesListsAsync(UserId);
+        var followersTask = UserService.GetFollowersAsync(UserId);
+        var readersTask = UserService.GetReadersAsync(UserId);
+        var identityFollowersTask = IdentityService.GetReadersAsync();
+        var identityProfileTask = IdentityService.GetProfileAsync();
 
-		if (userTask.Result.IsFound)
-		{
-			User = userTask.Result.AsFound;
-		}
-		else
-		{
-			Loaded = true;
-			NotFound = true;
-			StateHasChanged();
-		}
+        await Task.WhenAll(
+            userTask,
+            genresTask,
+            favouriteTitlesTask,
+            viewRecordsTask,
+            titlesListsTask,
+            followersTask,
+            readersTask,
+            identityFollowersTask,
+            identityProfileTask);
 
-		if (genresTask.Result.IsFound)
-		{
-			Genres = genresTask.Result.AsFound.Select(x => x.Name).ToList();
-		}
+        if (userTask.Result.IsFound)
+        {
+            User = userTask.Result.AsFound;
+        }
+        else
+        {
+            Loaded = true;
+            NotFound = true;
+            StateHasChanged();
+        }
 
-		if (favouriteTitlesTask.Result.IsFound)
-		{
-			FavouriteTitles = favouriteTitlesTask.Result.AsFound;
-		}
+        if (genresTask.Result.IsFound)
+        {
+            Genres = genresTask.Result.AsFound.Select(x => x.Name).ToList();
+        }
 
-		if (viewRecordsTask.Result.IsFound)
-		{
-			var viewRecords = viewRecordsTask.Result.AsFound;
+        if (favouriteTitlesTask.Result.IsFound)
+        {
+            FavouriteTitles = favouriteTitlesTask.Result.AsFound;
+        }
 
-			LastWatched = viewRecords.OrderBy(x => x.Time).LastOrDefault();
-			ViewRecords = viewRecords.DistinctBy(x => x.Title.Id).ToList();
-		}
+        if (viewRecordsTask.Result.IsFound)
+        {
+            var viewRecords = viewRecordsTask.Result.AsFound;
 
-		if (titlesListsTask.Result.IsFound)
-		{
-			Lists = titlesListsTask.Result.AsFound;
-		}
+            LastWatched = viewRecords.OrderBy(x => x.Time).LastOrDefault();
+            ViewRecords = viewRecords.DistinctBy(x => x.Title.Id).ToList();
+        }
 
-		if (followersTask.Result.IsFound)
-		{
-			Followers = followersTask.Result.AsFound;
-		}
+        if (titlesListsTask.Result.IsFound)
+        {
+            Lists = titlesListsTask.Result.AsFound;
+        }
 
-		if (readersTask.Result.IsFound)
-		{
-			Readers = readersTask.Result.AsFound;
-		}
+        if (followersTask.Result.IsFound)
+        {
+            Followers = followersTask.Result.AsFound;
+        }
 
-		if (identityFollowersTask.Result.IsFound)
-		{
-			var identityReaders = identityFollowersTask.Result.AsFound;
-			IsFollowing = identityReaders.Any(x => x.Id == User?.Id);
-		}
+        if (readersTask.Result.IsFound)
+        {
+            Readers = readersTask.Result.AsFound;
+        }
 
-		Loaded = true;
-		StateHasChanged();
-	}
+        if (identityFollowersTask.Result.IsFound)
+        {
+            var identityReaders = identityFollowersTask.Result.AsFound;
+            IsFollowing = identityReaders.Any(x => x.Id == User?.Id);
+        }
 
-	private async Task FollowAsync()
-	{
-		var result = await IdentityService.FollowAsync(User.Id);
+        if (identityProfileTask.Result.IsFound)
+        {
+            IdentityProfile = identityProfileTask.Result.AsFound;
+        }
 
-		if (result.IsUpdated)
-		{
-			IsFollowing = true;
-			StateHasChanged();
-		}
-	}
+        Loaded = true;
+        StateHasChanged();
+    }
 
-	private async Task UnfollowAsync()
-	{
-		var result = await IdentityService.UnfollowAsync(User.Id);
+    private async Task FollowAsync()
+    {
+        var result = await IdentityService.FollowAsync(User.Id);
 
-		if (result.IsUpdated)
-		{
-			IsFollowing = false;
-			StateHasChanged();
-		}
-	}
+        if (result.IsUpdated)
+        {
+            IsFollowing = true;
+            Followers.Add(IdentityProfile);
+            StateHasChanged();
+        }
+    }
+
+    private async Task UnfollowAsync()
+    {
+        var result = await IdentityService.UnfollowAsync(User.Id);
+
+        if (result.IsUpdated)
+        {
+            IsFollowing = false;
+            var user = Followers.First(x => x.Id == IdentityProfile.Id);
+            Followers.Remove(user);
+            StateHasChanged();
+        }
+    }
 }

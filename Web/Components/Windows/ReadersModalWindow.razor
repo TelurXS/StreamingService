@@ -2,6 +2,7 @@
 
 @inject IIdentityService IdentityService
 @inject ITitlesListService TitlesListService
+@inject NavigationManager NavigationManager
 
 <ModalWindow @ref="Window">
 
@@ -14,7 +15,7 @@
 		<div class="overflow-auto" style="height: 300px;">
 			@foreach (var user in Readers)
 			{
-				<a href="@WebRoutes.Users.Base/@user.Id">
+				<a @onclick="() => RedirectToUser(user.Id)">
 					<div class="gradient-panel my-2">
 						<div class="row mw-100">
 
@@ -54,4 +55,9 @@
 	public void Open() => Window.Open();
 
 	public void Close() => Window.Close();
+
+	private void RedirectToUser(Guid id)
+	{
+		NavigationManager.NavigateTo($"{@WebRoutes.Users.Base}/{id}", true);
+	}
 }
