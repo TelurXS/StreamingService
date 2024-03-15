@@ -12,7 +12,7 @@ public sealed class NotificationsEndpoint : ICarterModule
 {
 	public void AddRoutes(IEndpointRouteBuilder app)
 	{
-		app.MapPost(ApiRoutes.Notifications.Invite, SendInviteToUserAsync);
+		app.MapPost(ApiRoutes.Notifications.InviteById, SendInviteToUserAsync);
 	}
 
 	private static async Task<IResult> SendInviteToUserAsync(

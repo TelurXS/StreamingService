@@ -247,7 +247,9 @@ public static class ApiRoutes
 
 		public const string All = Route;
 
-		public const string Invite = Route + "/invite/{id:guid}";
+        public const string Invite = Route + "/invite";
+
+        public const string InviteById = Invite + "/{id:guid}";
 	}
 
 	public class Hubs

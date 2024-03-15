@@ -1,47 +1,192 @@
 ﻿@using Domain.Entities
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using Application.Features.Notifications
+@using NetcodeHub.Packages.Extensions.Clipboard
 
 @inject IIdentityService IdentityService
-@inject ITitlesListService TitlesListService
+@inject ClipboardService ClipboardService
+@inject NavigationManager NavigationManager
+@inject INotificationService NotificationService
 @inject IWebAssemblyHostEnvironment Enviroment
 
 <ModalWindow @ref="Window">
 
-	<div class="gradient-panel card-form p-3" @onclick:stopPropagation="true">
-		<h2>Create Session</h2>
+    <div class="gradient-panel create-session-panel p-3" @onclick:stopPropagation="true">
 
-		@{
-			string url = $"{Enviroment.GetHostName()}{WebRoutes.Sessions.Base}/{Title.Slug}/{Id}";
-		}
+        @{
+            string url = $"{Enviroment.GetHostName()}{WebRoutes.Sessions.Base}/{Title.Slug}/{Id}";
+        }
 
-		<div class="d-flex flex-column">
+        <div class="d-flex flex-column">
 
-			<span class="mt-3">The link for your session will be below. Join the session and share the link for your friends</span>
+            <h2 class="mx-auto">Create Session</h2>
 
-			<span class="mt-3">
-				Link:
-			</span>
+            <span class="mt-3 font-sm font-gray">The link for your session will be below. Join the session and share the link for your friends</span>
 
-			<a href="@(url)">
-				@(url)
-			</a>
-		</div>
+            <div class="gradient-panel row m-2 p-1">
 
-		<a href="@(url)" class="button mt-3 font-white">Create</a>
-	</div>
+                <div class="col-11">
+                    <a style="font-size: 10px" class="font-white" href="@(url)">
+                        @(url)
+                    </a>
+                </div>
+
+                <div class="col-1 d-flex justify-content-end">
+                    <button @onclick="async () => await ClipboardService.CopyAsync(url)" class="button-glass button-fit px-2"><i class="bi bi-copy"></i></button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-flex flex-column mt-3">
+
+            <span class="mx-auto">Readers</span>
+
+            <div class="mt-3">
+                <InputText Value="@Search" ValueExpression="() => Search" ValueChanged="OnSearchChanged"
+                           class="input-underline font-sm" placeholder="Search readers..." />
+            </div>
+
+            <div class="mt-3 row row-cols-3 row-cols-lg-4 row-cols-xl-5" style="max-height: 200px; overflow-y: auto">
+
+                @{
+                    foreach (var reader in ActiveReaders)
+                    {
+                        @if (Selected.Contains(reader))
+                        {
+                            <div class="col mb-2" @onclick="() => Unselect(reader)">
+                                <div class="d-flex flex-column justify-content-center align-items-center">
+                                    @if (string.IsNullOrEmpty(reader.ProfileImage))
+                                    {
+                                        <div>
+                                            <img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+                                            <div class="user-selected"></div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div style="position: relative">
+                                            <img class="profile-picture" src="@reader.ProfileImage" />
+                                            <div class="user-selected"></div>
+                                        </div>
+                                    }
+
+                                    <span class="font-sm text-center">@reader.Name</span>
+                                    <span class="font-xs font-gray text-center">@reader.FullName</span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col mb-2" @onclick="() => Select(reader)">
+                                <div class="d-flex flex-column justify-content-center align-items-center">
+                                    @if (string.IsNullOrEmpty(reader.ProfileImage))
+                                    {
+                                        <div>
+                                            <img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+                                            <div class="user-unselected"></div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div style="position: relative">
+                                            <img class="profile-picture" src="@reader.ProfileImage" />
+                                            <div class="user-unselected"></div>
+                                        </div>
+                                    }
+
+                                    <span class="font-sm text-center">@reader.Name</span>
+                                    <span class="font-xs font-gray text-center">@reader.FullName</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+
+        <button @onclick="() => Submit(url)" class="button button-fit px-3 py-2 mx-auto mt-3 font-white">Create</button>
+    </div>
 
 </ModalWindow>
 
 @code {
 
-	[Parameter]
-	public Title Title { get; set; } = default!;
+    [Parameter]
+    public Title Title { get; set; } = default!;
 
-	private Guid Id { get; set; } = Guid.NewGuid();
+    private List<User> Readers { get; set; } = [];
 
-	private ModalWindow Window { get; set; } = default!;
+    private IEnumerable<User> ActiveReaders { get; set; } = [];
 
-	public void Open() => Window.Open();
+    private List<User> Selected { get; set; } = [];
 
-	public void Close() => Window.Close();
+    private string Search { get; set; } = string.Empty;
+
+    private Guid Id { get; set; } = Guid.NewGuid();
+
+    private ModalWindow Window { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var readersResult = await IdentityService.GetReadersAsync();
+
+        if (readersResult.IsFound)
+        {
+            Readers = readersResult.AsFound;
+            ActiveReaders = Readers;
+        }
+    }
+
+    private void Select(User user)
+    {
+        Selected.Add(user);
+        StateHasChanged();
+    }
+
+    private void Unselect(User user)
+    {
+        Selected.Remove(user);
+        StateHasChanged();
+    }
+
+    private void OnSearchChanged(string value)
+    {
+        Search = value;
+
+        if (string.IsNullOrEmpty(Search))
+        {
+            ActiveReaders = Readers;
+            return;
+        }
+
+        ActiveReaders = Readers.Where(x => x.Name.Contains(Search) || x.FullName.Contains(Search));
+        StateHasChanged();
+    }
+
+    private async Task Submit(string url)
+    {
+        var tasks = new List<Task>();
+
+        foreach (var user in Selected)
+        {
+            var request = new SendSessionInviteNotification.Request
+            {
+                ReceiverId = user.Id,
+                Link = url,
+            };
+
+            tasks.Add(NotificationService.SendInvite(request));
+        }
+
+        await Task.WhenAll(tasks);
+
+        NavigationManager.NavigateTo(url);
+    }
+
+    public void Open() => Window.Open();
+
+    public void Close() => Window.Close();
+
 }

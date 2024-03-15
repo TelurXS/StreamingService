@@ -14,7 +14,7 @@
 
 			@if (Message is not null)
 			{
-				<div>@Message</div>
+				<div class="text-danger">@Message</div>
 			}
 
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
@@ -71,6 +71,9 @@
 
 	private async Task OnSubmit()
 	{
+		Message = string.Empty;
+		StateHasChanged();
+
 		var request = new LoginRequest()
 			{
 				Email = Input.Email,
@@ -80,17 +83,16 @@
 
 		var result = await AuthenticationStateProvider.LoginAsync(request);
 
+
 		if (result)
 		{
-			Message = "Success";
-
 			if (ReturnUrl is not null)
 				NavigationManager.NavigateTo(ReturnUrl);
 
 			else NavigationManager.NavigateToCurrentPage();
 
 		}
-		else Message = "Failed";
+		else Message = "Wrong email or password.";
 	}
 
 	private class InputModel
