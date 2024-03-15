@@ -66,6 +66,8 @@ public static class WebRoutes
 
 		public const string Lists = "/lists";	
 
+		public const string Notifications = "/notifications";	
+
 		public static class Profile
 		{
 			public const string Base = "/profile";

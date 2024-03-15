@@ -32,6 +32,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IViewRecordRepository, ViewRecordRepository>();
         services.AddTransient<ITitlesListRepository, TitlesListRepository>();
         services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddTransient<INotificationRepository, NotificationRepository>();
 
         services.AddTransient<IAccountService, AccountService>();
         services.AddTransient<IDescriptionService, DescriptionService>();
@@ -46,8 +47,9 @@ public static class ServiceCollectionExtension
         services.AddTransient<IViewRecordService, ViewRecordService>();
         services.AddTransient<ITitlesListService, TitlesListService>();
         services.AddTransient<ISubscriptionService, SubscriptionService>();
+		services.AddTransient<INotificationService, NotificationService>();
 
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
+		services.AddTransient<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

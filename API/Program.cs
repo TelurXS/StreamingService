@@ -102,6 +102,7 @@ app.UseCors();
 app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandler>();
 
+app.UseDeveloperExceptionPage();
 app.MapCarter();
 
 app.UseBlazorFrameworkFiles();

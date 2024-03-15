@@ -483,4 +483,40 @@ public sealed class IdentityService : IIdentityService
 			return new Failed(ex.Message);
 		}
 	}
+
+	public async Task<GetAllResult<Notification>> GetNotificationsAsync()
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.IdentityUsers.Notifications);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<Notification>>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> SnoozeNotificationsAsync()
+	{
+		try
+		{
+			var response = await Client
+				.PostAsync(ApiRoutes.IdentityUsers.SnoozeNotifications, default);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
 }

@@ -25,4 +25,6 @@ public interface IUserService : IEntityService<User>
 	GetAllResult<User> FindFollowersFromUser(Guid id);
 
 	GetAllResult<User> FindReadersFromUser(Guid id);
+
+	GetAllResult<Notification> FindNotificationsFromUser(Guid id);
 }

@@ -59,6 +59,10 @@ public static class ApiRoutes
 
 		public const string ApplyTrial = Base + "/apply-trial";
 
+		public const string Notifications = Base + "/notifications";
+
+		public const string SnoozeNotifications = Notifications + "/snooze";
+
 		public static class FavouriteTitles
 		{
 			public const string GroupName = "/favourites";
@@ -233,6 +237,17 @@ public static class ApiRoutes
 		public const string ById = Route + "/{id:guid}";
 
 		public const string ByName = Route + "/{name}";
+	}
+
+	public class Notifications
+	{
+		public const string GroupName = "/notifications";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+		public const string Invite = Route + "/invite/{id:guid}";
 	}
 
 	public class Hubs

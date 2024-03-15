@@ -1,0 +1,56 @@
+﻿@using Domain.Entities
+
+<div class="row">
+
+	@if (Notification.RelatedUser is not null)
+	{
+		<div class="col-2 col-sm-1">
+			@if (string.IsNullOrEmpty(Notification.RelatedUser.ProfileImage))
+			{
+				<a href="@WebRoutes.Users.Profile.Route/@Notification.RelatedUser.Id">
+					<img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
+				</a>
+			}
+			else
+			{
+				<a href="@WebRoutes.Users.Profile.Route/@Notification.RelatedUser.Id">
+					<img class="profile-picture" src="@Notification.RelatedUser.ProfileImage" />
+				</a>
+			}
+		</div>
+	}
+	else
+	{
+		<div class="col-2 col-sm-1">
+			<a href="@WebRoutes.Home">
+				<img class="profile-picture" src="/img/blank-poster.png" />
+			</a>
+		</div>
+	}
+
+	<div class="col-8 col-sm-9">
+		<div class="d-flex flex-column">
+			<span class="font-white">@Notification.Message</span>
+			<span class="font-gray">@Notification.Date.ToShortDateString()</span>
+		</div>
+	</div>
+
+	@if (string.IsNullOrEmpty(Notification.Link))
+	{
+		<div class="col-2"></div>
+	}
+	else
+	{
+		<div class="col-2">
+			<a href="@Notification.Link" class="button font-white">
+				Link
+			</a>
+		</div>
+	}
+
+</div>
+
+@code {
+	[Parameter]
+	public Notification Notification { get; set; } = default!;
+}

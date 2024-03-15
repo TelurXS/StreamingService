@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Models.Results.Unions;
 
 namespace Domain.Interfaces.Repositories;
 
@@ -23,4 +24,6 @@ public interface IUserRepository : IRepository<User>
 	List<User> FindFollowersFromUser(Guid id);
 
 	List<User> FindReadersFromUser(Guid id);
+
+	List<Notification> FindNotificationsFromUser(Guid id);
 }

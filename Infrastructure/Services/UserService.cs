@@ -60,6 +60,11 @@ public sealed class UserService : IUserService
 		return Repository.FindReadersFromUser(id);
 	}
 
+	public GetAllResult<Notification> FindNotificationsFromUser(Guid id)
+	{
+		return Repository.FindNotificationsFromUser(id);
+	}
+
 	public UpdateResult<Success> AddUserToFollowers(User follower, User user)
 	{
 		var result = Repository.AddUserToFollowers(follower.Id, user.Id);

@@ -64,5 +64,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
 		builder.HasMany(x => x.Lists)
 			.WithOne(x => x.Author);
+
+		builder.HasMany(x => x.Notifications)
+			.WithOne(x => x.Receiver);
 	}
 }

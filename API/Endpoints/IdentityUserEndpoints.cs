@@ -1,4 +1,5 @@
 ﻿using API.Extensions;
+using Application.Features.Notifications;
 using Application.Features.Subscriptions;
 using Application.Features.TitleLists;
 using Application.Features.TitlesLists;
@@ -74,6 +75,12 @@ public class IdentityUserEndpoints : ICarterModule
 			.RequireAuthorization();
 
 		app.MapPost(ApiRoutes.IdentityUsers.ApplyTrial, ApplyTrialAsync)
+			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.IdentityUsers.Notifications, GetNotificationsFromUserAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.IdentityUsers.SnoozeNotifications, SnoozeNotificationsFromUserAsync)
 			.RequireAuthorization();
 	}
 
@@ -493,6 +500,52 @@ public class IdentityUserEndpoints : ICarterModule
 
 		return result.Match(
 			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<List<NotificationResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetNotificationsFromUserAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new GetAllNotificationsFromUser.Request
+		{
+			Id = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			notifications => Results.Ok(notifications.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> SnoozeNotificationsFromUserAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		var request = new SnoozeAllUserNotification.Request
+		{
+			UserId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			notifications => Results.Ok(),
 			notFound => Results.NotFound(),
 			invalid => Results.BadRequest(),
 			failed => Results.BadRequest()

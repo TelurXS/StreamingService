@@ -47,6 +47,10 @@ public interface IIdentityService
 
 	Task<GetAllResult<User>> GetReadersAsync();
 
+	Task<GetAllResult<Notification>> GetNotificationsAsync();
+
+	Task<UpdateResult<Success>> SnoozeNotificationsAsync();
+
 	Task<UpdateResult<Success>> FollowAsync(Guid userId);
 
 	Task<UpdateResult<Success>> UnfollowAsync(Guid userId);

@@ -30,4 +30,6 @@ public interface IResponseMapper
 	ViewRecordResponse ToResponse(ViewRecord value);
 
 	TitlesListResponse ToResponse(TitlesList value);
+
+	NotificationResponse ToResponse(Notification value);
 }

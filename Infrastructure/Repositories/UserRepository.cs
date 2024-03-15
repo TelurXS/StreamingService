@@ -111,6 +111,18 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 		return user.Readers.ToList();
 	}
 
+	public List<Notification> FindNotificationsFromUser(Guid id)
+	{
+		var user = Entities
+			.Include(x => x.Notifications)
+			.FirstOrDefault(x => x.Id == id);
+
+		if (user is null)
+			return new();
+
+		return user.Notifications.ToList();
+	}
+
 	public bool AddUserToFollowers(Guid followerId, Guid userId)
 	{
 		var user = Entities
