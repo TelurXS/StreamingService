@@ -4,7 +4,9 @@ namespace Domain.Models;
 
 public static class WebRoutes
 {
-	public const string Home = "/";
+	public const string Index = "/";
+
+	public const string Home = "/home";
 
 	public const string NewAndPopular = "/new-and-popular";
 

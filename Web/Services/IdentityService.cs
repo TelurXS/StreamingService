@@ -519,4 +519,22 @@ public sealed class IdentityService : IIdentityService
 			return new Failed(ex.Message);
 		}
 	}
+
+	public async Task<UpdateResult<Success>> CancelSubscription()
+	{
+		try
+		{
+			var response = await Client
+				.PostAsync(ApiRoutes.Subscriptions.Cancel, default);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
 }

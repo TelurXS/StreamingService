@@ -23,7 +23,18 @@ window.initializePayPal = () => {
         onApprove: (data, actions) => {
             return fetch(`/api/payment?orderId=${data.orderID}`, { method: "get", })
                 .then((response) => response.json())
-                .then((data) => window.location.href = "/registration-success");
+                .then((data) => {
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const returnUrl = urlParams.get('returnUrl');
+
+                    if (returnUrl != "") {
+                        window.location.href = returnUrl
+                        return;
+                    }
+
+                    window.location.href = "/registration-success"
+                });
         }
     }).render('#paypal-button-container');
 }

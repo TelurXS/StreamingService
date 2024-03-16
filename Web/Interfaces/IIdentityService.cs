@@ -56,4 +56,6 @@ public interface IIdentityService
 	Task<UpdateResult<Success>> UnfollowAsync(Guid userId);
 
 	Task<UpdateResult<Success>> AppyTrialSubscription();
+
+	Task<UpdateResult<Success>> CancelSubscription();
 }

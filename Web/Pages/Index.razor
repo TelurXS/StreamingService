@@ -1,0 +1,214 @@
+﻿@attribute [Route(WebRoutes.Index)]
+@layout IndexLayout
+
+@using Domain.Entities
+
+@inject ITitleService TitleService
+
+<Background />
+
+<div class="sm-page-container">
+
+	<div class="d-flex flex-column">
+		<div class="row">
+			<div class="col-md-6 mx-auto">
+				<h2 class="text-center">Watch Together: The New Level of Shared Viewing</h2>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6 mx-auto mt-5 ">
+				<p class="text-center">Forget lonely evenings in front of the screen. At Xflick, we've created a unique environment where watching movies is not just entertainment, but also an opportunity to bond with your loved ones</p>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div style="height: 120px"></div>
+
+<div class="mb-5 d-flex">
+	<h3 class="mx-auto text-center">What makes our platform special?</h3>
+</div>
+
+<div class="row">
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">Shared viewing in real time</span>
+			<span class="font-sm mt-3">Real time is a key aspect for us. Our platform allows you to enjoy movies and series simultaneously with friends or a group using video and audio calls. This provides the ultimate co-viewing experience, and the added aspect of audio communication allows you to discuss events right while watching</span>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">A huge selection of movies and series</span>
+			<span class="font-sm mt-3">An endless world of entertainment awaits you at Xflick. We are proud to present to you an impressive range of films and series - from exclusive new releases to beloved classics. Forget about limitations, you will always find something exciting for you and your friends.</span>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">The possibility of organizing virtual viewings by a group</span>
+			<span class="font-sm mt-3">Our platform goes beyond the ordinary and allows you not only to watch movies with one or two friends, but also to create large groups for virtual viewings. It is the perfect way to bring people together, even if they are far apart.</span>
+		</div>
+	</div>
+
+</div>
+
+<div class="margin-top"></div>
+
+<div class="d-flex justify-content-center">
+	<p class="w-75 text-center">See how easy and exciting it can be to watch movies on Xflick using video and audio connections. Discover a new level of virtual movie viewing</p>
+</div>
+
+<div class="d-flex flex-column justify-content-center align-items-center mt-3 mb-5">
+	<Glow Size="200" Blur="50" Top="150px" Position="relative" ZIndex="1" />
+	<img class="img-fluid w-75 mx-auto image-margin-md" src="/img/notebook.png" />
+</div>
+
+<div class="margin-top"></div>
+
+<div class="d-flex">
+	<h3 class="mx-auto text-center">Choose from our impressive catalog that includes:</h3>
+</div>
+
+<div class="row mt-4">
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="20px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column justify-content-center align-items-center panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">Exclusive novelties</span>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="20px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column justify-content-center align-items-center panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">Favorite classics</span>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="20px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column justify-content-center align-items-center panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">Shared playlists for parties and holidays</span>
+		</div>
+	</div>
+
+</div>
+
+<div class="margin-top"></div>
+
+<div>
+	<Slider Titles="Titles" Header="Primetime - Special for you" />
+</div>
+
+<div class="margin-top"></div>
+
+<div class="d-flex">
+	<h3 class="mx-auto text-center">Choose a profitable subscription plan</h3>
+</div>
+
+<div class="row mt-4">
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">@Subscription.Trial.Name</span>
+			<span class="font-lg text-center mx-auto fw-bold font-primary">@Subscription.Trial.Price $/month</span>
+			<ul class="font-sm mt-3">
+				<li>Try the basic features</li>
+				<li>7 days free</li>
+				<li>One-time activation</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">@Subscription.Standart.Name</span>
+			<span class="font-lg text-center mx-auto fw-bold font-primary">@Subscription.Standart.Price $/month</span>
+			<ul class="font-sm mt-3">
+				<li>View without restrictions</li>
+				<li>Shared viewing with your friends</li>
+				<li>Access to a large library of movies and series</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="col-md-4 px-4 mb-2 mb-md-0">
+		<div class="d-flex justify-content-center">
+			<Glow Size="40" Blur="20" Top="10px" Position="relative" ZIndex="1" />
+		</div>
+		<div class="glass-panel h-100 position-relative d-flex flex-column panel-margin-md">
+			<span class="font-lg text-center mx-auto fw-bold">@Subscription.Premium.Name</span>
+			<span class="font-lg text-center mx-auto fw-bold font-primary">@Subscription.Premium.Price $/month</span>
+			<ul class="font-sm mt-3">
+				<li>Unlimited access to selected content.</li>
+				<li>Live sessions with your friends.</li>
+				<li>Exclusive promotions and discounts for subscribers.</li>
+			</ul>
+		</div>
+	</div>
+
+</div>
+
+<div class="margin-top"></div>
+
+<div class="d-flex flex-column">
+	<div class="row">
+		<div class="col-md-6 mx-auto">
+			<h3 class="text-center">Join Xflick today!</h3>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-9 mx-auto mt-4">
+			<p class="text-center">Join our community of moviegoers on Xflick today! Registration is easy, and the experience is unparalleled. Discover the world of shared viewing in a new format - our platform is waiting for you!</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-2 mx-auto mt-4">
+			<a class="button font-white mx-2" href="@WebRoutes.Register">Register</a>
+		</div>
+	</div>
+</div>
+
+<div class="margin-top"></div>
+
+@code {
+
+	private List<Title> Titles { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await TitleService.FindAllPopularAsync();
+
+		if (result.IsFound)
+		{
+			Titles = result.AsFound;
+		}
+	}
+}

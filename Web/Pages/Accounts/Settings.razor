@@ -4,6 +4,7 @@
 @using Domain.Entities
 
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <RequireAuthorization />
 
@@ -37,12 +38,28 @@
 
 <div class="mt-3 row">
 	<div class="col-md-6 d-flex flex-column">
-		<span class="font-md font-gray">Expires: @User.SubscriptionExpiresIn</span>
-		<a class="button button-fit py-1 px-2 mt-2 font-sm font-white">Cancel Subscription</a>
+
+		@if (User.Subscription is not null)
+		{
+			@if (User.Subscription.Name.Equals(Subscription.Trial.Name))
+			{
+				<span class="font-md font-gray">Activated: @User.SubscriptionExpiresIn?.AddDays(-Subscription.TRIAL_ACTIVE_DAYS)</span>
+			}
+			else
+			{
+				<span class="font-md font-gray">Activated: @User.SubscriptionExpiresIn?.AddDays(-Subscription.ACTIVE_DAYS)</span>
+			}
+
+			<button @onclick="() => ConfirmCancelSubscriptionWindow.Open()" class="button button-fit py-1 px-2 mt-2 font-sm font-white">Cancel Subscription</button>
+		}
+		else
+		{
+			<span class="font-md font-gray">You do not have active subscriptions yet</span>
+		}
+
 	</div>
 
 	<div class="col-md-6 mt-3 mt-md-0">
-
 	</div>
 </div>
 
@@ -52,22 +69,36 @@
 
 <div class="mt-3 row">
 	<div class="col-md-6 d-flex flex-column">
-		<span class="font-md font-gray">@User.Subscription?.Name</span>
+		
+		@if (User.Subscription is not null)
+		{
+			<span class="font-md font-gray">Active: @User.Subscription?.Name</span>
+			<span class="font-md font-gray">Expires: @User.SubscriptionExpiresIn?.ToShortDateString()</span>
+		}
+		else
+		{
+			<span class="font-md font-gray">You do not have active subscriptions yet. To activate the subscription, go to the subscription activation page</span>
+		}
+
 	</div>
 
 	<div class="col-md-6 mt-3 mt-md-0">
 		<span class="font-sm d-flex justify-content-start justify-content-md-end">
-			<a href="@WebRoutes.Manage.Subscription">Manage Subscription</a>
+			<a href="@WebRoutes.Manage.Subscription?returnUrl=@WebRoutes.Settings.Base">Manage Subscription</a>
 		</span>
 	</div>
 </div>
 
+<ConfirmModalWindow @ref="ConfirmCancelSubscriptionWindow"
+					OnConfirm="OnCanelSubscriptionConfirm"
+					Message="Are you sure want to cancel your current subscription plan?" />
 
 @code {
 	private User User { get; set; } = default!;
 
 	private bool Loaded { get; set; } = false;
 
+	private ConfirmModalWindow ConfirmCancelSubscriptionWindow { get; set; } = default!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -80,5 +111,15 @@
 
 		Loaded = true;
 		StateHasChanged();
+	}
+
+	private async Task OnCanelSubscriptionConfirm()
+	{
+		var cancelResult = await IdentityService.CancelSubscription();
+
+		if (cancelResult.IsUpdated)
+		{
+			NavigationManager.NavigateToCurrentPage();
+		}
 	}
 }

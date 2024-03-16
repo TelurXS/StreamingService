@@ -237,6 +237,8 @@ public static class ApiRoutes
 		public const string ById = Route + "/{id:guid}";
 
 		public const string ByName = Route + "/{name}";
+
+		public const string Cancel = Route + "/cancel";
 	}
 
 	public class Notifications

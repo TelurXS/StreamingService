@@ -7,9 +7,22 @@
 
 <RequireAuthorization />
 
+@if (Loaded is false)
+{
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
+	return;
+}
+
+<Glow Size="50" Top="200px" Blur="100" Left="calc(80% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
+<Glow Size="50" Top="900px" Blur="100" Left="calc(80% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
+<Glow Size="50" Top="600px" Blur="100" Left="calc(20% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
+
 <h2 class="mb-3">Lists</h2>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 position-relative">
 	@foreach (var list in Lists)
 	{
 		<div class="col d-flex justify-content-center mt-2">
@@ -23,6 +36,8 @@
 @code {
 	private List<TitlesList> Lists { get; set; } = new();
 
+	private bool Loaded { get; set; } = false;
+
 	protected override async Task OnInitializedAsync()
 	{
 		var listsResult = await IdentityService.GetTitlesListsAsync();
@@ -31,5 +46,8 @@
 		{
 			Lists = listsResult.AsFound;
 		}
+
+		Loaded = true;
+		StateHasChanged();
 	}
 }
