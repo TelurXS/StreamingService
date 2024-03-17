@@ -115,6 +115,7 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 	{
 		var user = Entities
 			.Include(x => x.Notifications)
+			.ThenInclude(x => x.RelatedUser)
 			.FirstOrDefault(x => x.Id == id);
 
 		if (user is null)

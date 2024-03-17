@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -25,10 +26,16 @@ public class AdditionalUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<U
 
         var claims = new List<Claim>
 		{
-			new Claim(ClaimTypes.Name, user.Name)
+			new Claim(ClaimTypes.Name, user.Name),
 		};
 
-        identity.AddClaims(claims);
+        if (user.Subscription is not null)
+			claims.Add(new Claim(CustomClaimTypes.Subscription, user.Subscription.Name));
+
+		if (user.SubscriptionExpiresIn is not null)
+			claims.Add(new Claim(CustomClaimTypes.SubscriptionExpiresIn, user.SubscriptionExpiresIn?.ToShortDateString()!));
+
+		identity.AddClaims(claims);
         return principal;
     }
 }

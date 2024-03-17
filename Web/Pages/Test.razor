@@ -3,9 +3,30 @@
 
 @using Domain.Entities
 
+@inject IIdentityService IdentityService
+@inject ITitleService TitleService
 
-<svg class="loading-progress">
-    <circle r="40%" cx="50%" cy="50%" />
-    <circle r="40%" cx="50%" cy="50%" />
-</svg>
-<div class="loading-progress-text"></div>
+<RequireSubscription Subscription="Subscription.Trial" />
+
+@code {
+	private User User { get; set; } = default!;
+
+	private List<Title> Titles { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var userResult = await IdentityService.GetProfileAsync();
+
+		if (userResult.IsFound)
+		{
+			User = userResult.AsFound;
+		}
+
+		var titlesResult = await TitleService.FindAllPopularAsync();
+
+		if (titlesResult.IsFound)
+		{
+			Titles = titlesResult.AsFound;
+		}
+	}
+}

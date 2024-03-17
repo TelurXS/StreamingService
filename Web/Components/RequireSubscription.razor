@@ -1,0 +1,60 @@
+﻿@using Domain.Entities
+
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+
+@code {
+
+	[Parameter]
+	public Subscription Subscription { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var userResult = await IdentityService.GetProfileAsync();
+
+		if (userResult.IsFound is false)
+		{
+			NavigateToLogin();
+			return;
+		}
+
+		var user = userResult.AsFound;
+
+		if (user.Subscription is null)
+		{
+			NavigateToNotAuthorized();
+			return;
+		}
+
+		if (user.SubscriptionExpiresIn is null)
+		{
+			NavigateToNotAuthorized();
+			return;
+		}
+
+		if (user.Subscription.Level < Subscription.Level)
+		{
+			NavigateToNotAuthorized();
+			return;
+		}
+
+		if (user.SubscriptionExpiresIn < DateTime.Now)
+		{
+			NavigateToNotAuthorized();
+			return;
+		}
+
+		return;
+	}
+
+	private void NavigateToLogin()
+	{
+		NavigationManager.NavigateTo(WebRoutes.Login + "?returnUrl=" + NavigationManager.GetCurrentRoute());
+	}
+
+	private void NavigateToNotAuthorized()
+	{
+		NavigationManager.NavigateTo(WebRoutes.NotAuthorized);
+	}
+}
+

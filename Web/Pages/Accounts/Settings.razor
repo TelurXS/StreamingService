@@ -74,6 +74,12 @@
 		{
 			<span class="font-md font-gray">Active: @User.Subscription?.Name</span>
 			<span class="font-md font-gray">Expires: @User.SubscriptionExpiresIn?.ToShortDateString()</span>
+
+			@if(User.SubscriptionExpiresIn < DateTime.Now)
+			{
+				<span class="font-md text-danger">Your current subscription has expired</span>
+				<span class="font-md font-gray">To activate the subscription, go to the subscription activation page</span>
+			}
 		}
 		else
 		{
