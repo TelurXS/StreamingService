@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using VideoDemos.Views.Profile.Settings.ChangeEmail;
 
 namespace VideoDemos.Views.Profile.Settings;

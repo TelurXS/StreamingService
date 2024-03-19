@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Mobile;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Backend;
 
@@ -21,8 +22,8 @@ public partial class MainTVPage : ContentPage
         InitializeComponent();
         
         GenerateBanners();
-        FooterLayout.Add(FooterMobileFactory.CreateFooter(nameof(MainMobilePage)));
-        NavBarGird.Add(FooterMobileFactory.CreateNavbar());
+        ((Layout)FooterLayout).Add(FooterMobileFactory.CreateFooter(nameof(MainMobilePage)));
+        ((Layout)NavBarGird).Add(FooterMobileFactory.CreateNavbar());
         
         FooterMobileFactory.CurrentPage = nameof(MainTVPage);
         

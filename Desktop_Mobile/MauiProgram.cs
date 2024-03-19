@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
-using Sharpnado.MaterialFrame;
-using VideoDemos.Controls;
 using VideoDemos.Core.Auth;
-using VideoDemos.Handlers;
 using VideoDemos.Views;
 using Xe.AcrylicView;
 
@@ -17,6 +17,8 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkitMediaElement()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -25,8 +27,8 @@ public static class MauiProgram
                 fonts.AddFont("Inter", "Inter-V.ttf");
                 fonts.AddFont("Inter-bold.ttf", "Inter-Bold.otf");
             })
-            .UseAcrylicView()
-            .ConfigureMauiHandlers(handlers => { handlers.AddHandler(typeof(Video), typeof(VideoHandler)); });
+            .UseAcrylicView();
+            // .ConfigureMauiHandlers(handlers => { handlers.AddHandler(typeof(Video), typeof(VideoHandler)); });
 
         builder.Services.AddTransient<AuthService>();
         builder.Services.AddTransient<LoadingPage>();

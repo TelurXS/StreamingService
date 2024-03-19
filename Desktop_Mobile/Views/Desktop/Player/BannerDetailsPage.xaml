@@ -2,9 +2,12 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:VideoDemos.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:elems="using:VideoDemos.Core.Elems"
              xmlns:acrylic="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
+             xmlns:primitives="using:CommunityToolkit.Maui.Core.Primitives"
+             Shell.FlyoutBehavior="Disabled"
+             Shell.TabBarIsVisible="False"
              x:Class="VideoDemos.Views.BannerDetailsPage">
     <ContentPage.Content>
         <Grid>
@@ -92,18 +95,50 @@
                     </Button>
                 </VerticalStackLayout>
             </Border>
-            <ScrollView>
+            <Border x:Name="AddToConfirence" Opacity="0"
+                    HeightRequest="0"
+                    WidthRequest="0"
+                    StrokeShape="RoundRectangle 20,20,20,20"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    BackgroundColor="#080808"
+                    ZIndex="999"
+                    Width="700"
+                    Height="700"
+                    StrokeThickness="2"
+                    Padding="115"
+                    Margin="0">
+                <Border.Stroke>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                        <GradientStop Color="#0044E9" Offset="0.1"></GradientStop>
+                        <GradientStop Color="Black" Offset="1.0"></GradientStop>
+                    </LinearGradientBrush>
+                </Border.Stroke>
                 <VerticalStackLayout>
-                    <Grid>
+                    <Label FontSize="34">Create Session</Label>
+                    <Label Margin="0,10,0,20">The link for your session will be below. Join the session and share the link for your friends</Label>
+                    <Label>Link:</Label>
+                    <Button x:Name="CopySessionLink" Clicked="CopySessionLink_OnClicked" BorderColor="Transparent"
+                            BackgroundColor="Transparent" TextColor="#0044E9" />
+                    <Button WidthRequest="300" x:Name="CreateSessionLink" Clicked="CreateSessionLink_OnClicked" Text="Створити" />          
+                    <Button WidthRequest="300" Clicked="CloseSessionDialog_OnClicked" 
+                           Text="Скасувати"/>
+                </VerticalStackLayout>
+            </Border>
+            <ScrollView Margin="0" Padding="0">
+                <VerticalStackLayout Margin="0" Padding="0" Spacing="0">
+                    <Grid Margin="0" Padding="0">
+                        <Grid x:Name="NavBarGrid" Margin="0" Padding="0" HeightRequest="100" ZIndex="9999"
+                              VerticalOptions="Start">
+                        </Grid>
                         <Image Aspect="AspectFill" x:Name="BackgroundImage"
                                HorizontalOptions="Start" VerticalOptions="Start" MaximumHeightRequest="1100"
                                Grid.RowSpan="4" />
                         <acrylic:AcrylicView TintColor="Black" TintOpacity="0.2"
-                                             CornerRadius="0">
+                                             CornerRadius="0" Margin="0" Padding="0">
                             <Grid RowDefinitions="Auto,Auto,Auto,Auto" HorizontalOptions="Start"
-                                  VerticalOptions="Center" x:Name="DetailsGrid">
-                                <Grid Grid.Row="0" x:Name="NavBarGrid" HeightRequest="100" VerticalOptions="Start">
-                                </Grid>
+                                  VerticalOptions="Center" x:Name="DetailsGrid" Margin="0" Padding="0">
+
                                 <Grid Padding="125, 0" Grid.Row="1" HorizontalOptions="Start">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition></ColumnDefinition>
@@ -201,8 +236,10 @@
                                                 <Label FontSize="20" Text="{x:Binding  Cast}" TextColor="White"></Label>
                                             </VerticalStackLayout>
                                         </Grid>
-                                        <ScrollView Orientation="Horizontal" >
-                                            <HorizontalStackLayout x:Name="ScreenshotsContainer" MinimumHeightRequest="200" MinimumWidthRequest="600"></HorizontalStackLayout>
+                                        <ScrollView Orientation="Horizontal">
+                                            <HorizontalStackLayout x:Name="ScreenshotsContainer"
+                                                                   MinimumHeightRequest="200" MinimumWidthRequest="600">
+                                            </HorizontalStackLayout>
                                         </ScrollView>
                                     </VerticalStackLayout>
                                 </Grid>
@@ -216,90 +253,77 @@
                         </acrylic:AcrylicView>
                     </Grid>
 
-                    <Label Text="В озвучці від:" FontSize="22" FontAttributes="Bold" Margin="140,64,0,35"></Label>
-                    <HorizontalStackLayout x:Name="VozContainerLayout" Margin="140, 0" />
-                    <Grid RowDefinitions="*,Auto,Auto" WidthRequest="1564" HeightRequest="1080">
-                        <HorizontalStackLayout Margin="20,20,0,0" ZIndex="9999" VerticalOptions="Start"
-                                               HorizontalOptions="Start">
-                            <acrylic:AcrylicView EffectStyle="Dark" CornerRadius="20" BorderThickness="0"
-                                                 WidthRequest="129"
-                                                 HeightRequest="50">
-                                <Button Clicked="SeasonButton_OnClicked" Text="Сезон " x:Name="SeasonButton"
-                                        BorderWidth="0"
-                                        TextColor="White"
-                                        BackgroundColor="#000000"
-                                        HeightRequest="50"
-                                        FontSize="18"
-                                        FontAttributes="Bold"
-                                        CornerRadius="20" />
-                            </acrylic:AcrylicView>
-                            <acrylic:AcrylicView TintOpacity="0.2" EffectStyle="Dark" CornerRadius="20"
-                                                 BorderThickness="0"
-                                                 WidthRequest="190" Margin="20,0"
-                                                 HeightRequest="50">
-                                <Button Clicked="EpisodeButton_OnClicked" Text="Серiя " x:Name="EpisodeButton"
-                                        BorderWidth="0"
-                                        TextColor="White"
-                                        BackgroundColor="#000000"
-                                        HeightRequest="50"
-                                        FontSize="18"
-                                        FontAttributes="Bold"
-                                        CornerRadius="20" />
-                            </acrylic:AcrylicView>
-                        </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <VerticalStackLayout HorizontalOptions="Start">
+                            <Label Text="В озвучці від:" FontSize="22" FontAttributes="Bold" Margin="140,64,0,35"></Label>
+                            <HorizontalStackLayout x:Name="VozContainerLayout" Margin="140, 0" />
+                        </VerticalStackLayout>
+                        <ImageButton VerticalOptions="End" HorizontalOptions="End" BackgroundColor="Transparent" WidthRequest="50" HeightRequest="50" Source="create_session_button.png" Clicked="ImageButton_OnClicked"/>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Margin="20,20,0,0" ZIndex="9999" VerticalOptions="Start"
+                                           HorizontalOptions="Start">
+                        <acrylic:AcrylicView EffectStyle="Dark" CornerRadius="20" BorderThickness="0"
+                                             WidthRequest="129"
+                                             HeightRequest="50">
+                            <Button Clicked="SeasonButton_OnClicked" Text="Сезон " x:Name="SeasonButton"
+                                    BorderWidth="0"
+                                    TextColor="White"
+                                    BackgroundColor="#000000"
+                                    HeightRequest="50"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    CornerRadius="20" />
+                        </acrylic:AcrylicView>
+                        <acrylic:AcrylicView TintOpacity="0.2" EffectStyle="Dark" CornerRadius="20"
+                                             BorderThickness="0"
+                                             WidthRequest="190" Margin="20,0"
+                                             HeightRequest="50">
+                            <Button Clicked="EpisodeButton_OnClicked" Text="Серiя " x:Name="EpisodeButton"
+                                    BorderWidth="0"
+                                    TextColor="White"
+                                    BackgroundColor="#000000"
+                                    HeightRequest="50"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    CornerRadius="20" />
+                        </acrylic:AcrylicView>
+                    </HorizontalStackLayout>
+                    <Grid Margin="50, 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <HorizontalStackLayout Margin="20,80,0,0" ZIndex="9999" VerticalOptions="Start"
                                                HorizontalOptions="Start">
                             <VerticalStackLayout WidthRequest="129" x:Name="SeasonContainer"></VerticalStackLayout>
                             <VerticalStackLayout WidthRequest="190" x:Name="EpisodesContainer" Margin="20,0"></VerticalStackLayout>
                         </HorizontalStackLayout>
-                        <controls:Video x:Name="video" 
-                                        AreTransportControlsEnabled="False"
-                                        Source="{StaticResource ElephantsDream}" />
-                        <ActivityIndicator Color="Gray"
-                                           IsVisible="False">
-                            <ActivityIndicator.Triggers>
-                                <DataTrigger TargetType="ActivityIndicator"
-                                             Binding="{Binding Source={x:Reference video}, 
-                                               Path=Status}"
-                                             Value="{x:Static controls:VideoStatus.NotReady}">
-                                    <Setter Property="IsVisible"
-                                            Value="True" />
-                                    <Setter Property="IsRunning"
-                                            Value="True" />
-                                </DataTrigger>
-                            </ActivityIndicator.Triggers>
-                        </ActivityIndicator>
-
-                        <!-- <acrylic:AcrylicView EffectStyle="Dark" TintOpacity="0.2" TintColor="Black" BackgroundColor="Transparent" -->
-                        <!--                      VerticalOptions="End" CornerRadius="0"> -->
-                        <StackLayout VerticalOptions="End">
+                        <toolkit:MediaElement
+                            x:Name="mediaElement"
+                            Source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                            WidthRequest="1564"
+                            HeightRequest="1080"
+                            ShouldShowPlaybackControls="False"
+                            ShouldAutoPlay="False" />
+                        <StackLayout Grid.Row="2" VerticalOptions="End" x:Name="playerControlsGrid">
                             <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Start">
-                                <Label Grid.Column="0" Margin="0"
-                                       BindingContext="{x:Reference video}"
+                                <Label Margin="0" Grid.Column="0"
                                        Text="{Binding Path=Position,
                                   StringFormat='{0:hh\\:mm\\:ss}'}"
                                        HorizontalOptions="Start"
                                        VerticalOptions="Center" />
-                                <controls:PositionSlider Grid.Column="1" VerticalOptions="Start"
-                                                         BackgroundColor="#454545" MaximumTrackColor="#454545"
-                                                         MinimumTrackColor="#0044E9"
-                                                         ThumbColor="#0044E9"
-                                                         Margin="10,0,10,20"
-                                                         BindingContext="{x:Reference video}"
-                                                         Duration="{Binding Duration}"
-                                                         Position="{Binding Position}">
+                                <elems:PositionSlider x:Name="PositionSlider" Grid.Column="1" BackgroundColor="#454545"
+                                                      MaximumTrackColor="#454545"
+                                                      MinimumTrackColor="#0044E9"
+                                                      ThumbColor="#0044E9"
+                                                      Margin="10,0,10,20"
+                                                      Position="{Binding Position}"
+                                                      Duration="{Binding Duration}"
+                                                      ValueChanged="PositionSlider_OnValueChanged" />
 
-                                    <controls:PositionSlider.Triggers>
-                                        <DataTrigger TargetType="controls:PositionSlider"
-                                                     Binding="{Binding Status}"
-                                                     Value="{x:Static controls:VideoStatus.NotReady}">
-                                            <Setter Property="IsEnabled"
-                                                    Value="False" />
-                                        </DataTrigger>
-                                    </controls:PositionSlider.Triggers>
-                                </controls:PositionSlider>
-                                <Label Grid.Column="2" Margin="0"
-                                       BindingContext="{x:Reference video}"
+                                <Label Margin="0" Grid.Column="2"
                                        Text="{Binding Path=Duration,
                                   StringFormat='{0:hh\\:mm\\:ss}'}"
                                        HorizontalOptions="Start"
@@ -309,7 +333,6 @@
                                 Margin="10,0"
                                 ColumnDefinitions="0.33*,0.33*,0.33*"
                                 HeightRequest="50"
-                                BindingContext="{x:Reference video}"
                                 VerticalOptions="End">
                                 <Grid.Resources>
                                     <Style TargetType="ImageButton">
@@ -325,22 +348,9 @@
                                                  Clicked="OnMinus10SecondsButtonClicked">
                                     </ImageButton>
                                     <ImageButton Source="play.png"
+                                                 x:Name="PauseButton"
                                                  HorizontalOptions="Center"
                                                  Clicked="OnPlayPauseButtonClicked">
-                                        <ImageButton.Triggers>
-                                            <DataTrigger TargetType="ImageButton"
-                                                         Binding="{Binding Status}"
-                                                         Value="{x:Static controls:VideoStatus.Playing}">
-                                                <Setter Property="Source"
-                                                        Value="pause.png" />
-                                            </DataTrigger>
-                                            <DataTrigger TargetType="ImageButton"
-                                                         Binding="{Binding Status}"
-                                                         Value="{x:Static controls:VideoStatus.NotReady}">
-                                                <Setter Property="IsEnabled"
-                                                        Value="False" />
-                                            </DataTrigger>
-                                        </ImageButton.Triggers>
                                     </ImageButton>
                                     <ImageButton Source=" forward_10.png"
                                                  HorizontalOptions="Center"
@@ -359,19 +369,12 @@
                                     <Label x:Name="TitleNameLabel"></Label>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Grid.Column="2" HorizontalOptions="End">
-                                    <ImageButton Source="next.png" Clicked="OnNextEpisodeClicked" />
-                                    <ImageButton Source="episodes.png" Clicked="OnEpisodesButtonClicked" />
-                                    <ImageButton Source="subtitles.png" Clicked="OnSubtitleButtonClicked" />
-                                    <ImageButton Source="speed.png" Clicked="OnPlaySpeedButtonClicked" />
                                     <ImageButton Source="fullscreen.png" Clicked="OnFullScreenButtonClicked" />
                                 </HorizontalStackLayout>
-
-
                             </Grid>
                         </StackLayout>
-                        <!-- </acrylic:AcrylicView> -->
-
                     </Grid>
+
                     <HorizontalStackLayout Margin="140, 0" x:Name="RateingContainer" VerticalOptions="Center">
                         <Label Text="Оціни серіал:" TextColor="White" FontSize="22" FontAttributes="Bold"
                                VerticalOptions="Center" />
@@ -380,7 +383,8 @@
                                                    AccentColor="White"
                                                    StarSize="43"
                                                    StarMargin="5" />
-                        <Label FontSize="60" Text="{x:Binding AvarageRate}" Margin="21, 0, 0, 0" FontAttributes="Bold"
+                        <Label FontSize="60" Text="{x:Binding AvarageRate}" Margin="21, 0, 0, 0"
+                               FontAttributes="Bold"
                                VerticalOptions="Center" TextColor="#0044E9" />
                     </HorizontalStackLayout>
 
@@ -396,9 +400,10 @@
                             StrokeThickness="2"
                             Padding="0"
                             Margin="0">
-                            <Entry Placeholder="Написати відгук" x:Name="CommentsEntry" HeightRequest="145" WidthRequest="1500" />
+                            <Entry Placeholder="Написати відгук" x:Name="CommentsEntry" HeightRequest="145"
+                                   WidthRequest="1500" />
                         </Border>
-                        <Button Text="Отправити" Clicked="CommentsButtonClicked" WidthRequest="150"/>
+                        <Button Text="Отправити" Clicked="CommentsButtonClicked" WidthRequest="150" />
                         <ScrollView HeightRequest="700" Margin="140 ,0" x:Name="CommentsContainer"
                                     VerticalScrollBarVisibility="Never" />
                     </VerticalStackLayout>

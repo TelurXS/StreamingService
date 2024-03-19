@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Mobile;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Backend;
 
@@ -47,7 +48,7 @@ public partial class ProfileMobilePage : ContentPage
         NicknameLabel.Text = _profileModel.Name;
         NameLabel.Text = _profileModel.FirstName + " " + _profileModel.SecondName;
         ProfileImage.Source = Config.IMAGE_LINK + _profileModel.ProfileImage;
-        FooterLayout.Add(FooterMobileFactory.CreateFooter(nameof(ProfileMobilePage)));
+        ((Layout)FooterLayout).Add(FooterMobileFactory.CreateFooter(nameof(ProfileMobilePage)));
     }
 
     private void ChooseAvatarClicked(object sender, EventArgs e)

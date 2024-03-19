@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using Metflix.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,19 +12,20 @@ namespace VideoDemos.Core.Auth;
 public class RegisterService
 {
     public static AccountModel AccountModel;
-    public static List<string> _errorsList = new List<string>();
+    public static List<string> _errorsList;
 
     public static void StartRegister(string email, string password)
     {
         AccountModel = new AccountModel();
         AccountModel.Email = email;
         AccountModel.Password = password;
+        _errorsList = new List<string>();
     }
 
-    public static async void EndProfileRegister()
+    public static async Task EndProfileRegister()
     {
         string apiUrl = "http://telurxs-001-site1.ftempurl.com/api/register";
-        _errorsList = null;
+        _errorsList = new List<string>();
         using (HttpClient client = new HttpClient())
         {
             string jsonData = JsonConvert.SerializeObject(new UserCredentials()
@@ -53,8 +56,16 @@ public class RegisterService
                 }
 
                 _errorsList = errorList;
+                return;
             }
+
+            AuthService _authService = new AuthService();
+            _authService.Login(AccountModel.Email, AccountModel.Password, false);
         }
+    }
+
+    public static void EndDetailsRegister()
+    {
         string detailsJsonData = JsonConvert.SerializeObject(new UserDetails()
         {
             Name = AccountModel.Nickname,
@@ -63,9 +74,7 @@ public class RegisterService
             BirthDate = AccountModel.Birthdate
         });
         APIExecutor.ExecutePost(Config.API_LINK + "/manage/profile", detailsJsonData);
-        APIExecutor.ExecutePost(Config.API_LINK + "/manage/genres", JsonConvert.SerializeObject(AccountModel.Genres));
     }
-
     public static void EndPaymentRegister()
     {
         APIExecutor.ExecutePost(Config.API_LINK + "/manage/genres", JsonConvert.SerializeObject(AccountModel.Genres));

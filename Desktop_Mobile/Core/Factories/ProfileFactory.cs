@@ -1,4 +1,7 @@
-﻿using Metflix.Core.Models;
+﻿using System.Collections.Generic;
+using Metflix.Core.Models;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Shapes;
 using VideoDemos.Core.Backend;
 
@@ -6,7 +9,7 @@ namespace Metflix.Core;
 
 public class ProfileFactory
 {
-    public static Grid CreateHistoryBanner(Banner banner)
+    public static Grid CreateHistoryBanner(DB_ProggressBanner banner)
     {
         Grid mainGrid = new Grid()
         {
@@ -33,7 +36,7 @@ public class ProfileFactory
         {
             Aspect = Aspect.AspectFill,
             HorizontalOptions = LayoutOptions.Center,
-            Source = Config.IMAGE_LINK + banner.Image,
+            Source = Config.IMAGE_LINK + banner.Title.Image.Uri,
             VerticalOptions = LayoutOptions.Center,
             ZIndex = 999
         };
@@ -50,7 +53,7 @@ public class ProfileFactory
         return mainGrid;
     }
 
-    public static Grid CreateWatchProgress(int precent)
+    public static Grid CreateWatchProgress(float precent)
     {
         Grid watchProgressGrid = new Grid()
         {
@@ -67,7 +70,7 @@ public class ProfileFactory
         watchProgressGrid.Add(
             new RoundRectangle()
             {
-                WidthRequest = 361 / 100 * precent,
+                WidthRequest = 3F * precent,
                 HeightRequest = 10,
                 VerticalOptions = LayoutOptions.Center,
                 BackgroundColor = Color.FromArgb("#0044E9"),
@@ -77,14 +80,14 @@ public class ProfileFactory
         return watchProgressGrid;
     }
 
-    public static HorizontalStackLayout CreateBannerCollection(List<Banner> banners)
+    public static HorizontalStackLayout CreateBannerCollection(List<DB_ProggressBanner> banners)
     {
         HorizontalStackLayout horizontalStackLayout = new HorizontalStackLayout()
         {
             HorizontalOptions = LayoutOptions.End
         };
         int i = 0;
-        foreach (Banner banner in banners)
+        foreach (DB_ProggressBanner banner in banners)
         {
             i++;
             horizontalStackLayout.Add(CreateHistoryBanner(banner));
@@ -95,5 +98,18 @@ public class ProfileFactory
         }
 
         return horizontalStackLayout;
+    }
+
+    public static IView CreateGenre(string genreName)
+    {
+        Button button = new Button()
+        {
+            HeightRequest = 29,
+            Text = genreName,
+            Padding = new Thickness(25,5),
+            Margin = new Thickness(0,0,15,0),
+            CornerRadius = 20
+        };
+        return button;
     }
 }

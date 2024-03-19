@@ -1,4 +1,6 @@
-﻿namespace Metflix.Core.Models;
+﻿using System;
+
+namespace Metflix.Core.Models;
 
 public class NotificationModel
 {

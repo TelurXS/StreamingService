@@ -1,5 +1,7 @@
-﻿using Metflix.Core.Models;
-using VideoDemos.Controls;
+﻿using System;
+using System.Collections.Generic;
+using Metflix.Core.Models;
+using Microsoft.Maui;
 using VideoDemos.Views;
 using Microsoft.Maui.Controls.Shapes;
 using Path = Microsoft.Maui.Controls.Shapes.Path;
@@ -10,6 +12,8 @@ using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
 using VideoDemos.Core.Backend;
 using VideoDemos.Views.Mobile.Player;
+
+// using VideoDemos.Views.Mobile.Player;
 
 namespace Metflix.Core;
 
@@ -395,7 +399,7 @@ private static Label CreateBannerLabel(Title banner, int fontSize)
         };
         year_view.Add(new Label()
         {
-            Text = banner.ReleaseDate.ToString(),
+            Text = banner.ReleaseDate.Year.ToString(),
             TextColor = Colors.White,
             Padding = new Thickness(4, 0, 0, 2),
             FontSize = 14,
@@ -456,72 +460,8 @@ private static Label CreateBannerLabel(Title banner, int fontSize)
         grid.HeightRequest = height;
         grid.Margin = 15;
 
-        AcrylicView rating = new AcrylicView()
-        {
-            WidthRequest = 50,
-            HeightRequest = 22,
-            CornerRadius = 5,
-            EffectStyle = EffectStyle.Dark,
-            Margin = new Thickness(20, 20, 0, 0),
-            ZIndex = 999,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Start,
-            Padding = 0
-        };
-        HorizontalStackLayout mark = new HorizontalStackLayout()
-        {
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center
-        };
-        mark.Add(new Label()
-        {
-            Margin = new Thickness(4, 0, 0, 2),
-            Text = banner.AvarageRate.ToString(),
-            TextColor = Colors.White,
-            FontSize = 14,
-            FontAttributes = FontAttributes.Bold
-        });
-        mark.Add(new Image()
-        {
-            Source = "star.png",
-            WidthRequest = 15,
-            HeightRequest = 15,
-            Margin = new Thickness(5, 0, 0, 0),
-            ZIndex = 999
-        });
-        rating.Content = mark;
-
-        grid.Add(rating);
-
-        AcrylicView year = new AcrylicView()
-        {
-            WidthRequest = 43,
-            HeightRequest = 22,
-            CornerRadius = 5,
-            EffectStyle = EffectStyle.Dark,
-            Margin = new Thickness(80, 20, 0, 0),
-            ZIndex = 999,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Start,
-        };
-        HorizontalStackLayout year_view = new HorizontalStackLayout()
-        {
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
-        };
-        year_view.Add(new Label()
-        {
-            Text = banner.ReleaseDate.ToString(),
-            TextColor = Colors.White,
-            Padding = new Thickness(4, 0, 0, 2),
-            FontSize = 14,
-            FontAttributes = FontAttributes.Bold
-        });
-        year.Content = year_view;
-        grid.Add(year);
-
+        
         Button eventTrigger = new Button();
-
         eventTrigger.Background = Brush.Transparent;
         eventTrigger.BorderWidth = 0;
         eventTrigger.Text = banner.AvarageRate.ToString();
@@ -975,8 +915,6 @@ private static void RollPrewPageOfBanners(object sender, EventArgs e)
 
         Border mainContentBorder = new Border()
         {
-            WidthRequest = 355,
-            HeightRequest = 232,
             StrokeShape = new RoundRectangle()
             {
                 CornerRadius = 20
@@ -993,7 +931,8 @@ private static void RollPrewPageOfBanners(object sender, EventArgs e)
             AlignContent = FlexAlignContent.Start,
             Wrap = FlexWrap.Wrap,
             WidthRequest = 355,
-            Margin = new Thickness(0,0,0,0)
+            HeightRequest = 232,
+            Margin = new Thickness(0,0,0,0),
         };
 
         flexLayout.Background = new LinearGradientBrush(new GradientStopCollection()

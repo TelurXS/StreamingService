@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Security;
 using System.Text;
 using Metflix.Core.Models;
@@ -47,7 +49,7 @@ public class APIExecutor
                 }
                 else
                 {
-                    result = "Error: " + response.StatusCode + " - " + response.StatusDescription;
+                    result = "Error: " + response.StatusDescription;
                 }
             }
         }

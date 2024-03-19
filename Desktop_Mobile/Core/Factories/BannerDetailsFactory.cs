@@ -1,8 +1,12 @@
-﻿using Metflix.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using Metflix.Core.Models;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+using Microsoft.Maui.Graphics;
 using VideoDemos.Core.Backend;
+using VideoDemos.Views;
 using Brush = Microsoft.Maui.Controls.Brush;
 using Button = Microsoft.Maui.Controls.Button;
 using ColumnDefinition = Microsoft.Maui.Controls.ColumnDefinition;
@@ -19,6 +23,9 @@ namespace Metflix.Core;
 
 public class BannerDetailsFactory
 {
+    public static string SelectedVoz = "Default";
+    private static Rectangle ActiveRec;
+
     public static VerticalStackLayout CreateVoz(VozModel voz)
     {
         VerticalStackLayout container = new VerticalStackLayout()
@@ -54,10 +61,12 @@ public class BannerDetailsFactory
                 new GradientStop(Color.FromArgb("#0044E9"), 0f),
             }, new Point(0, 0), new Point(1, 1)),
             Margin = 0,
+            Opacity = 0
         };
-        if (!voz.IsEnabled)
+        if (voz.IsEnabled)
         {
-            rectangle.Opacity = 0;
+            rectangle.Opacity = 1;
+            ActiveRec = rectangle;
         }
 
         container.Add(button);
@@ -67,7 +76,16 @@ public class BannerDetailsFactory
 
     private static void VozChangedButtonOnClicked(object sender, EventArgs e)
     {
-        // throw new NotImplementedException();
+        Button button = ((Button)(sender));
+        VerticalStackLayout par = (VerticalStackLayout)button.RealParent;
+        Rectangle rec = (Rectangle)par.Children[1];
+        rec.Opacity = 1;
+        if (ActiveRec != null && ActiveRec != rec)
+        {
+            ActiveRec.Opacity = 0;
+        }
+        ActiveRec = rec;
+        SelectedVoz = button.Text;
     }
 
     public static Grid CreateComment(DB_Comment comment)
@@ -121,54 +139,12 @@ public class BannerDetailsFactory
         {
             FontSize = 16,
             TextColor = Color.FromArgb("#838383"),
-            Text = comment.ReleaseDate.ToLongTimeString(),
+            Text = comment.ReleaseDate.ToShortDateString(),
             HorizontalOptions = LayoutOptions.End
         };
         reusltGrid.Add(dateTextLabel, 2, 0);
 
-        Button answerButton = new Button()
-        {
-            FontSize = 18,
-            TextColor = Color.FromArgb("#b4b4b4"),
-            BackgroundColor = Colors.Transparent,
-            BorderWidth = 0,
-            Text = "Відповісти",
-            HorizontalOptions = LayoutOptions.Start
-        };
-        reusltGrid.Add(answerButton, 1, 2);
-
-
-        HorizontalStackLayout likeContainer = new HorizontalStackLayout()
-        {
-            HorizontalOptions = LayoutOptions.End,
-            VerticalOptions = LayoutOptions.Center
-        };
-        likeContainer.Add(new Label()
-        {
-            FontSize = 22,
-            FontAttributes = FontAttributes.Bold,
-            // Text = comment.LikesAmmount.ToString(),
-            VerticalOptions = LayoutOptions.Center,
-        });
-        ImageButton imageButton = new ImageButton()
-        {
-            Source = "like.png",
-            WidthRequest = 30,
-            HeightRequest = 30,
-            VerticalOptions = LayoutOptions.Center,
-        };
-        imageButton.Clicked += LikeButtonOnClick;
-        likeContainer.Add(imageButton);
-
-        reusltGrid.Add(likeContainer, 2, 2);
-
-
         return reusltGrid;
-    }
-
-    private static void LikeButtonOnClick(object sender, EventArgs e)
-    {
-        throw new NotImplementedException();
     }
 
     public static VerticalStackLayout CreateCommentsLayout(List<DB_Comment> comments)

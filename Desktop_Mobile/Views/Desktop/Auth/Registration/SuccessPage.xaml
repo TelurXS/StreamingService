@@ -2,7 +2,9 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="VideoDemos.Views.Auth.Registration.SuccessPage">
+             x:Class="VideoDemos.Views.Auth.Registration.SuccessPage"
+             Shell.FlyoutBehavior="Disabled"
+             Shell.TabBarIsVisible="False">
     <ContentPage.Content>
 
     <Grid x:Name="View">
@@ -36,10 +38,7 @@
             </Border.Stroke>
             <VerticalStackLayout
                 Padding="40"
-                VerticalOptions="Center"
-                HorizontalOptions="Center"
-                HeightRequest="597"
-                WidthRequest="415"
+
                 BackgroundColor="Black">
                 <Image WidthRequest="278" HeightRequest="64" Source="logo_inverted_color.png" Margin="19, 0, 18, 25"/>
                 <Label Text="Ви Успішно зареєструвалися!" x:Name="TitleLabel" FontSize="28" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>

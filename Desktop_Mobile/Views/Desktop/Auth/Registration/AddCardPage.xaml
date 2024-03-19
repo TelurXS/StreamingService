@@ -3,7 +3,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             x:Class="VideoDemos.Views.Auth.Registration.AddCardPage">
+             x:Class="VideoDemos.Views.Auth.Registration.AddCardPage"
+             Shell.FlyoutBehavior="Disabled"
+             Shell.TabBarIsVisible="False">
     <ContentPage.Content>
 
         <Grid x:Name="View">
@@ -37,10 +39,7 @@
                 </Border.Stroke>
                 <VerticalStackLayout
                     Padding="50"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    HeightRequest="597"
-                    WidthRequest="415"
+
                     BackgroundColor="Black">
                     <Label Text="Налаштуйте оплату за банківською карткою" x:Name="TitleLabel" FontSize="28"
                            FontAttributes="Bold"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
@@ -22,9 +23,24 @@ public partial class RegisterSecondPage : ContentPage
         RegisterService.AccountModel.Name = NameEntry.Text;
         RegisterService.AccountModel.Surname = SurnameEntry.Text;
         RegisterService.AccountModel.Birthdate = BirthDateEntry.Date;
-        
 
-        await Shell.Current.GoToAsync($"/{nameof(GenreChoosePage)}");
+        string jsonData = JsonConvert.SerializeObject(new UserDetails()
+        {
+            Name = NicknameEntry.Text,
+            FirstName = NameEntry.Text,
+            SecondName = SurnameEntry.Text,
+            BirthDate = BirthDateEntry.Date
+        });
+        string res = APIExecutor.ExecutePost(Config.API_LINK + "/manage/profile", jsonData);
+
+        if (res.Contains("Error") || res.Contains("Exception") )
+        {
+            DisplayAlert("Error", "Incorrect data", "ok");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync($"/{nameof(GenreChoosePage)}");
+        }
     }
 
     async void LoginButton_OnClick(object sender, EventArgs e)

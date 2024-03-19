@@ -6,7 +6,34 @@
     <ContentPage.Content>
         <ScrollView VerticalScrollBarVisibility="Always">
             <VerticalStackLayout Margin="115">
-                <Label FontSize="22" Text="Перегляд за мовами" Margin="0, 40, 0,0" />
+                <HorizontalStackLayout>
+                    <Label FontSize="22" Text="Перегляд за мовами" Margin="0, 40, 0,0" />
+                    <Label Text="Select option: " FontSize="18" Margin="50,40,0,0" />
+                    <Picker x:Name="LanguagePicker" SelectedIndexChanged="LanguagePicker_OnSelectedIndexChanged"
+                            Title="" Margin="15, 40,15,0">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Ukrainian</x:String>
+                                <x:String>English</x:String>
+                                <x:String>German</x:String>
+                                <x:String>Polish</x:String>
+                                <x:String>Spanish</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                    <Picker x:Name="SortingPicker" SelectedIndexChanged="SortingPicker_OnSelectedIndexChanged"
+                            Title="" Margin="15, 40,15,0">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>None</x:String>
+                                <x:String>New</x:String>
+                                <x:String>Old</x:String>
+                                <x:String>Rating</x:String>
+                                <x:String>Popularity</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </HorizontalStackLayout>
                 <FlexLayout x:Name="MainContainer" AlignContent="Start" JustifyContent="Start" AlignItems="Start"
                             Wrap="Wrap" />
                 <Button Clicked="LoadMoreButton_OnClicked" x:Name="LoadMoreButton" Text="More"

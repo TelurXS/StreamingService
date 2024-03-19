@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using VideoDemos.Core.Auth;
 using VideoDemos.Views.Mobile.Auth.Register;
 using VideoDemos.Views.Mobile.Main;
@@ -23,7 +24,7 @@ public partial class AuthMobilePage : ContentPage
     
     async void OnSignInClicked(object sender, EventArgs e)
     {
-        string result = _authService.Login(LoginEntry.Text, PasswordEntry.Text);
+        string result = _authService.Login(LoginEntry.Text, PasswordEntry.Text, RememberMeRadioButton.IsChecked);
         if (result != "" && result.Length < 50)
         {
             ErrorLabel.Text = result;

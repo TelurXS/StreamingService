@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Microsoft.Maui.Controls;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Maui.Storage;
 using VideoDemos.Core.Auth;
 using VideoDemos.ViewModels;
@@ -28,7 +27,7 @@ public partial class AuthPage : ContentPage
 
     async void OnSignInClicked(object sender, EventArgs e)
     {
-        string result = _authService.Login(LoginEntry.Text, PasswordEntry.Text);
+        string result = _authService.Login(LoginEntry.Text, PasswordEntry.Text, RememberMeRadioButton.IsChecked);
         if (result != "" && result.Length < 50)
         {
             ErrorLabel.Text = result;
@@ -41,9 +40,5 @@ public partial class AuthPage : ContentPage
     async void RegiserButton_OnClick(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync($"/{nameof(RegisterPage)}");
-    }
-
-    private void OnEnterWithGoogleClicked(object sender, EventArgs e)
-    {
     }
 }

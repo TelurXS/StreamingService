@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Maui.Controls;
 using VideoDemos.Core.Auth;
 
 namespace VideoDemos.Views.Mobile.Auth.Register;
@@ -35,7 +36,10 @@ public partial class RegisterMobilePage : ContentPage
         }
         
         ErrorsContainer.Content = layout;
-        await Shell.Current.GoToAsync($"/{nameof(RegisterMobileSecondPage)}");
+        if (RegisterService._errorsList.Count == 0)
+        {
+            await Shell.Current.GoToAsync($"/{nameof(RegisterMobileSecondPage)}");
+        }
     }
     async void LoginButton_OnClick(object sender, EventArgs e)
     {

@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Metflix.Core;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
@@ -33,5 +36,11 @@ public partial class MainPage : ContentPage
        
         Grid navbar = NavbarFactory.CreateNavBar(new AuthService());
         NavBarGrid.Children.Add(navbar);
+    }
+
+    private async void WatchButton_OnClicked(object? sender, EventArgs e)
+    {
+        BannerFactory.NavigatedBanner = "squid-game";
+        await Shell.Current.GoToAsync($"/{nameof(BannerDetailsPage)}");
     }
 }

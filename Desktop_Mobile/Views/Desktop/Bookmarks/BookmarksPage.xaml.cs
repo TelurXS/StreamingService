@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Backend;
 
@@ -20,7 +21,7 @@ public partial class BookmarksPage : ContentPage
         foreach (DBBanner banner in banners)
         {
             MainContainer.Add(BookmarksFactory.CreateBanner(banner.Name, Config.IMAGE_LINK + banner.Titles[0].Image.Uri,
-                banner.Availability == 1, banner.Id));
+                banner.Availability == 1, banner.Id.ToString()));
         }
     }
 }
