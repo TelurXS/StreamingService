@@ -27,6 +27,12 @@
                             <ul class="dropdown-menu dropdown-menu-lg-end back-dark">
                                 <li><a class="dropdown-item" href="@WebRoutes.My.Profile.Base">My Profile</a></li>
                                 <li><a class="dropdown-item" href="@WebRoutes.Logout">Log Out</a></li>
+
+                                @if (context.User.IsInRole(Role.Admin))
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="@WebRoutes.Dashboard.Home">Dashboard</a></li>
+                                }
                             </ul>
                         </li>
                     </ul>

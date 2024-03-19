@@ -103,6 +103,8 @@ public static class ApiRoutes
 
 		public const string FavouriteTitles = Base + GroupNameWithId + "/favourites";
 
+		public const string Roles = Base + GroupNameWithId + "/roles";
+
 		public const string TitlesLists = Base + GroupNameWithId + "/lists";
 	}
 

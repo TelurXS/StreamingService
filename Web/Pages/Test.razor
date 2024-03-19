@@ -8,7 +8,9 @@
 
 <AuthorizeView>
 	<Authorized>
-		<span>@context.User.Identity.Name</span>
+		<span>@context.User.IsInRole(Role.User)</span>
+		<span>@context.User.IsInRole(Role.Moderator)</span>
+		<span>@context.User.IsInRole(Role.Admin)</span>
 	</Authorized>
 </AuthorizeView>
 
@@ -19,18 +21,5 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		var userResult = await IdentityService.GetProfileAsync();
-
-		if (userResult.IsFound)
-		{
-			User = userResult.AsFound;
-		}
-
-		var titlesResult = await TitleService.FindAllPopularAsync();
-
-		if (titlesResult.IsFound)
-		{
-			Titles = titlesResult.AsFound;
-		}
 	}
 }

@@ -54,7 +54,13 @@ public class UserEndpoint : ICarterModule
 
         app.MapDelete(ApiRoutes.Users.ById, DeleteUserByIdAsync)
             .RequireAuthorization();
-    }
+
+		app.MapPost(ApiRoutes.Users.Roles, AddRoleToUserAsync)
+			.RequireAuthorization();
+
+		app.MapDelete(ApiRoutes.Users.Roles, RemoveRoleFromUserAsync)
+			.RequireAuthorization();
+	}
 
 	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -344,4 +350,44 @@ public class UserEndpoint : ICarterModule
             notFound => Results.NotFound(),
             failed => Results.BadRequest());
     }
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> AddRoleToUserAsync(
+		[FromRoute] Guid id,
+		[FromBody] AddRoleToUser.Request request,
+		[FromServices] IMediator mediator)
+	{
+		request.UserId = id;
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			title => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest());
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> RemoveRoleFromUserAsync(
+		[FromRoute] Guid id,
+		[FromBody] RemoveRoleFromUser.Request request,
+		[FromServices] IMediator mediator)
+	{
+		request.UserId = id;
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			title => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest());
+	}
 }
