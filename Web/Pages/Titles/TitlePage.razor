@@ -55,7 +55,15 @@
 				</Authorized>
 			</AuthorizeView>
 		</div>
-		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+
+		@if (string.IsNullOrEmpty(Title.Trailer))
+		{
+			<button disabled class="button font-btn mt-2">Watch Trailer</button>
+		}
+		else
+		{
+			<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+		}
 	</div>
 
 	<div class="col-md-8 mt-5 mt-md-0 ">
