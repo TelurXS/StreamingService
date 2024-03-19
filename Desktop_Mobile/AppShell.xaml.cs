@@ -1,4 +1,5 @@
-﻿using VideoDemos.Views;
+﻿using Microsoft.Maui.Controls;
+using VideoDemos.Views;
 using VideoDemos.Views.Auth.Registration;
 using VideoDemos.Views.Bookmarks;
 using VideoDemos.Views.Main;
@@ -10,6 +11,8 @@ using VideoDemos.Views.Profile.Settings;
 using VideoDemos.Views.Profile.Settings.ChangeEmail;
 using VideoDemos.Views.Profile.Settings.ChangePassword;
 using VideoDemos.Views.Profile.Settings.Payment;
+using Xflick.Views.Desktop.Main;
+using Xflick.Views.Desktop.Player;
 
 namespace VideoDemos;
 
@@ -19,23 +22,24 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        
+
         // MAIN PAGES
         Routing.RegisterRoute(nameof(ListeningPage), typeof(ListeningPage));
         Routing.RegisterRoute(nameof(LoadingPage), typeof(LoadingPage));
         Routing.RegisterRoute(nameof(AuthPage), typeof(AuthPage));
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+        Routing.RegisterRoute(nameof(SearchPage), typeof(SearchPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
-        
+
         //TYPE PAGES
         Routing.RegisterRoute(nameof(FilmsPage), typeof(FilmsPage));
         Routing.RegisterRoute(nameof(SeriesPage), typeof(SeriesPage));
         Routing.RegisterRoute(nameof(NewAndPopularPage), typeof(NewAndPopularPage));
         Routing.RegisterRoute(nameof(WatchViaLanguagesPage), typeof(WatchViaLanguagesPage));
-        
-        
+
+
         //VIDEO
-        Routing.RegisterRoute(nameof(VideoPlayerPage), typeof(VideoPlayerPage));
+        Routing.RegisterRoute(nameof(ConnectedSessionPage), typeof(ConnectedSessionPage));
         Routing.RegisterRoute(nameof(BannerDetailsPage), typeof(BannerDetailsPage));
 
         // REGISTER
@@ -65,8 +69,11 @@ public partial class AppShell : Shell
 
         // BOOKMARKS
         Routing.RegisterRoute(nameof(BookmarksDetailsPage), typeof(BookmarksDetailsPage));
-        
+
         // CHATS
         Routing.RegisterRoute(nameof(NotificationsPage), typeof(NotificationsPage));
+
+        //PROFILE 
+        Routing.RegisterRoute(nameof(GenreChangePage), typeof(GenreChangePage));
     }
 }

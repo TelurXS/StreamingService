@@ -1,4 +1,6 @@
-﻿namespace Metflix.Core.Models;
+﻿using System.Collections.Generic;
+
+namespace Metflix.Core.Models;
 
 public class ChatModel
 {

@@ -1,6 +1,8 @@
-﻿using Metflix.Core.Models;
+﻿using System;
+using System.Linq;
+using Metflix.Core.Models;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.UI.Xaml.Controls;
 using VideoDemos.Views.Auth.Registration;
 using Border = Microsoft.Maui.Controls.Border;
 using Button = Microsoft.Maui.Controls.Button;

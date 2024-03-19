@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using VideoDemos.Views.Auth.Registration;
 
 namespace Metflix.Core.Models;

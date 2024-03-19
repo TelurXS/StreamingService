@@ -17,7 +17,7 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" ZIndex="1">
                     <Grid Padding="0" Margin="0">
-                        <Image Source="wallpapers.jpg" Aspect="AspectFill" Margin="0"/>
+                        <Image Source="http://telurxs-001-site1.ftempurl.com/api/titles/images/9598e503-977d-4746-8e3f-4905feb6750d.jpg" Aspect="AspectFill" Margin="0"/>
                         <Frame Padding="0" BorderColor="Transparent" BackgroundColor="Transparent" Margin="0">
                             <StackLayout VerticalOptions="End" Padding="10" Margin="0,0,800,300" WidthRequest="614">
                                 <Label Text="Серіал" FontSize="18" FontAttributes="Bold" TextColor="White" />
@@ -36,7 +36,7 @@
                                                 ImageSource="main_page_play.png"
                                                 ContentLayout="Right, 14"
                                                 CornerRadius="20" Padding="10,12"
-                                                BorderWidth="0" />
+                                                BorderWidth="0" Clicked="WatchButton_OnClicked" />
 
                                     </acrylic:AcrylicView>
                                     <acrylic:AcrylicView CornerRadius="20" BorderThickness="0"
@@ -49,7 +49,7 @@
                                                 ImageSource="info.png"
                                                 HeightRequest="50" FontAttributes="Bold"
                                                 ContentLayout="Right, 16"
-                                                CornerRadius="20" Padding="10,12" />
+                                                CornerRadius="20" Padding="10,12" Clicked="WatchButton_OnClicked"  />
                                     </acrylic:AcrylicView>
 
                                 </HorizontalStackLayout>

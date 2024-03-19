@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Maui.Core.Primitives;
 using Metflix.Core;
 using Metflix.Core.Models;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using VideoDemos.Controls;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
 using VideoDemos.Core.Models.Bookmarks;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
+using Xflick.Views.Desktop.Player;
+using Application = Microsoft.Maui.Controls.Application;
+using Button = Microsoft.Maui.Controls.Button;
+using Thickness = Microsoft.Maui.Thickness;
 
 
 namespace VideoDemos.Views;
@@ -26,27 +25,46 @@ public partial class BannerDetailsPage : ContentPage
     private static bool _isEpisodeChooseing = false;
 
     private static IDispatcherTimer timer;
-
+    private static List<string> _dubbing;
 
     public BannerDetailsPage()
     {
         InitializeComponent();
         string slug = BannerFactory.NavigatedBanner;
         BookmarksFactory.clickedEvent += BookmarksFactoryOnclickedEvent;
+
         string json = APIExecutor.ExecuteGet(Config.API_LINK + "/titles/" + slug);
         currentTitle =
             JsonConvert.DeserializeObject<Title>(json);
         string titleType = convertIntToType(currentTitle.Type);
 
+        PositionSlider.CurrentMediaElem = mediaElement;
+        playerControlsGrid.BindingContext = mediaElement;
+
+        TitleNameLabel.Text = currentTitle.Name;
         currentTitle.Image.Uri = Config.IMAGE_LINK + currentTitle.Image.Uri;
         this.BindingContext = this;
         DetailsGrid.BindingContext = currentTitle;
         BackgroundImage.Source = currentTitle.Image.Uri;
         PreviewImage.Source = currentTitle.Image.Uri;
         RateingContainer.BindingContext = currentTitle;
+
         NavBarGrid.Children.Add(NavbarFactory.CreateNavBar(new AuthService()));
         DescriptionLabel.Text = $"Про що {titleType} \"{currentTitle.Name}\":";
         TitleTypeLabel.Text = titleType;
+
+        _dubbing = new List<string>();
+        foreach (DB_Series currentTitleSeries in currentTitle.Series)
+        {
+            if (currentTitleSeries.Dubbing != null)
+                if (!_dubbing.Contains(currentTitleSeries.Dubbing))
+                {
+                    _dubbing.Add(currentTitleSeries.Dubbing);
+                    VozContainerLayout.Add(
+                        BannerDetailsFactory.CreateVoz(new VozModel(currentTitleSeries.Dubbing, false)));
+                }
+        }
+
         if (currentTitle.Genres.Count > 0)
         {
             string request = Config.API_LINK + "/titles/by-genres?genres=";
@@ -63,9 +81,8 @@ public partial class BannerDetailsPage : ContentPage
             FilmsForYouLayout.Add(BannerFactory.CreateBannerCollection("Фільми для вас", same));
         }
 
-        Shell.SetTabBarIsVisible(Application.Current.MainPage, false);
-        Shell.SetFlyoutBehavior(Application.Current.MainPage, FlyoutBehavior.Flyout);
-        TitleNameLabel.Text = currentTitle.Name;
+        HideCreateSessionDialog();
+        // TitleNameLabel.Text = currentTitle.Name;
 
         if (currentTitle.Series.Count > 1)
         {
@@ -84,8 +101,14 @@ public partial class BannerDetailsPage : ContentPage
         timer.Tick += (s, e) => SaveProgress();
         timer.Start();
 
-        video.Stop();
         VideoSourceChanged();
+    }
+
+    private void ChangeVoz(string voz)
+    {
+        if (_dubbing != null)
+        {
+        }
     }
 
     private string convertIntToType(int typeNum)
@@ -101,10 +124,10 @@ public partial class BannerDetailsPage : ContentPage
 
     private void SaveProgress()
     {
-        if (video.Status == VideoStatus.Playing)
+        if (mediaElement.CurrentState == MediaElementState.Playing)
         {
-            TimeSpan currentVideoPosition = video.Position;
-            TimeSpan videoDuration = video.Duration;
+            TimeSpan currentVideoPosition = mediaElement.Position;
+            TimeSpan videoDuration = mediaElement.Duration;
             int percentWatched;
             if (videoDuration.Seconds / 100 == 0)
             {
@@ -148,52 +171,16 @@ public partial class BannerDetailsPage : ContentPage
     {
         if (!currentTitle.Series.IsNullOrEmpty() && !currentTitle.Series[CurrentEpisode].Uri.IsNullOrEmpty())
         {
-            video.Source = VideoSource.FromUri(Config.IMAGE_LINK + currentTitle.Series[CurrentEpisode].Uri);
-            video.AutoPlay = false;
+            mediaElement.Source = (Config.IMAGE_LINK + currentTitle.Series[CurrentEpisode].Uri);
         }
-    }
-
-    void OnPlayPauseButtonClicked(object sender, EventArgs args)
-    {
-        if (video.Status == VideoStatus.Playing)
-        {
-            video.Pause();
-        }
-        else if (video.Status == VideoStatus.Paused)
-        {
-            video.Play();
-        }
-    }
-
-    void OnContentPageUnloaded(object sender, EventArgs e)
-    {
-        video.Handler?.DisconnectHandler();
-    }
-
-    private void OnMinus10SecondsButtonClicked(object sender, EventArgs e)
-    {
-        video.Position = video.Position.Add(new TimeSpan(0, 0, 0, -10));
-    }
-
-    private void OnPlus10SecondsButtonClicked(object sender, EventArgs e)
-    {
-        video.Position = video.Position.Add(new TimeSpan(0, 0, 0, 10));
-    }
-
-    private void OnNextEpisodeClicked(object sender, EventArgs e)
-    {
-        video.Stop();
-        video.Play();
     }
 
     private void OnEpisodesButtonClicked(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
     }
 
     private void OnSubtitleButtonClicked(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
     }
 
     private void OnPlaySpeedButtonClicked(object sender, EventArgs e)
@@ -236,8 +223,13 @@ public partial class BannerDetailsPage : ContentPage
                 int opacity = 100;
                 for (int i = 0; i < currentTitle.Series.Count; i++)
                 {
-                    if (i > 5) opacity -= 10;
-                    EpisodesContainer.Children.Add(CreateAcrilicButton("Серiя " + (i + 1), opacity, i));
+                    if (currentTitle.Series[i].Dubbing == BannerDetailsFactory.SelectedVoz)
+                    {
+                        if (i > 5)
+                            opacity -= 10;
+                        EpisodesContainer.Children.Add(CreateAcrilicButton($"{currentTitle.Series[i].Name}",
+                            opacity, i));
+                    }
                 }
 
                 _isEpisodeChooseing = true;
@@ -339,9 +331,23 @@ public partial class BannerDetailsPage : ContentPage
     private void ShowAddToFolderNotification()
     {
         AddToFolder.Opacity = 1;
-
         AddToFolder.HeightRequest = 623;
         AddToFolder.WidthRequest = 540;
+        
+        string data = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
+        List<DBBanner> model = JsonConvert.DeserializeObject<List<DBBanner>>(data);
+        VerticalStackLayout verticalStackLayout = new VerticalStackLayout();
+        foreach (DBBanner bookmarkModel in model)
+        {
+            verticalStackLayout.Add(
+                BookmarksFactory.CreateSaveCollectionButton(bookmarkModel.Id, bookmarkModel.Name,
+                    currentTitle.Image.Uri,
+                    bookmarkModel.Availability == 1));
+        }
+
+        MainBookmarksContentScrollView.Content = verticalStackLayout;
+        
+
     }
 
     private void ShowCreateNewFolderNotification()
@@ -361,10 +367,11 @@ public partial class BannerDetailsPage : ContentPage
                 Name = FolderNameEntry.Text
             };
             string result = APIExecutor.ExecutePost(Config.API_LINK + "/lists", JsonConvert.SerializeObject(@params));
+            DBBanner bookmarkModel = JsonConvert.DeserializeObject<DBBanner>(result);
+            APIExecutor.ExecutePost(Config.API_LINK + "/lists/" + bookmarkModel.Id + "/" + currentTitle.Id);
             if (result != "")
             {
                 HideCreateNewFolderNotification();
-                ShowAddToFolderNotification();
             }
         }
     }
@@ -377,7 +384,6 @@ public partial class BannerDetailsPage : ContentPage
 
     private void FavButtonClicked(object sender, EventArgs e)
     {
-        DisplayAlert("al", currentTitle.Id.ToString(), "ok");
         APIExecutor.ExecutePost(Config.API_LINK + "/favourites/" + currentTitle.Id);
         ImageButton button = (ImageButton)sender;
         button.Source = "liked.png";
@@ -385,27 +391,14 @@ public partial class BannerDetailsPage : ContentPage
 
     private void BookmarksButtonClicked(object sender, EventArgs e)
     {
-        if (MainBookmarksContentScrollView.Content == null)
-        {
-            string data = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
-            List<DBBanner> model = JsonConvert.DeserializeObject<List<DBBanner>>(data);
-            VerticalStackLayout verticalStackLayout = new VerticalStackLayout();
-            foreach (DBBanner bookmarkModel in model)
-            {
-                verticalStackLayout.Add(
-                    BookmarksFactory.CreateSaveCollectionButton(bookmarkModel.Id, bookmarkModel.Name,
-                        currentTitle.Image.Uri,
-                        bookmarkModel.Availability == 1));
-            }
-
-            MainBookmarksContentScrollView.Content = verticalStackLayout;
-        }
-
         if (AddToFolder.Opacity == 1)
         {
             HideAddToFolderNotification();
             return;
         }
+
+
+
 
         ShowAddToFolderNotification();
     }
@@ -414,8 +407,6 @@ public partial class BannerDetailsPage : ContentPage
     {
         if (CommentsEntry.Text != "")
         {
-            // DisplayAlert("Alert", currentTitle.Id.ToString(), "OK");
-
             string commentJson = APIExecutor.ExecutePost(Config.API_LINK + $"/comments/{currentTitle.Id}",
                 JsonConvert.SerializeObject(new DB_CommentsSendobject()
                 {
@@ -423,10 +414,92 @@ public partial class BannerDetailsPage : ContentPage
                     CreationTime = DateTime.Now - TimeSpan.FromSeconds(20)
                 }));
 
-            DisplayAlert("Alert", commentJson, "OK");
             currentTitle.Comments.Add(JsonConvert.DeserializeObject<DB_Comment>(commentJson));
             CommentsContainer.Content = BannerDetailsFactory.CreateCommentsLayout(currentTitle.Comments);
         }
+    }
+
+    private bool _isFullscreenToggle = false;
+
+    public bool IsFullscreen
+    {
+        get { return _isFullscreenToggle; }
+        set { _isFullscreenToggle = value; }
+    }
+
+    private void OnMinus10SecondsButtonClicked(object? sender, EventArgs e)
+    {
+        mediaElement.SeekTo(mediaElement.Position - new TimeSpan(0, 0, 0, 10));
+    }
+
+    private void OnPlayPauseButtonClicked(object? sender, EventArgs e)
+    {
+        if (mediaElement.CurrentState == MediaElementState.Playing)
+        {
+            mediaElement.Pause();
+            PauseButton.Source = "play.png";
+        }
+        else if (mediaElement.CurrentState == MediaElementState.Paused)
+        {
+            mediaElement.Play();
+            PauseButton.Source = "pause.png";
+        }
+    }
+
+    private void OnPlus10SecondsButtonClicked(object? sender, EventArgs e)
+    {
+        mediaElement.SeekTo(mediaElement.Position + new TimeSpan(0, 0, 0, 10));
+    }
+
+    private void OnNextEpisodeClicked(object? sender, EventArgs e)
+    {
+    }
+
+    private void PositionSlider_OnValueChanged(object? sender, ValueChangedEventArgs e)
+    {
+        TimeSpan newPosition = TimeSpan.FromSeconds(PositionSlider.Value);
+        if (Math.Abs(newPosition.TotalSeconds - mediaElement.Position.TotalSeconds) /
+            mediaElement.Duration.TotalSeconds > 0.01)
+            mediaElement.SeekTo(newPosition);
+    }
+
+    private void CopySessionLink_OnClicked(object? sender, EventArgs e)
+    {
+        DisplayAlert("Success", "Link coppied", "ok");
+        Clipboard.Default.SetTextAsync(ConnectedSessionPage.ConnectToSessionString);
+    }
+
+    private async void CreateSessionLink_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync($"/{nameof(ConnectedSessionPage)}");
+    }
+
+    private void ShowCreateSessionDialog()
+    {
+        AddToConfirence.Opacity = 1;
+        AddToConfirence.HeightRequest = 623;
+        AddToConfirence.WidthRequest = 540;
+    }
+
+    private void HideCreateSessionDialog()
+    {
+        AddToConfirence.Opacity = 0;
+        AddToConfirence.HeightRequest = 0;
+        AddToConfirence.WidthRequest = 0;
+    }
+
+    private void ImageButton_OnClicked(object? sender, EventArgs e)
+    {
+        ConnectedSessionPage.SessionId = Guid.NewGuid().ToString();
+        ConnectedSessionPage.ConnectToSessionString =
+            Config.CREATE_SESSION_LINK + currentTitle.Slug + "/" + ConnectedSessionPage.SessionId;
+        CopySessionLink.Text = ConnectedSessionPage.ConnectToSessionString;
+        ShowCreateSessionDialog();
+    }
+
+    private void CloseSessionDialog_OnClicked(object? sender, EventArgs e)
+    {
+        HideCreateSessionDialog();
     }
 }
 

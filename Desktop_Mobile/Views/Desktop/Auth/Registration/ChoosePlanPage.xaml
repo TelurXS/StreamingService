@@ -2,7 +2,9 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="VideoDemos.Views.Auth.Registration.ChoosePlanPage">
+             x:Class="VideoDemos.Views.Auth.Registration.ChoosePlanPage"
+             Shell.FlyoutBehavior="Disabled"
+             Shell.TabBarIsVisible="False">
     <ContentPage.Content>
 
     <Grid x:Name="View">
@@ -37,10 +39,7 @@
             <VerticalStackLayout
                 Spacing="25"
                 Padding="40"
-                VerticalOptions="Center"
-                HorizontalOptions="Center"
-                HeightRequest="597"
-                WidthRequest="415"
+
                 BackgroundColor="Black">
                 <Label Text="Реєстрація" x:Name="TitleLabel" FontSize="40" TextColor="White" />
                 <ScrollView>

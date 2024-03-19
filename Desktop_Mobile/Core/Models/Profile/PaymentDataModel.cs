@@ -1,4 +1,7 @@
-﻿namespace Metflix.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Metflix.Core.Models;
 
 public class PaymentDataModel
 {

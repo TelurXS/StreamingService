@@ -1,4 +1,5 @@
 ﻿using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace Metflix.Core;

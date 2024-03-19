@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;

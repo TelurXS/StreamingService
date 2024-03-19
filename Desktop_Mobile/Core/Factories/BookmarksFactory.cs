@@ -1,21 +1,30 @@
-﻿using Metflix.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using Metflix.Core.Models;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Shapes;
 using Newtonsoft.Json;
 using VideoDemos.Core.Backend;
+using VideoDemos.Views;
 using VideoDemos.Views.Bookmarks;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
+using Xflick.Views.Mobile.Bookmarks;
 
 namespace Metflix.Core;
 
 public class BookmarksFactory
 {
     private static int bannerWidth = 258;
-    private static int bannerHeight = 371;
-    private static Guid currentGuid;
+    private static int bannerHeight = 371;   
+    
+    private static int mobileBannerWidth = 118;
+    private static int mobileBannerHeight = 170;
+    private static string currentGuid;
     public static event EventHandler clickedEvent;
 
-    public static VerticalStackLayout CreateBanner(string name, string imageSrc, bool isPrivate, Guid list_id)
+    public static VerticalStackLayout CreateBanner(string name, string imageSrc, bool isPrivate, string list_id)
     {
         currentGuid = list_id;
 
@@ -76,6 +85,68 @@ public class BookmarksFactory
             HorizontalOptions = LayoutOptions.Center,
         });
         return resultConteiner;
+    }  
+    public static VerticalStackLayout CreateMobileBanner(string name, string imageSrc, bool isPrivate, string list_id)
+    {
+        currentGuid = list_id;
+
+        VerticalStackLayout resultContainer = new VerticalStackLayout();
+        Grid content = new Grid();
+
+        string imageSource = "lock.png";
+        content.Add(new Image()
+        {
+            Source = "bookmarks_bg_2.png",
+            Margin = new Thickness(39, 39, 0, 0),
+            WidthRequest = mobileBannerWidth,
+            HeightRequest = mobileBannerHeight,
+        });
+        content.Add(new Image()
+        {
+            Source = "bookmarks_bg_1.png",
+            Margin = new Thickness(19, 19, 0, 0),
+            WidthRequest = mobileBannerWidth,
+            HeightRequest = mobileBannerHeight,
+        });
+        content.Add(new Image()
+        {
+            Source = imageSrc,
+            WidthRequest = mobileBannerWidth,
+            HeightRequest = mobileBannerHeight,
+        });
+        if (!isPrivate) imageSource = "unlock.png";
+        content.Add(new Image()
+        {
+            Source = imageSource,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Start,
+            WidthRequest = 30,
+            HeightRequest = 30,
+            Margin = new Thickness(0, 30, 40, 0)
+        });
+        Button eventTrigger = new Button()
+        {
+            WidthRequest = mobileBannerWidth,
+            HeightRequest = mobileBannerHeight,
+            Padding = 0,
+            Margin = 0,
+            Background = Brush.Transparent,
+            BorderWidth = 0,
+            Text = currentGuid.ToString(),
+            FontSize = 0,
+            Opacity = 0,
+        };
+
+        content.Add(eventTrigger);
+        eventTrigger.Clicked += ButtonMobileClicked;
+
+        resultContainer.Add(content);
+        resultContainer.Add(new Label()
+        {
+            Text = name,
+            HorizontalOptions = LayoutOptions.Center,
+        });
+        return resultContainer;
     }
 
     public static Grid CreateSaveCollectionButton(Guid id, string name, string imageSrc, bool isPrivate)
@@ -99,7 +170,7 @@ public class BookmarksFactory
             HeightRequest = 104
         };
 
-        HorizontalStackLayout resultConteiner = new HorizontalStackLayout()
+        HorizontalStackLayout resultContainer = new HorizontalStackLayout()
         {
         };
         Grid content = new Grid();
@@ -123,7 +194,7 @@ public class BookmarksFactory
             WidthRequest = 47,
             HeightRequest = 68,
         });
-        resultConteiner.Add(content);
+        resultContainer.Add(content);
         VerticalStackLayout verticalStackLayout = new VerticalStackLayout()
         {
             Margin = 20,
@@ -152,8 +223,8 @@ public class BookmarksFactory
             FontSize = 16
         });
         verticalStackLayout.Add(horizontalStackLayout);
-        resultConteiner.Add(verticalStackLayout);
-        grid.Add(resultConteiner, 0);
+        resultContainer.Add(verticalStackLayout);
+        grid.Add(resultContainer, 0);
         Button button = new Button()
         {
             Margin = new Thickness(0, 0, 15, 0),
@@ -318,9 +389,22 @@ public class BookmarksFactory
 
     private async static void ButtonClicked(object sender, EventArgs e)
     {
+        Button button = (Button)(sender);
+        currentGuid = button.Text;
+        
         Dictionary<string, object> sendParams = new Dictionary<string, object>();
         sendParams.Add("listId", currentGuid);
+        BookmarksDetailsPage.CurrentListId = Guid.Parse(currentGuid);
         await Shell.Current.GoToAsync($"/{nameof(BookmarksDetailsPage)}", sendParams);
+    }   
+    private async static void ButtonMobileClicked(object sender, EventArgs e)
+    {
+        Button button = (Button)(sender);
+        currentGuid = button.Text;
         
+        Dictionary<string, object> sendParams = new Dictionary<string, object>();
+        sendParams.Add("listId", currentGuid);
+        BannerFactory.NavigatedBanner = currentGuid;
+        await Shell.Current.GoToAsync($"/{nameof(BookmarksDetailsMobilePage)}", sendParams);
     }
 }

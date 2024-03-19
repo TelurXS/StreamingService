@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Metflix.Core;
 using Metflix.Core.Models;
 using Microsoft.Maui.Controls.Shapes;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
-using VideoDemos.Core.Models.Bookmarks;
-using VideoDemos.Views.Auth.Registration;
 using VideoDemos.Views.Profile;
 using VideoDemos.Views.Profile.Settings;
 
@@ -24,6 +16,7 @@ public partial class ProfilePage : ContentPage
     private List<DBBanner> _bookmarks;
     private List<DBProfileModel> _readers;
     private List<DBProfileModel> _followers;
+    private List<DB_Genre> _genres;
 
     private bool _isMainNotificationShown;
 
@@ -38,24 +31,35 @@ public partial class ProfilePage : ContentPage
             JsonConvert.DeserializeObject<List<DBProfileModel>>(APIExecutor.ExecuteGet(Config.API_LINK + "/followers"));
         _readers = JsonConvert.DeserializeObject<List<DBProfileModel>>(
             APIExecutor.ExecuteGet(Config.API_LINK + "/readers"));
-
+        _genres = JsonConvert.DeserializeObject<List<DB_Genre>>(APIExecutor.ExecuteGet(Config.API_LINK + "/manage/genres"));
+        
         string favJson = APIExecutor.ExecuteGet(Config.API_LINK + $"/users/{_profileModel.Id}/favourites");
-
-        FavBannersLayout.Add(BannerFactory.CreateFavBannerCollection("В обраному",
-            JsonConvert.DeserializeObject<List<Title>>(favJson)));
-
+        string viewRecordsJson = APIExecutor.ExecuteGet(Config.API_LINK + $"/users/{_profileModel.Id}/view-records");
+        List<Title> fav = JsonConvert.DeserializeObject<List<Title>>(favJson);
+        FavBannersLayout.Add(BannerFactory.CreateFavBannerCollection("В обраному", fav));
         foreach (DBBanner bookmark in _bookmarks)
         {
             FavBannersLayout.Add(BannerFactory.CreateFavBannerCollection(bookmark.Name, bookmark.Titles));
         }
 
-        // RecentMoviesLayout.Add(ProfileFactory.CreateBannerCollection(banners));
-        // ProgressGrid.Add(ProfileFactory.CreateWatchProgress(banners[0].WatchedPrecent));
-
+        foreach (DB_Genre genre in _genres)
+        {
+            GenreLayout.Add(ProfileFactory.CreateGenre(genre.Name));
+        }
+        List<DB_ProggressBanner> banners = JsonConvert.DeserializeObject<List<DB_ProggressBanner>>(viewRecordsJson);
+        if (banners.Count > 0)
+        {
+            RecentMoviesLayout.Add(ProfileFactory.CreateBannerCollection(banners));
+            ProgressGrid.Add(ProfileFactory.CreateWatchProgress(banners[0].Progress));
+            CurrentFilmImage.Source = Config.IMAGE_LINK + banners[0].Title.Image.Uri;
+            CurrentFilmLabel.Text = banners[0].Title.Name;
+        }
+        
         ReadersAmountLabel.Text = _readers.Count.ToString();
         FollowersAmountLabel.Text = _followers.Count.ToString();
-
-        CurrentFilmLabel.Text = "Аватар: шлях води";
+        FavLabel.Text = fav.Count.ToString();
+        
+        
         NicknameLabel.Text = _profileModel.Name;
         NameLabel.Text = _profileModel.FirstName + " " + _profileModel.SecondName;
         ProfileImage.Source = Config.IMAGE_LINK + _profileModel.ProfileImage;
@@ -119,25 +123,13 @@ public partial class ProfilePage : ContentPage
                 Opacity = 0.5
             });
             readerLayout.Add(detailsLayout);
-            Button button = new Button()
-            {
-                Margin = new Thickness(126, 0, 0, 0),
-                FontSize = 18,
-                CornerRadius = 20,
-                WidthRequest = 178,
-                HeightRequest = 50
-            };
-            button.Clicked += RemoveFromReadersClicked;
-            readerLayout.Add(button);
+
+            mainLayout.Add(readerLayout);
         }
 
         return mainLayout;
     }
 
-    private void RemoveFromReadersClicked(object sender, EventArgs e)
-    {
-        throw new NotImplementedException();
-    }
 
     private void Readers_Clicked(object sender, EventArgs e)
     {
@@ -156,7 +148,7 @@ public partial class ProfilePage : ContentPage
     {
         VerticalStackLayout mainLayout = new VerticalStackLayout();
 
-        foreach (var follower in _followers)
+        foreach (var follower in _readers)
         {
             HorizontalStackLayout readerLayout = new HorizontalStackLayout()
             {
@@ -187,26 +179,12 @@ public partial class ProfilePage : ContentPage
                 Opacity = 0.5
             });
             readerLayout.Add(detailsLayout);
-            Button button = new Button()
-            {
-                Margin = new Thickness(126, 0, 0, 0),
-                FontSize = 18,
-                CornerRadius = 20,
-                WidthRequest = 178,
-                HeightRequest = 50,
-                Text = "Не стежити"
-            };
-            button.Clicked += RemoveFromFollowersClicked;
-            readerLayout.Add(button);
+            mainLayout.Add(readerLayout);
         }
 
         return mainLayout;
     }
 
-    private void RemoveFromFollowersClicked(object sender, EventArgs e)
-    {
-        throw new NotImplementedException();
-    }
 
     private void Fav_Clicked(object sender, EventArgs e)
     {
@@ -254,7 +232,7 @@ public partial class ProfilePage : ContentPage
 
     public async Task<FileResult> PickAndShow(PickOptions options)
     {
-        var result = await FilePicker.Default.PickAsync(options);
+        FileResult result = await FilePicker.Default.PickAsync(options);
         if (result != null)
         {
             if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
@@ -267,7 +245,8 @@ public partial class ProfilePage : ContentPage
 
                 // Create the HttpClient
                 using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", service.GetAccessToken());
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", service.GetAccessToken());
 
                 // Create the multipart form data content
                 using var formData = new MultipartFormDataContent();
@@ -276,7 +255,7 @@ public partial class ProfilePage : ContentPage
                 // Send the request
                 try
                 {
-                    var response = await client.PostAsync(Config.API_LINK+"/manage/image/", formData);
+                    var response = await client.PostAsync(Config.API_LINK + "/manage/image/", formData);
                     if (response.IsSuccessStatusCode)
                     {
                         serverResult = await response.Content.ReadAsStringAsync();
@@ -295,5 +274,32 @@ public partial class ProfilePage : ContentPage
 
         ProfileImage.Source = result.FullPath;
         return result;
+    }
+
+    private void ProfilePage_OnAppearing(object? sender, EventArgs e)
+    {
+        string pJson = APIExecutor.ExecuteGet(Config.API_LINK + "/manage/profile");
+        string bookmarksJson = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
+        _profileModel = JsonConvert.DeserializeObject<DBProfileModel>(pJson);
+        _bookmarks = JsonConvert.DeserializeObject<List<DBBanner>>(bookmarksJson);
+        _followers =
+            JsonConvert.DeserializeObject<List<DBProfileModel>>(APIExecutor.ExecuteGet(Config.API_LINK + "/followers"));
+        _readers = JsonConvert.DeserializeObject<List<DBProfileModel>>(
+            APIExecutor.ExecuteGet(Config.API_LINK + "/readers"));
+        _genres = JsonConvert.DeserializeObject<List<DB_Genre>>(APIExecutor.ExecuteGet(Config.API_LINK + "/manage/genres"));
+        GenreLayout.Clear();
+        foreach (DB_Genre genre in _genres)
+        {
+            GenreLayout.Add(ProfileFactory.CreateGenre(genre.Name));
+        }
+        
+        NicknameLabel.Text = _profileModel.Name;
+        NameLabel.Text = _profileModel.FirstName + " " + _profileModel.SecondName;
+        ProfileImage.Source = Config.IMAGE_LINK + _profileModel.ProfileImage;
+    }
+
+    private async void AddGenresClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync($"/{nameof(GenreChangePage)}");
     }
 }

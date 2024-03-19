@@ -10,7 +10,6 @@
     xmlns:main="using:VideoDemos.Views.Mobile.Main"
     xmlns:profile="using:VideoDemos.Views.Mobile.Profile"
     xmlns:bookmarks="using:VideoDemos.Views.Mobile.Bookmarks"
-    xmlns:mail="using:VideoDemos.Views.Mobile.Mail"
     xmlns:history="using:VideoDemos.Views.Mobile.History"
     TabBarIsVisible="False"
     Shell.FlyoutBehavior="Disabled"
@@ -44,9 +43,9 @@
     <ShellContent ContentTemplate="{DataTemplate auth:AuthMobilePage}"
                   Route="AuthMobilePage"
                   FlyoutItemIsVisible="False" />
-    <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}"
-                  Route="VideoPlayer"
-                  FlyoutItemIsVisible="False" />
+    <!-- <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}" -->
+                  <!-- Route="VideoPlayer" -->
+                  <!-- FlyoutItemIsVisible="False" /> -->
 
     <ShellContent ContentTemplate="{DataTemplate views:HelloPage}"
                   Route="HelloPage"
@@ -68,12 +67,6 @@
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate bookmarks:BookmarksMobilePage}"
                           Route="BookmarksMobilePage" />
-        </Tab>
-    </FlyoutItem>
-    <FlyoutItem Icon="letter.png" Title="Letter">
-        <Tab>
-            <ShellContent ContentTemplate="{DataTemplate mail:MailMobilePage}"
-                          Route="MailMobilePage" />
         </Tab>
     </FlyoutItem>
     <FlyoutItem Icon="history.png" Title="History">

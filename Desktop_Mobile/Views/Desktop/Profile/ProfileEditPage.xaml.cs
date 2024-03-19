@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
@@ -15,6 +17,12 @@ public partial class ProfileEditPage : ContentPage
     public ProfileEditPage()
     {
         InitializeComponent();
+        string pJson = APIExecutor.ExecuteGet(Config.API_LINK + "/manage/profile");
+        DBProfileModel profileModel = JsonConvert.DeserializeObject<DBProfileModel>(pJson);
+        NicknameEntry.Text = profileModel.Name;
+        NameEntry.Text = profileModel.FirstName;
+        SurnameEntry.Text = profileModel.SecondName;
+        BirthDateEntry.Date = profileModel.BirthDate;
     }
 
     async void OnContinueClicked(object sender, EventArgs e)
@@ -26,6 +34,6 @@ public partial class ProfileEditPage : ContentPage
             SecondName = SurnameEntry.Text,
             BirthDate = BirthDateEntry.Date
         }));
-        await Shell.Current.GoToAsync($"..");
+        await Shell.Current.GoToAsync("..");
     }
 }

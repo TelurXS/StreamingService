@@ -1,6 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Maui.Storage;
 using Newtonsoft.Json;
 
 namespace VideoDemos.Core.Auth;
@@ -36,14 +40,24 @@ public class AuthService
 
     public void RefreshData(string jData)
     {
-        var tokenInfo = JsonConvert.DeserializeObject<TokenInfo>(jData);
+        try
+        {
+            var tokenInfo = JsonConvert.DeserializeObject<TokenInfo>(jData);
 
 
-        Preferences.Default.Set<bool>(AuthStateKey, true);
-        Preferences.Default.Set<string>(AccessToken, tokenInfo.AccessToken);
-        Preferences.Default.Set<string>(RefreshToken, tokenInfo.RefreshToken);
+            Preferences.Default.Set<bool>(AuthStateKey, true);
+            Preferences.Default.Set<string>(AccessToken, tokenInfo.AccessToken);
+            Preferences.Default.Set<string>(RefreshToken, tokenInfo.RefreshToken);
+        }
+        catch (Exception e)
+        {
+            Preferences.Default.Set<bool>(AuthStateKey, false);
+            Preferences.Default.Set<string>(AccessToken, "");
+            Preferences.Default.Set<string>(RefreshToken, "");
+        }
+
     }
-    public string Login(string login, string password)
+    public string Login(string login, string password, bool rememberMe)
     {
         try
         {
@@ -57,7 +71,10 @@ public class AuthService
 
             Preferences.Default.Set<bool>(AuthStateKey, true);
             Preferences.Default.Set<string>(AccessToken, tokenInfo.AccessToken);
-            Preferences.Default.Set<string>(RefreshToken, tokenInfo.RefreshToken);
+            if (rememberMe)
+            {
+                Preferences.Default.Set<string>(RefreshToken, tokenInfo.RefreshToken);
+            }
 
             return result;
         }

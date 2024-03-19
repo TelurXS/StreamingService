@@ -1,4 +1,7 @@
-﻿namespace Metflix.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Metflix.Core.Models;
 
 public class Title
 {
@@ -88,7 +91,7 @@ public class DBBanner
 public class DB_ProggressBanner
 {
     public Guid Id { get; set; }
-    public int Progress { get; set; }
+    public float Progress { get; set; }
     public DB_Series Series { get; set; }
     public Title Title { get; set; }
 }

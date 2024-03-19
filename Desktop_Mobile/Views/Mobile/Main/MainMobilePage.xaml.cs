@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Mobile;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 using Newtonsoft.Json;
 using VideoDemos.Core.Backend;
 using VideoDemos.Views.Mobile.Profile;

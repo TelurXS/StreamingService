@@ -1,4 +1,6 @@
-﻿namespace VideoDemos;
+﻿using Microsoft.Maui;
+
+namespace VideoDemos;
 
 public partial class App : Application
 {

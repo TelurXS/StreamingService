@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Models;
+using Microsoft.Maui.Controls;
 
 namespace VideoDemos.Views.Notifications;
 

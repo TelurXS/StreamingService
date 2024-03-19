@@ -1,9 +1,15 @@
-﻿using Metflix.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using Metflix.Core.Models;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Shapes;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
+using VideoDemos.Views;
 using VideoDemos.Views.Main;
+using Xflick.Views.Desktop.Main;
 
 namespace Metflix.Core;
 
@@ -11,18 +17,19 @@ public class NavbarFactory
 {
     public static Dictionary<string, string> NavBar = new Dictionary<string, string>()
     {
-        { "Головна", "MainPage" },
+        { "Головна", "//MainPage" },
         { "Телесеріали", nameof(SeriesPage) },
         { "Фільми", nameof(FilmsPage) },
         { "Новинки й популярне", nameof(NewAndPopularPage) },
-        { "Мій список", "MainPage" },
         { "Перегляд за мовами", nameof(WatchViaLanguagesPage) },
     };
+
+    private static Border detailsBorder;
+    public static Entry SearchEntry;
 
     public static Grid CreateNavBar(AuthService authService, bool displayLayout = true)
     {
         string pJson = APIExecutor.ExecuteGet(Config.API_LINK + "/manage/profile");
-        string bookmarksJson = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
         DBProfileModel profileModel = JsonConvert.DeserializeObject<DBProfileModel>(pJson);
 
 
@@ -33,6 +40,12 @@ public class NavbarFactory
                 new ColumnDefinition(new GridLength(0.2, GridUnitType.Star)),
                 new ColumnDefinition(new GridLength(0.6, GridUnitType.Star)),
                 new ColumnDefinition(new GridLength(0.2, GridUnitType.Star)),
+            });
+        navBar.RowDefinitions = new RowDefinitionCollection(
+            new[]
+            {
+                new RowDefinition(new GridLength(0, GridUnitType.Auto)),
+                new RowDefinition(new GridLength(0, GridUnitType.Auto)),
             });
 
         navBar.HeightRequest = 100;
@@ -74,7 +87,13 @@ public class NavbarFactory
             {
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0,0,20,0)
+                Margin = new Thickness(0, 0, 20, 0)
+            };
+            SearchEntry = new Entry()
+            {
+                Placeholder = "Search...",
+                Margin = new Thickness(5, 10),
+                WidthRequest = 50
             };
             ImageButton searchButton = new ImageButton()
             {
@@ -84,8 +103,8 @@ public class NavbarFactory
                 Margin = 20,
             };
             searchButton.Clicked += SearchButtonOnClicked;
+            profileSelection.Add(SearchEntry);
             profileSelection.Add(searchButton);
-            //
 
             ImageButton profileDetailsButton = new ImageButton()
             {
@@ -112,43 +131,77 @@ public class NavbarFactory
                 HeightRequest = 70,
                 WidthRequest = 70,
                 VerticalOptions = LayoutOptions.Center,
-
             });
             navBar.Add(layout, 1);
             navBar.Add(profileSelection, 2);
         }
-        else if (!authService.IsAuthenticated())
-        {
-            navBar.FlowDirection = FlowDirection.RightToLeft;
-            navBar.Children.Add(new Button()
-            {
-                Text = "Login",
-                HeightRequest = 50,
-                WidthRequest = 274,
-                BorderWidth = 0,
-                CornerRadius = 15,
-                BackgroundColor = Color.FromArgb("#0044E980"),
-            });
-            navBar.Children.Add(new Button()
-            {
-                Text = "Register",
-                HeightRequest = 50,
-                WidthRequest = 274,
-                BorderWidth = 0,
-                CornerRadius = 15,
-                BackgroundColor = new Color(0, 0, 0, 50),
-            });
-        }
 
+        detailsBorder = new Border()
+        {
+            HorizontalOptions = LayoutOptions.End,
+            Margin = new Thickness(0, 10, 40, 0),
+            Background = new LinearGradientBrush(new GradientStopCollection()
+            {
+                new GradientStop(Color.FromArgb("#080808"), 0),
+                new GradientStop(Colors.Transparent, 1),
+            }, new Point(1, 0.5), new Point(0, 0.5)),
+            Stroke = new LinearGradientBrush(new GradientStopCollection()
+            {
+                new GradientStop(Colors.White, 0),
+                new GradientStop(Colors.Transparent, 1),
+            }, new Point(1, 1), new Point(0, 0)),
+            StrokeShape = new RoundRectangle
+            {
+                CornerRadius = new CornerRadius(20, 20, 20, 20)
+            },
+            Opacity = 0
+        };
+        VerticalStackLayout verticalStackLayout = new VerticalStackLayout()
+        {
+        };
+        Button account = new Button()
+        {
+            Text = "Акаунт",
+            FontSize = 18,
+            BackgroundColor = Colors.Transparent,
+            HorizontalOptions = LayoutOptions.Center,
+            BorderWidth = 0,
+            Margin = new Thickness(0, 0, 0, 0)
+        };
+        account.Clicked += async (sender, args) => { await Shell.Current.GoToAsync($"/{nameof(ProfilePage)}"); };
+        Button exit = new Button()
+        {
+            Text = "Вихід",
+            FontSize = 18,
+            BackgroundColor = Colors.Transparent,
+            HorizontalOptions = LayoutOptions.Center,
+            BorderWidth = 0,
+            Margin = new Thickness(0, 0, 0, 0)
+        };
+        exit.Clicked += async (sender, args) => { await Shell.Current.GoToAsync($"//{nameof(AuthPage)}"); };
+
+        verticalStackLayout.Add(account);
+        verticalStackLayout.Add(exit);
+
+        detailsBorder.Content = verticalStackLayout;
+        navBar.Add(detailsBorder, 2, 1);
         return navBar;
     }
 
     private static void ProfileDetailsButtonOnClicked(object sender, EventArgs e)
     {
+        if (detailsBorder.Opacity == 0)
+            detailsBorder.Opacity = 1;
+        else
+            detailsBorder.Opacity = 0;
     }
 
-    private static void SearchButtonOnClicked(object sender, EventArgs e)
+    private async static void SearchButtonOnClicked(object sender, EventArgs e)
     {
+        if (SearchEntry.Text != "")
+        {
+            await Shell.Current.GoToAsync($"/{nameof(SearchPage)}");
+        }
     }
 
     private static Button CreateNavBarLink(string key, string value)

@@ -42,9 +42,9 @@
     <ShellContent ContentTemplate="{DataTemplate views:AuthPage}"
                   Route="AuthPage"
                   FlyoutItemIsVisible="False" />
-    <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}"
-                  Route="VideoPlayer"
-                  FlyoutItemIsVisible="False" />
+    <!-- <ShellContent ContentTemplate="{DataTemplate views:VideoPlayerPage}" -->
+    <!--               Route="VideoPlayer" -->
+    <!--               FlyoutItemIsVisible="False" /> -->
 
     <ShellContent ContentTemplate="{DataTemplate views:HelloPage}"
                   Route="HelloPage"
@@ -66,12 +66,6 @@
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate views:BookmarksPage}"
                           Route="BookmarksPage" />
-        </Tab>
-    </FlyoutItem>
-    <FlyoutItem Icon="letter.png" Title="Letter">
-        <Tab>
-            <ShellContent ContentTemplate="{DataTemplate notifications:ChatPage}"
-                          Route="ChatPage" />
         </Tab>
     </FlyoutItem>
     <FlyoutItem Icon="history.png" Title="History">

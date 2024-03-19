@@ -1,8 +1,9 @@
-﻿using Microsoft.Maui.Controls.Shapes;
+﻿using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
 using VideoDemos.Views.Mobile.Bookmarks;
 using VideoDemos.Views.Mobile.History;
-using VideoDemos.Views.Mobile.Mail;
 using VideoDemos.Views.Mobile.Main;
 using VideoDemos.Views.Mobile.Profile;
 
@@ -19,21 +20,19 @@ public class FooterMobileFactory
             BackgroundColor = Color.FromArgb("#080808"),
             HeightRequest = 98,
             StrokeThickness = 0,
-            StrokeShape =  new RoundRectangle()
+            StrokeShape = new RoundRectangle()
             {
                 CornerRadius = 30
             },
-            HorizontalOptions = LayoutOptions.Center,
             ZIndex = 9999,
         };
-        HorizontalStackLayout resultContainer = new HorizontalStackLayout();
+        HorizontalStackLayout resultContainer = new HorizontalStackLayout()
+            { HorizontalOptions = LayoutOptions.Center };
         resultContainer.Add(CreateButton("manpage_navbar.png", "mainpage_activated.png", nameof(MainMobilePage),
             currentViewName));
         resultContainer.Add(CreateButton("profile_navbar.png", "profile_activated.png", nameof(ProfileMobilePage),
             currentViewName));
         resultContainer.Add(CreateButton("bookmarks_navbar.png", "bookmarks_activated.png", nameof(BookmarksMobilePage),
-            currentViewName));
-        resultContainer.Add(CreateButton("mail_navbar.png", "mail_activated.png", nameof(MailMobilePage),
             currentViewName));
         resultContainer.Add(CreateButton("history_navbar.png", "history_activated.png", nameof(HistoryMobilePage),
             currentViewName));
@@ -46,7 +45,7 @@ public class FooterMobileFactory
     {
         VerticalStackLayout buttonContainer = new VerticalStackLayout()
         {
-            Margin=new Thickness(20,10,20,0),
+            Margin = new Thickness(20, 10, 20, 0),
             VerticalOptions = LayoutOptions.Start,
         };
         bool isSelected = currentView == viewName;
@@ -58,7 +57,8 @@ public class FooterMobileFactory
             Source = imageIcon,
             Margin = 4
         };
-        button.Clicked  += async (sender, args) => { await Shell.Current.GoToAsync($"//{viewName}"); };;
+        button.Clicked += async (sender, args) => { await Shell.Current.GoToAsync($"//{viewName}"); };
+        ;
         buttonContainer.Add(button);
         if (isSelected)
         {

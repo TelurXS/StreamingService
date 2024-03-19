@@ -45,7 +45,7 @@
 
                 </Border>
                 <StackLayout x:Name="LoginFields" IsVisible="True" Margin="0">
-                    <RadioButton Content="Запам'ятати мене" Margin="0"></RadioButton>
+                    <RadioButton Content="Запам'ятати мене" Margin="0" x:Name="RememberMeRadioButton"></RadioButton>
                     <Button
                         Text="Увійти"
                         SemanticProperties.Hint="Enter"

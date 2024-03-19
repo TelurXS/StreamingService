@@ -1,9 +1,13 @@
-﻿using VideoDemos.Views;
+﻿using Microsoft.Maui.Controls;
+using VideoDemos.Views;
 using VideoDemos.Views.Mobile.Auth;
 using VideoDemos.Views.Mobile.Auth.Register;
+using VideoDemos.Views.Mobile.Bookmarks;
 using VideoDemos.Views.Mobile.Main;
 using VideoDemos.Views.Mobile.Player;
 using VideoDemos.Views.Mobile.Profile;
+using Xflick.Views.Mobile.Bookmarks;
+using Xflick.Views.Mobile.Player;
 
 
 namespace VideoDemos;
@@ -26,6 +30,8 @@ public partial class MobileAppShell : Shell
         Routing.RegisterRoute(nameof(MainMyListPage), typeof(MainMyListPage));
         Routing.RegisterRoute(nameof(MainTVPage), typeof(MainTVPage));
         Routing.RegisterRoute(nameof(MainWatchViaLanguagesPage), typeof(MainWatchViaLanguagesPage));
+        Routing.RegisterRoute(nameof(BookmarksDetailsMobilePage), typeof(BookmarksDetailsMobilePage));
+        Routing.RegisterRoute(nameof(BannerMobileConnectedSessionPage), typeof(BannerMobileConnectedSessionPage));
 
         //REGISTER
         Routing.RegisterRoute(nameof(RegisterMobilePage), typeof(RegisterMobilePage));

@@ -51,7 +51,7 @@
             <VerticalStackLayout Margin="100">
                 <HorizontalStackLayout Margin="0, 50">
                     <Label Text="Збережені" FontSize="28" VerticalOptions="Center" />
-                    <ImageButton Clicked="LockOpenMenuClicked" Source="lock.png" Margin="19, 0"
+                    <ImageButton Clicked="LockOpenMenuClicked" x:Name="LockImageButton" Source="lock.png" Margin="19, 0"
                                  VerticalOptions="Center" WidthRequest="25"
                                  HeightRequest="25">
                     </ImageButton>

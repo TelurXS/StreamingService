@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Metflix.Core.Mobile;
+using Microsoft.Maui.Controls;
 
 namespace VideoDemos.Views.Mobile.Main;
 

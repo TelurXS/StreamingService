@@ -37,10 +37,6 @@
                 <VerticalStackLayout
                     Spacing="25"
                     Padding="40"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    HeightRequest="597"
-                    WidthRequest="415"
                     BackgroundColor="Black">
                     <Label Text="Реєстрація" x:Name="TitleLabel" FontSize="40" TextColor="White" />
                     <Border Stroke="#0044E9"

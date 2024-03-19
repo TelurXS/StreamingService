@@ -4,7 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="VideoDemos.Views.ProfilePage"
              Loaded="ProfilePage_OnLoaded"
-             BackgroundColor="#080808">
+             BackgroundColor="#080808"
+             Appearing="ProfilePage_OnAppearing">
     <ContentPage.Content>
         <ScrollView VerticalScrollBarVisibility="Always">
             <Grid>
@@ -58,13 +59,13 @@
                                                 Padding="0"
                                                 Margin="0">
                                             <Image x:Name="ProfileImage"
-                                                Margin="0"
-                                                Aspect="AspectFill"
-                                                Source="profile_test.jpg"
-                                                HeightRequest="140"
-                                                WidthRequest="140"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center" />
+                                                   Margin="0"
+                                                   Aspect="AspectFill"
+                                                   Source="profile_test.jpg"
+                                                   HeightRequest="140"
+                                                   WidthRequest="140"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Center" />
                                         </Border>
                                         <ImageButton WidthRequest="36" HeightRequest="36" Source="edit.png"
                                                      CornerRadius="100"
@@ -83,7 +84,7 @@
                                                              CornerRadius="100"
                                                              BackgroundColor="#0044E9"
                                                              BorderWidth="0"
-                                                             Padding="6" />
+                                                             Padding="6" Clicked="EditNameClicked" />
                                             </HorizontalStackLayout>
 
                                             <HorizontalStackLayout>
@@ -91,11 +92,6 @@
                                                        x:Name="NameLabel"
                                                        Text="Ліза Пушкаренко">
                                                 </Label>
-                                                <ImageButton WidthRequest="36" HeightRequest="36" Source="edit.png"
-                                                             CornerRadius="100"
-                                                             BackgroundColor="#0044E9"
-                                                             BorderWidth="0"
-                                                             Padding="6" Clicked="EditNameClicked"/>
                                             </HorizontalStackLayout>
 
                                         </VerticalStackLayout>
@@ -103,7 +99,15 @@
                                         <Label FontSize="18" FontFamily="Inter" FontAttributes="Bold" TextColor="White"
                                                Opacity="0.5"
                                                Text="Улюблені жанри" Margin="6" />
-                                        <HorizontalStackLayout x:Name="GenreLayout" />
+                                        <HorizontalStackLayout>
+                                            <FlexLayout Wrap="Wrap" x:Name="GenreLayout" WidthRequest="400" Padding="0" Margin="0" />
+                                            <ImageButton WidthRequest="30" HeightRequest="30" Source="add_genre.png"
+                                                         CornerRadius="100"
+                                                         BackgroundColor="#0044E9"
+                                                         BorderWidth="0"
+                                                         Padding="6" Clicked="AddGenresClicked" />
+                                        </HorizontalStackLayout>
+
                                     </VerticalStackLayout>
 
 
@@ -165,7 +169,7 @@
                                             BackgroundColor="Black">
                                         <Grid RowDefinitions="0.5*,0.5*" HeightRequest="79">
                                             <Label Grid.Row="0" HorizontalOptions="Center" VerticalOptions="End"
-                                                   FontSize="28" x:Name="FavAmountLabel" Text="0" />
+                                                   FontSize="28" Text="0" x:Name="FavLabel" />
                                             <Label Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start"
                                                    Opacity="0.5" FontSize="18" Text="В обраному" />
                                             <Button CornerRadius="20" WidthRequest="138" HeightRequest="79"
@@ -188,6 +192,7 @@
                                             <Image
                                                 Margin="0"
                                                 Aspect="AspectFill"
+                                                x:Name="CurrentFilmImage"
                                                 Source="test_bg_2.png"
                                                 HeightRequest="107"
                                                 WidthRequest="74"
