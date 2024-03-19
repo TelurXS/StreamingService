@@ -84,12 +84,9 @@ public sealed class GenreRepository : EntityRepository<Genre>, IGenreRepository
 
     public bool Delete(Genre value)
     {
-        var result = Entities
-            .Where(x => x.Id == value.Id)
-            .ExecuteDelete();
-
-        return result > 0;
-    }
+		Entities.Remove(value);
+		return Context.SaveChanges() > 0;
+	}
 
 	public int Count()
 	{

@@ -5,15 +5,14 @@
 
 <Background/>
 
-<div class="row g-3 align-items-center justify-content-center">
-	<div class="card card-form back-dark border-primary rounded-corners p-4 form-shadow-primary">
-		<div class="card-body">
+<div class="gradient-panel card-form p-4 shadow-primary">
+	<h2 class="text-white mb-2">Not Authorized</h2>
 
-			<h2 class="text-white mb-2">Not Authorized</h2>
+	<p>You don't have enough permission to enter this page</p>
 
-			<p>You don't have enough permission to enter this page</p>
+	<p>
+		Maybe this page requires to be subscribed. To subscribe, follow <a href="@WebRoutes.Manage.Subscription?returnUrl=@WebRoutes.Home">this link</a>
+	</p>
 
-			<a href="/" class="btn btn-outline-primary rounded-corners w-100 font-gray">To Home Page</a>
-		</div>
-	</div>
+	<a href="@WebRoutes.Home" class="button font-white">To Home Page</a>
 </div>

@@ -235,6 +235,7 @@
 		await Connection!.SendAsync(
 			SessionMessages.JOIN_SESSION,
 			SessionId,
+			User?.Name ?? ANONYMOUS,
 			Title.Id,
 			Title.Series.FirstOrDefault()?.Id);
 	}
@@ -255,27 +256,31 @@
 	private async Task OnRecieveMessage(string message)
 	{
 		Messages.Add(message);
-
+		Console.WriteLine($"Received {nameof(OnRecieveMessage)} ({message})");
 		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task OnStartPlayback()
 	{
+		Console.WriteLine($"Received {nameof(OnStartPlayback)} ()");
 		await Player.Play(false);
 	}
 
 	private async Task OnStopPlayback()
 	{
+		Console.WriteLine($"Received {nameof(OnStopPlayback)} ()");
 		await Player.Stop(false);
 	}
 
 	private async Task OnChangeProgress(float value)
 	{
+		Console.WriteLine($"Received {nameof(OnChangeProgress)} ({value})");
 		await Player.SetProgress(value);
 	}
 
 	private async Task OnChangeSeries(Guid value)
 	{
+		Console.WriteLine($"Received {nameof(OnChangeSeries)} ({value})");
 		await Player.ChangeSeries(value, false);
 	}
 
@@ -305,27 +310,31 @@
 
 	private async Task OnPlayerPlaybackStarted()
 	{
+		Console.WriteLine($"Sending {nameof(OnPlayerPlaybackStarted)} ()");
 		await Connection!.SendAsync(SessionMessages.PLAYBACK_STARTED, SessionId);
 	}
 
 	private async Task OnPlayerPlaybackStopped()
 	{
+		Console.WriteLine($"Sending {nameof(OnPlayerPlaybackStopped)} ()");
 		await Connection!.SendAsync(SessionMessages.PLAYBACK_STOPED, SessionId);
 	}
 
 	private async Task OnPlayerProgressChanged(float value)
 	{
+		Console.WriteLine($"Sending {nameof(OnPlayerProgressChanged)} ({value})");
 		await Connection!.SendAsync(SessionMessages.PROGRESS_CHANGED, SessionId, value);
 	}
 
 	private async Task OnPlayerSeriesChanged(Series series)
 	{
+		Console.WriteLine($"Sending {nameof(OnPlayerSeriesChanged)} ({series.Id})");
 		await Connection!.SendAsync(SessionMessages.SERIES_CHANGED, SessionId, series.Id);
 	}
 
 	private async Task OnBeforeUnload()
 	{
-		await Connection!.SendAsync(SessionMessages.LEAVE_SESSION, SessionId);
+		await Connection!.SendAsync(SessionMessages.LEAVE_SESSION, SessionId, User?.Name ?? ANONYMOUS);
 	}
 
 	private async Task OnPlayerLeaveSeries(Series series, float progress)
@@ -346,7 +355,7 @@
 		if (Connection is null)
 			return;
 
-		await Connection.SendAsync(SessionMessages.LEAVE_SESSION, SessionId);
+		await Connection.SendAsync(SessionMessages.LEAVE_SESSION, SessionId, User?.Name ?? ANONYMOUS);
 
 		await Connection.DisposeAsync();
 	}

@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Models;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
+using Microsoft.AspNetCore.Components.Forms;
 using System.Net.Http.Json;
 using Web.Interfaces;
 
@@ -37,19 +38,45 @@ public class SeriesService : ISeriesService
 		}
 	}
 
-	public Task<CreateResult<Series>> CreateAsync(CreateSeries.Request value)
+	public async Task<CreateResult<Series>> CreateAsync(CreateSeries.Request value)
 	{
-		throw new NotImplementedException();
+		try
+		{
+			var response = await Client
+				.PostAsJsonAsync(ApiRoutes.Series.Route, value);
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<Series>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
 	}
 
-	public Task<DeleteResult> DeleteAsync(Series value)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task<DeleteResult> DeleteByIdAsync(Guid id)
+    {
+        try
+        {
+            var response = await Client
+                .DeleteAsync(ApiRoutes.Series.Route + $"/{id}");
 
-	public Task<DeleteResult> DeleteByIdAsync(Guid id)
+            if (response.IsSuccessStatusCode)
+                return new Success();
+
+            return new NotFound();
+        }
+        catch (Exception ex)
+        {
+            return new Failed(ex.Message);
+        }
+    }
+
+    public Task<DeleteResult> DeleteAsync(Series value)
 	{
-		throw new NotImplementedException();
+		return DeleteByIdAsync(value.Id);
 	}
 
 	public async Task<GetAllResult<Series>> FindAllAsync(int count = 10, int page = 0)
@@ -97,6 +124,49 @@ public class SeriesService : ISeriesService
 
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<Series>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> UploadFileAsync(Guid id, IBrowserFile file)
+	{
+		try
+		{
+			var data = new MultipartFormDataContent
+			{
+				{ new StreamContent(file.OpenReadStream(51200000)), "file", file.Name }
+			};
+
+			var response = await Client
+				.PutAsync(ApiRoutes.Series.ByIdFile.Replace("{id}", id.ToString()), data);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> AddSeriesToTitle(Guid id, Guid titleId)
+	{
+		try
+		{
+			var response = await Client
+				.PostAsync(ApiRoutes.Series.ByIdAndTitleId
+					.Replace("{id}", id.ToString())
+					.Replace("{titleId}", titleId.ToString()), default);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
 
 			return new Failed();
 		}

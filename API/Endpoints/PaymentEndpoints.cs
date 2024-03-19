@@ -20,6 +20,9 @@ public sealed class PaymentEndpoints : ICarterModule
 		app.MapPost(ApiRoutes.Payment.CreateOrder, CreateOrderAsync)
 			.RequireAuthorization();
 
+		app.MapPost(ApiRoutes.Subscriptions.Cancel, CancelSubscriptionAsync)
+			.RequireAuthorization();
+
 		app.MapGet(ApiRoutes.Subscriptions.All, GetAllSubscriptionsAsync);
 
 		app.MapGet(ApiRoutes.Subscriptions.ById, GetSubscriptionByIdAsync);
@@ -141,4 +144,27 @@ public sealed class PaymentEndpoints : ICarterModule
             failed => Results.BadRequest()
             );
     }
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> CancelSubscriptionAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims
+		)
+	{
+		var request = new CancelSubscriptionToUser.Request
+		{
+			UserId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			subscription => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
 }

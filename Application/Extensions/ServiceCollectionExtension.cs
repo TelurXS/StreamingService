@@ -25,6 +25,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IUserMapper, UserMapper>();
         services.AddTransient<ITitlesListMapper, TitlesListMapper>();
         services.AddTransient<IResponseMapper, ResponseMapper>();
+        services.AddTransient<INotificationMapper, NotificationMapper>();
 
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
         

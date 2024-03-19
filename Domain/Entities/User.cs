@@ -37,4 +37,6 @@ public sealed class User : IdentityUser<Guid>
     public ICollection<User> Followers { get; set; } = default!;
 
     public ICollection<TitlesList> Lists { get; set; } = default!;
+
+    public ICollection<Notification> Notifications { get; set; } = default!;
 }

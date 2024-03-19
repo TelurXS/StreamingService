@@ -8,135 +8,139 @@
 @inject IUserService UserService
 
 <ModalWindow @ref="Window">
-	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
-		<h2>Title</h2>
+	<div class="gradient-panel dashboard-form p-4 d-flex flex-column" @onclick:stopPropagation="true" style="max-height: 90vh">
+		<h2>User</h2>
 
-		<EditForm Model="Input">
-			<DataAnnotationsValidator />
-			<ValidationSummary />
+		<div class="h-100" style="overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">Email</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.Email" class="input font-md font-gray" />
-				</div>
+			<EditForm Model="Input">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.Email" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">Email</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.Email" class="input font-md font-gray" />
+					</div>
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">PhoneNumber</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.PhoneNumber" class="input font-md font-gray" />
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.Email" />
+					</div>
 				</div>
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.PhoneNumber" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">PhoneNumber</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.PhoneNumber" class="input font-md font-gray" />
+					</div>
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">UserName</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.UserName" class="input font-md font-gray" />
-				</div>
-
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.UserName" />
-				</div>
-			</div>
-
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">Name</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.PhoneNumber" />
+					</div>
 				</div>
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.Name" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">UserName</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.UserName" class="input font-md font-gray" />
+					</div>
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">FirstName</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.FirstName" class="input font-md font-gray" />
-				</div>
-
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.FirstName" />
-				</div>
-			</div>
-
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">SecondName</span>
-				</div>
-				<div class="col-md-9">
-					<InputText @bind-Value="Input.SecondName" class="input font-md font-gray" />
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.UserName" />
+					</div>
 				</div>
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.SecondName" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">Name</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+					</div>
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">BirthDate</span>
-				</div>
-				<div class="col-md-9">
-					<InputDate @bind-Value="Input.BirthDate" class="input font-md font-gray" />
-				</div>
-
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.BirthDate" />
-				</div>
-			</div>
-
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">Trial Used</span>
-				</div>
-				<div class="col-md-9">
-					<InputCheckbox @bind-Value="Input.IsTrialSubscriptionUsed" class="mx-2 rounded-checkbox" />
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.Name" />
+					</div>
 				</div>
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.IsTrialSubscriptionUsed" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">FirstName</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.FirstName" class="input font-md font-gray" />
+					</div>
 
-			<div class="row mt-3">
-				<div class="col-md-3">
-					<span class="font-md">Subs. Expires In</span>
-				</div>
-				<div class="col-md-9">
-					<InputDate @bind-Value="Input.SubscriptionExpiresIn" class="input font-md font-gray" />
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.FirstName" />
+					</div>
 				</div>
 
-				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.SubscriptionExpiresIn" />
-				</div>
-			</div>
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">SecondName</span>
+					</div>
+					<div class="col-md-9">
+						<InputText @bind-Value="Input.SecondName" class="input font-md font-gray" />
+					</div>
 
-			<div class="mt-3 d-flex">
-				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
-				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
-			</div>
-		</EditForm>
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.SecondName" />
+					</div>
+				</div>
+
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">BirthDate</span>
+					</div>
+					<div class="col-md-9">
+						<InputDate @bind-Value="Input.BirthDate" class="input font-md font-gray" />
+					</div>
+
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.BirthDate" />
+					</div>
+				</div>
+
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">Trial Used</span>
+					</div>
+					<div class="col-md-9">
+						<InputCheckbox @bind-Value="Input.IsTrialSubscriptionUsed" class="mx-2 rounded-checkbox" />
+					</div>
+
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.IsTrialSubscriptionUsed" />
+					</div>
+				</div>
+
+				<div class="row mt-3">
+					<div class="col-md-3">
+						<span class="font-md">Subs. Expires In</span>
+					</div>
+					<div class="col-md-9">
+						<InputDate @bind-Value="Input.SubscriptionExpiresIn" class="input font-md font-gray" />
+					</div>
+
+					<div class="col-md-12 mt-2">
+						<ValidationMessage For="() => Input.SubscriptionExpiresIn" />
+					</div>
+				</div>
+
+				<div class="mt-3 d-flex">
+					<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
+					<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
+				</div>
+			</EditForm>
+
+		</div>
 	</div>
 </ModalWindow>
 
@@ -205,6 +209,17 @@
 		var result = await UserService.UpdateAsync(Id, request);
 
 		if (result.IsUpdated)
+		{
+			OnChanged?.Invoke();
+			Close();
+		}
+	}
+
+	private async Task Delete()
+	{
+		var result = await UserService.DeleteByIdAsync(Id);
+
+		if (result.IsSuccess)
 		{
 			OnChanged?.Invoke();
 			Close();

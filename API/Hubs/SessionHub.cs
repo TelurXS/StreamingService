@@ -75,7 +75,7 @@ public class SessionHub : Hub<ISessionClient>
 		await Clients.Client(connection).Syncronize(seriesId, progress, isPlaying);
 	}
 
-	public async Task JoinSession(Guid id, Guid titleId, Guid seriesId)
+	public async Task JoinSession(Guid id, string name, Guid titleId, Guid seriesId)
 	{
 		var session = Sessions.FirstOrDefault(x => x.Id == id);
 
@@ -89,7 +89,7 @@ public class SessionHub : Hub<ISessionClient>
 
 		await Groups.AddToGroupAsync(Context.ConnectionId, session.Id.ToString());
 
-		await SendSessionMessage(id, $"{(Context.User?.Identity?.Name ?? ANONYMOUS)} connected.");
+		await SendSessionMessage(id, $"{name} connected.");
 
 		var connection = session.Host;
 
@@ -101,7 +101,7 @@ public class SessionHub : Hub<ISessionClient>
 		await Clients.Client(connection).RequestState(Context.ConnectionId);
 	}
 
-	public async Task LeaveSession(Guid id)
+	public async Task LeaveSession(Guid id, string name)
 	{
 		var session = Sessions.FirstOrDefault(x => x.Id == id);
 
@@ -121,7 +121,7 @@ public class SessionHub : Hub<ISessionClient>
 			return;
 		}
 
-		await SendSessionMessage(id, $"{(Context.User?.Identity?.Name ?? ANONYMOUS)} disconnected.");
+		await SendSessionMessage(id, $"{name} disconnected.");
 
 		if (session.Host.Equals(Context.ConnectionId)) 
 			session.Host = session.Connections.First();

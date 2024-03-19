@@ -20,9 +20,13 @@ public class TitleEndpoints : ICarterModule
 			.DisableAntiforgery()
 			.RequireAuthorization();
 
-        app.MapPost(ApiRoutes.Titles.ImageById, UploadImageToTitleAsync)
+        app.MapPost(ApiRoutes.Titles.ByIdImage, UploadImageToTitleAsync)
             .DisableAntiforgery()
             .RequireAuthorization();
+
+        app.MapPost(ApiRoutes.Titles.ByIdScreenshots, UploadScreenshotsToTitleAsync)
+           .DisableAntiforgery()
+           .RequireAuthorization();
 
         app.MapGet(ApiRoutes.Titles.ById, GetTitleByIdAsync);
 
@@ -59,6 +63,8 @@ public class TitleEndpoints : ICarterModule
 		app.MapGet(ApiRoutes.Titles.CountByFilter, GetTitlesCountByFilterAsync);
 
 		app.MapPut(ApiRoutes.Titles.ById, UpdateTitleByIdAsync);
+
+		app.MapDelete(ApiRoutes.Titles.ById, DeleteTitleByIdAsync);
 	}
 
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -86,8 +92,7 @@ public class TitleEndpoints : ICarterModule
 	private static async Task<IResult> UploadImageToTitleAsync(
 		[FromRoute] Guid id,
 		[FromForm] IFormFile image,
-		[FromServices] IMediator mediator,
-        [FromServices] IResponseMapper mapper)
+		[FromServices] IMediator mediator)
     {
 		var request = new SetImageToTitle.Request
 		{
@@ -104,7 +109,31 @@ public class TitleEndpoints : ICarterModule
             failed => Results.BadRequest());
     }
 
-	[ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> UploadScreenshotsToTitleAsync(
+        [FromRoute] Guid id,
+        [FromForm] IFormFileCollection screenshots,
+        [FromServices] IMediator mediator)
+    {
+        var request = new SetScreenshotsToTitle.Request
+        {
+            Files = screenshots.ToList(),
+            TitleId = id
+        };
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            success => Results.Ok(),
+            notFound => Results.NotFound(),
+            invalid => Results.BadRequest(),
+            failed => Results.BadRequest());
+    }
+
+    [ProducesResponseType<TitleResponse>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetTitleByIdAsync(
@@ -525,4 +554,22 @@ public class TitleEndpoints : ICarterModule
 			invalid => Results.BadRequest(),
 			failed => Results.BadRequest());
 	}
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> DeleteTitleByIdAsync(
+        [FromRoute] Guid id,
+        [FromServices] IMediator mediator)
+    {
+        var request = new DeleteTitleById.Request { Id = id };
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            title => Results.Ok(),
+            notFound => Results.NotFound(),
+            failed => Results.BadRequest());
+    }
 }

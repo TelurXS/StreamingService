@@ -20,11 +20,17 @@ public interface IFileService
 
 	byte[]? DownloadUserImage(string name);
 
-	bool DeleteUserImage(string name);
-
 	byte[]? DownloadTitleImage(string name);
 
 	byte[]? DownloadTitleScreenshot(string name);
 
 	byte[]? DownloadSeries(string name);
+
+	bool DeleteUserImage(string name);
+
+	bool DeleteTitleImage(string name);
+
+	bool DeleteTitleScreenshot(string name);
+
+	bool DeleteSeries(string name);
 }

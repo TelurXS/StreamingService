@@ -2,17 +2,28 @@
 @layout ProfileLayout
 
 @using Domain.Entities
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using NetcodeHub.Packages.Extensions.Clipboard
 
 @inject IIdentityService IdentityService
+@inject ClipboardService ClipboardService
 @inject ITitlesListService TitlesListService
+@inject IWebAssemblyHostEnvironment Enviroment
 
 <RequireAuthorization />
 
-@if (Loading)
+@if (Loaded is false)
 {
-	<span>Loading...</span>
+	<div class="sm-page-container">
+		<Loading />
+	</div>
+	<LargeMargin />
 	return;
 }
+
+<Glow Size="50" Top="200px" Blur="100" Left="calc(80% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
+<Glow Size="50" Top="900px" Blur="100" Left="calc(80% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
+<Glow Size="50" Top="600px" Blur="100" Left="calc(20% - 100px)" ShadowColor="var(--primary)" ZIndex="1" />
 
 <div class="mb-3 d-flex align-items-center">
 
@@ -22,26 +33,29 @@
 	{
 		@if (List.Availability is Availability.Public)
 		{
-			<img @onclick="() => Window.Open()" height="30" src="/img/unlock.svg" class="mx-2" style="opacity: 0.3" />
+			<img @onclick="() => Window.Open()" height="25" src="/img/unlock.svg" class="mx-3" style="opacity: 0.3" />
 		}
 		else
 		{
-			<img @onclick="() => Window.Open()" height="30" src="/img/lock.svg" class="mx-2" style="opacity: 0.3" />
+			<img @onclick="() => Window.Open()" height="25" src="/img/lock.svg" class="mx-3" style="opacity: 0.3" />
 		}
 	}
 	else
 	{
 		@if (List.Availability is Availability.Public)
 		{
-			<img height="30" src="/img/unlock.svg" class="mx-2" style="opacity: 0.3" />
+			<img height="25" src="/img/unlock.svg" class="mx-3" style="opacity: 0.3" />
 		}
 		else
 		{
-			<img height="30" src="/img/lock.svg" class="mx-2" style="opacity: 0.3" />
+			<img height="25" src="/img/lock.svg" class="mx-3" style="opacity: 0.3" />
 		}
 	}
 
 	<span class="font-md font-gray">@List.Name</span>
+
+	<button @onclick='async () => await ClipboardService.CopyAsync($"{Enviroment.GetHostName()}{WebRoutes.TitlesLists.Base}/{Id}")'
+			class="button-glass button-fit px-2 mx-1"><i class="bi bi-copy"></i></button>
 </div>
 
 @if (IsAuthorView is false && List.Availability is Availability.Private)
@@ -53,11 +67,11 @@
 	return;
 }
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 position-relative">
 	@foreach (var title in List.Titles)
 	{
 		<div class="col d-flex justify-content-center mt-2">
-			<TitleCard Title="title" />
+			<ResponsiveTitleCard Title="title" />
 		</div>
 	}
 </div>
@@ -71,7 +85,7 @@
 
 	private TitlesList List { get; set; } = default!;
 
-	private bool Loading { get; set; } = true;
+	private bool Loaded { get; set; } = false;
 
 	private bool IsAuthorView { get; set; } = false;
 
@@ -96,7 +110,8 @@
 			IsAuthorView = titlesListsResult.AsFound.Any(x => x.Id == List.Id);
 		}
 
-		Loading = false;
+		Loaded = true;
+		StateHasChanged();
 	}
 
 	private void OnSettingsChanged(TitlesList list)

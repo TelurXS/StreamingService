@@ -3,9 +3,23 @@
 
 @using Domain.Entities
 
+@inject IIdentityService IdentityService
+@inject ITitleService TitleService
 
-<svg class="loading-progress">
-    <circle r="40%" cx="50%" cy="50%" />
-    <circle r="40%" cx="50%" cy="50%" />
-</svg>
-<div class="loading-progress-text"></div>
+<AuthorizeView>
+	<Authorized>
+		<span>@context.User.IsInRole(Role.User)</span>
+		<span>@context.User.IsInRole(Role.Moderator)</span>
+		<span>@context.User.IsInRole(Role.Admin)</span>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	private User User { get; set; } = default!;
+
+	private List<Title> Titles { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+	}
+}

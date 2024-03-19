@@ -16,7 +16,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Domain.Entities.Account", b =>
@@ -177,6 +177,47 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TitleId");
 
                     b.ToTable("Names");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("LocalizabledMessage")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("RelatedUserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("Snoozed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("RelatedUserId");
+
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rate", b =>
@@ -760,6 +801,23 @@ namespace Infrastructure.Migrations
                     b.Navigation("Title");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Receiver")
+                        .WithMany("Notifications")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "RelatedUser")
+                        .WithMany()
+                        .HasForeignKey("RelatedUserId");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("RelatedUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Rate", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Author")
@@ -1020,6 +1078,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Lists");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Rates");
 

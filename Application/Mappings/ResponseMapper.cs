@@ -33,4 +33,6 @@ public partial class ResponseMapper : IResponseMapper
 	public partial ViewRecordResponse ToResponse(ViewRecord value);
 
 	public partial TitlesListResponse ToResponse(TitlesList value);
+
+	public partial NotificationResponse ToResponse(Notification value);
 }

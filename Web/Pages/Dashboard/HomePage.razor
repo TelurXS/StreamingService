@@ -1,5 +1,8 @@
-﻿@attribute [Route(WebRoutes.Dashboard.Home)]
+﻿@using Domain.Entities
+@attribute [Route(WebRoutes.Dashboard.Home)]
 @layout DashboardLayout
+
+<RequireRole Role="@Role.Admin" />
 
 <div class="page-container">
 	<h1>Welcome to Dashboard</h1>

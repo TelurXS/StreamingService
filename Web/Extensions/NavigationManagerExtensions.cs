@@ -17,6 +17,6 @@ public static class NavigationManagerExtensions
 
     public static void NavigateToCurrentPage(this NavigationManager manager)
 	{
-		manager.NavigateTo(manager.GetCurrentPage());
+		manager.NavigateTo(manager.GetCurrentPage(), true);
 	}
 }

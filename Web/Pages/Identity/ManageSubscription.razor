@@ -35,9 +35,9 @@
 			<h4>Premium Plan</h4>
 			<span class="font-body">@Subscription.Premium.Price$ / month</span>
 			<ul class="font-sm mt-1">
-				<li>Необмежений доступ до обраного контенту. Ексклюзивні акції та знижки для абонентів.</li>
-				<li>Спільний перегляд в реальному часі з однією особою, використовуючи відео та аудіо дзвінки.</li>
-				<li>Ексклюзивні акції та знижки для абонентів.</li>
+				<li>Unlimited access to selected content. Exclusive promotions and discounts for subscribers.</li>
+				<li>Live sessions with your friends.</li>
+				<li>Exclusive promotions and discounts for subscribers.</li>
 			</ul>
 		</div>
 	</div>
@@ -64,7 +64,7 @@
 			return;
 		}
 
-		NavigationManager.NavigateTo($"{WebRoutes.Payment}/{Selected}");
+		NavigationManager.NavigateTo($"{WebRoutes.Payment}/{Selected}?returnUrl={ReturnUrl}");
 	}
 
 	private void Select(string value)

@@ -6,6 +6,7 @@ using Domain.Models.PayPal;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Subscriptions;
 
@@ -15,7 +16,8 @@ public static class CaptureSubscriptionOrder
     {
         public string OrderId { get; set; } = string.Empty;
 
-        public Guid UserId { get; set; }
+		[JsonIgnore]
+		public Guid UserId { get; set; }
     }
 
     public class Handler : IRequestHandler<Request, UpdateResult<CaptureOrderResponse>>

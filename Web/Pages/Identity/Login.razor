@@ -14,7 +14,7 @@
 
 			@if (Message is not null)
 			{
-				<div>@Message</div>
+				<div class="text-danger">@Message</div>
 			}
 
 			<EditForm Model="Input" OnValidSubmit="OnSubmit" FormName="login">
@@ -41,14 +41,16 @@
 			</EditForm>
 
 			<div class="mt-3">
-				<a href="/forgot-password" class="font-gray link-no-underline">Forgot Password ?</a>
+				<a href="@WebRoutes.ForgotPassword" class="link-primary font-gray link-no-underline">Forgot Password ?</a>
 			</div>
 
 			<div class="mt-5">
-				<a class="button-glass font-btn font-gray">
+				@*
+				<a href="@ApiRoutes.ExternalLogin?provider=Google&returnUrl=@ReturnUrl" class="button-glass font-btn font-gray">
 					Sign In via Google 
 					<i class="bi bi-google mx-2"></i>
 				</a>
+				*@
 			</div>
 
 			<div class="mt-3 d-flex flex-column">
@@ -71,6 +73,9 @@
 
 	private async Task OnSubmit()
 	{
+		Message = string.Empty;
+		StateHasChanged();
+
 		var request = new LoginRequest()
 			{
 				Email = Input.Email,
@@ -80,17 +85,16 @@
 
 		var result = await AuthenticationStateProvider.LoginAsync(request);
 
+
 		if (result)
 		{
-			Message = "Success";
-
 			if (ReturnUrl is not null)
 				NavigationManager.NavigateTo(ReturnUrl);
 
 			else NavigationManager.NavigateToCurrentPage();
 
 		}
-		else Message = "Failed";
+		else Message = "Wrong email or password.";
 	}
 
 	private class InputModel

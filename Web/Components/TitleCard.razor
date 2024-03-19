@@ -6,6 +6,28 @@
 	<div class="title-card-background" style="background-image: url(@Title.Image?.Uri)">
 		<span class="title-card-info font-sm">@Title.AvarageRate.ToString("0.0") <i class="bi bi-star-fill"></i></span>
 		<span class="title-card-info font-sm">@Title.ReleaseDate.Year</span>
+
+		@if (Title.RequiredSubscription?.Name == Subscription.Trial.Name)
+		{
+			<span class="title-card-info font-sm d-flex align-items-center">
+				<img height="21" src="/img/lock-gray.svg" />
+			</span>
+		}
+
+		@if (Title.RequiredSubscription?.Name == Subscription.Standart.Name)
+		{
+			<span class="title-card-info font-sm d-flex align-items-center">
+				<img height="21" src="/img/lock.svg" />
+			</span>
+		}
+
+		@if (Title.RequiredSubscription?.Name == Subscription.Premium.Name)
+		{
+			<span class="title-card-info font-sm d-flex align-items-center">
+				<img height="21" src="/img/lock-blue.svg" />
+			</span>
+		}
+
 	</div>
 	<span class="title-card-label text-center user-select-none">@Title.Name</span>
 </a>

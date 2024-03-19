@@ -30,13 +30,12 @@ public class DatabaseQueriesBenchmark
             .FirstOrDefault(x => x.Id == Guid.NewGuid());
     }
 
-    private static readonly Func<DataContext, Guid, Account?> GetByIdQuery =
-        EF.CompileQuery((DataContext context, Guid guid) =>
-            context.Accounts.FirstOrDefault(x => x.Id == guid));
-
     [Benchmark]
-    public Account? CompiledQuery()
+    public Account? SplitQuery()
     {
-        return GetByIdQuery(_dataContext, Guid.NewGuid());
-    }
+		return _dataContext
+			 .Accounts
+             .AsSplitQuery()
+			 .FirstOrDefault(x => x.Id == Guid.NewGuid());
+	}
 }

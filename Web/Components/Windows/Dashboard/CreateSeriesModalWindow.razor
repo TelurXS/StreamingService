@@ -1,0 +1,193 @@
+﻿@using Application.Features.Serieses
+@using Application.Features.Titles
+@using Application.Features.Users
+@using Domain.Entities
+@using Domain.Extensions
+@using Domain.Models.Responses
+@using Infrastructure.Configurations
+
+@inject ISeriesService SeriesService
+@inject ITitleService TitleService
+
+<ModalWindow @ref="Window">
+	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
+		<h2>Series</h2>
+
+		<EditForm Model="Input">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			@if (Errors.Count > 0)
+			{
+				<ul>
+					@foreach (var error in Errors)
+					{
+						<li class="text-danger">@error</li>
+					}
+				</ul>
+			}
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Title Id</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.TitleId" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.TitleId" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Name</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Name" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Name" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">File</span>
+				</div>
+				<div class="col-md-9">
+					<InputFile OnChange="(args) => Input.File = args.File" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.File" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Dubbing</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Dubbing" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Dubbing" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Language</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.Language" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Language" />
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Index</span>
+				</div>
+				<div class="col-md-9">
+					<InputNumber @bind-Value="Input.Index" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.Index" />
+				</div>
+			</div>
+
+			<div class="mt-3 d-flex">
+				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
+				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
+			</div>
+		</EditForm>
+	</div>
+</ModalWindow>
+
+@code {
+
+	[Parameter]
+	public Func<Task> OnChanged { get; set; } = default!;
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	private List<string> Errors { get; set; } = [];
+
+	public Guid Id { get; set; } = default;
+
+	private ModalWindow Window { get; set; } = default!;
+
+	public void Open() => Window.Open();
+
+	public void Close() => Window.Close();
+
+	private async Task Save()
+	{
+		if (Guid.TryParse(Input.TitleId, out Guid titleId) is false)
+		{
+			Errors = ["Enter correct title id"];
+			return;
+		}
+
+		var titleResult = await TitleService.FindByIdAsync(titleId);
+
+		if (titleResult.IsFound is false)
+		{
+			Errors = ["Title not found"];
+			return;
+		}
+
+		var request = new CreateSeries.Request
+		{
+			TitleId = titleId,
+			Name = Input.Name,
+			Uri = string.Empty,
+			Dubbing = Input.Dubbing,
+			Language = Input.Language,
+			Index = Input.Index,
+		};
+
+		var result = await SeriesService.CreateAsync(request);
+
+		if (result.IsCreated)
+		{
+			var series = result.AsCreated;
+
+			var fileResult = await SeriesService.UploadFileAsync(series.Id, Input.File);
+
+			if (fileResult.IsFailed)
+			{
+				Errors = fileResult.AsFailed.Errors.ToList();
+				return;
+			}
+
+			OnChanged?.Invoke();
+			Close();
+		}
+	}
+
+	private class InputModel
+	{
+		public string TitleId { get; set; } = string.Empty;
+
+		public string Name { get; set; } = string.Empty;
+
+		public IBrowserFile File { get; set; } = default!;
+
+		public string Dubbing { get; set; } = string.Empty;
+
+		public string Language { get; set; } = string.Empty;
+
+		public int Index { get; set; } = default;
+	}
+}

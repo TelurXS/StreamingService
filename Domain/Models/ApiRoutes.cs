@@ -8,6 +8,10 @@ public static class ApiRoutes
 
 	public const string Login = Base + "/login";
 
+	public const string ExternalLogin = Base + "/external-login";
+
+	public const string ExternalLoginCallback = Base + "/external-login-callback";
+
 	public const string Logout = Base + "/logout";
 
 	public const string Refresh = Base + "/refresh";
@@ -55,6 +59,10 @@ public static class ApiRoutes
 
 		public const string ApplyTrial = Base + "/apply-trial";
 
+		public const string Notifications = Base + "/notifications";
+
+		public const string SnoozeNotifications = Notifications + "/snooze";
+
 		public static class FavouriteTitles
 		{
 			public const string GroupName = "/favourites";
@@ -69,9 +77,17 @@ public static class ApiRoutes
 	{
 		public const string GroupName = "/users";
 
-		public const string All = Base + GroupName;
+		public const string Route = Base + GroupName;
+
+		public const string ById = Route + "/{id}";
+
+		public const string All = Route;
+
+		public const string AllByName = All + "/by-name";
 
 		public const string CountAll = All + "/count";
+
+		public const string CountByName = AllByName + "/count";
 
 		public const string GroupNameWithId = GroupName + "/{id}";
 
@@ -86,6 +102,8 @@ public static class ApiRoutes
 		public const string Readers = Base + GroupNameWithId + "/readers";
 
 		public const string FavouriteTitles = Base + GroupNameWithId + "/favourites";
+
+		public const string Roles = Base + GroupNameWithId + "/roles";
 
 		public const string TitlesLists = Base + GroupNameWithId + "/lists";
 	}
@@ -128,7 +146,9 @@ public static class ApiRoutes
 
 		public const string ById = Base + GroupName + "/{id:guid}";
 
-		public const string ImageById = ById + "/image";
+		public const string ByIdImage = ById + "/image";
+
+		public const string ByIdScreenshots = ById + "/screenshots";
 
 		public const string BySlug = Base + GroupName + "/{slug}";
 	}
@@ -205,6 +225,10 @@ public static class ApiRoutes
 		public const string CountAll = Route + "/count";
 
 		public const string ById = Route + "/{id}";
+
+		public const string ByIdFile = ById + "/file";
+
+		public const string ByIdAndTitleId = ById + "/{titleId}";
 	}
 
 	public class Payment
@@ -229,6 +253,21 @@ public static class ApiRoutes
 		public const string ById = Route + "/{id:guid}";
 
 		public const string ByName = Route + "/{name}";
+
+		public const string Cancel = Route + "/cancel";
+	}
+
+	public class Notifications
+	{
+		public const string GroupName = "/notifications";
+
+		public const string Route = Base + GroupName;
+
+		public const string All = Route;
+
+        public const string Invite = Route + "/invite";
+
+        public const string InviteById = Invite + "/{id:guid}";
 	}
 
 	public class Hubs

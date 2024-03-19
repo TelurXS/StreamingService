@@ -18,10 +18,15 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
 }
 
 .title-card-info {
     padding: 2px 5px;
+    margin: 2px;
     background-color: var(--secondary-glass);
     backdrop-filter: blur(10px);
     border-radius: 5px;

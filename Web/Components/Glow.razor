@@ -2,6 +2,7 @@
 <div class="glow d-none d-lg-block" 
 	style="width: @(Size)px; 
 	background-color: @(Color);
+	position: @(Position);
 	box-shadow: 0 0 10px @(Size)px @(ShadowColor);
 	filter: blur(@(Blur)px);
 	top: @(Top);
@@ -25,6 +26,9 @@
 
 	[Parameter]
 	public string Color { get; set; } = "var(--primary)";
+
+	[Parameter]
+	public string Position { get; set; } = "absolute";
 
 	[Parameter]
 	public int ZIndex { get; set; } = 20;

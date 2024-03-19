@@ -339,11 +339,8 @@ public sealed class TitleRepository : EntityRepository<Title>, ITitleRepository
 
     public bool Delete(Title value)
     {
-        var result = Entities
-            .Where(x => x.Id == value.Id)
-            .ExecuteDelete();
-
-        return result > 0;
+		Entities.Remove(value);
+        return Context.SaveChanges() > 0;
     }
 
 	public int Count()

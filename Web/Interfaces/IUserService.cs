@@ -6,6 +6,8 @@ namespace Web.Interfaces;
 
 public interface IUserService : IWebService<User, User, UpdateUser.Request>
 {
+	Task<GetAllResult<User>> FindAllByNameAsync(string name, int count = 10, int page = 0);
+
 	Task<GetResult<User>> GetProfileAsync(Guid id);
 
 	Task<GetAllResult<Genre>> GetFavouriteGenresAsync(Guid id);
@@ -19,4 +21,6 @@ public interface IUserService : IWebService<User, User, UpdateUser.Request>
 	Task<GetAllResult<User>> GetReadersAsync(Guid id);
 
 	Task<GetAllResult<User>> GetFollowersAsync(Guid id);
+
+	Task<int> CountByNameAsync(string name);
 }

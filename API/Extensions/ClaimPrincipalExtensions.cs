@@ -6,6 +6,11 @@ public static class ClaimPrincipalExtensions
 {
 	public static Guid GetIdentifier(this ClaimsPrincipal claims)
 	{
-		return new Guid(claims.FindFirstValue(ClaimTypes.NameIdentifier)!);
+		var id = claims.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (id is null)
+			return Guid.Empty;
+
+        return new Guid(id);
 	}
 }

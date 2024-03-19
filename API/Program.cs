@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using API.Services;
 using Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,11 +50,12 @@ builder.Services
     {
         options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+        options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
     })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        options.ExpireTimeSpan = TimeSpan.FromHours(3);
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
         options.Cookie.IsEssential = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.None;
@@ -61,7 +63,16 @@ builder.Services
     })
     .AddBearerToken(IdentityConstants.BearerScheme, options =>
     {
+        options.BearerTokenExpiration = TimeSpan.FromDays(1);
+        options.RefreshTokenExpiration = TimeSpan.FromDays(3);
+    })
+    .AddCookie(IdentityConstants.ExternalScheme)
+    .AddGoogle(x =>
 
+    {
+		x.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+		x.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        x.SignInScheme = IdentityConstants.ExternalScheme;
     });
 
 builder.Services.AddAuthorization(o => o.DefaultPolicy =

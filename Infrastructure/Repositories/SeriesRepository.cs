@@ -82,11 +82,8 @@ public sealed class SeriesRepository : EntityRepository<Series>, ISeriesReposito
 
 	public bool Delete(Series value)
 	{
-		var result = Entities
-			.Where(x => x.Id == value.Id)
-			.ExecuteDelete();
-
-		return result > 0;
+		Entities.Remove(value);
+		return Context.SaveChanges() > 0;
 	}
 
 	public int Count()

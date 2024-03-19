@@ -2,53 +2,29 @@
 <div>
     <nav class="navigation">
         <div class="nav-item">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <!--<i class="bi bi-house-door-fill"></i>-->
+            <NavLink class="nav-link" href="@WebRoutes.Home" Match="NavLinkMatch.All">
                 <img class="nav-icon" src="/img/nav-home.svg" />
             </NavLink>
         </div>
         <div class="nav-item">
             <NavLink class="nav-link" href="@WebRoutes.My.Profile.MyProfile" Match="NavLinkMatch.Prefix">
-                <!--<i class="bi bi-5-circle"></i>-->
                 <img class="nav-icon" src="/img/nav-profile.svg" />
             </NavLink>
         </div>
         <div class="nav-item">
             <NavLink class="nav-link" href="@WebRoutes.My.Lists">
-                <!--<i class="bi bi-cloud-drizzle-fill"></i>-->
                 <img class="nav-icon" src="/img/nav-favourite.svg" />
             </NavLink>
         </div>
-
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item">
-                    <NavLink class="nav-link" href="/auth">
-                        <!--<i class="bi bi-lock-fill"></i>-->
-                        <img class="nav-icon" src="/img/nav-mail.svg" />
-                    </NavLink>
-                </div>
-                <div class="nav-item">
-                    <NavLink class="nav-link" href="@WebRoutes.My.History">
-                        <!--<i class="bi bi-box-arrow-in-left"></i>-->
-                        <img class="nav-icon" src="/img/nav-recent.svg" />
-                    </NavLink>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item">
-                    <NavLink class="nav-link" href="/register">
-                        <!--<i class="bi bi-person-fill-add"></i>-->
-                        <img class="nav-icon" src="/img/nav-mail.svg" />
-                    </NavLink>
-                </div>
-                <div class="nav-item">
-                    <NavLink class="nav-link" href="/login?returnUrl=/">
-                        <!--<i class="bi bi-box-arrow-in-right"></i>-->
-                        <img class="nav-icon" src="/img/nav-recent.svg" />
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="@WebRoutes.My.Notifications">
+                <img class="nav-icon" src="/img/nav-mail.svg" />
+            </NavLink>
+        </div>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="@WebRoutes.My.History">
+                <img class="nav-icon" src="/img/nav-recent.svg" />
+            </NavLink>
+        </div>
     </nav>
 </div>

@@ -19,7 +19,7 @@ public sealed class ExceptionHandler : IMiddleware
         }
         catch (Exception e)
         {
-            Logger.LogError(e.Message);
+            Logger.LogError("ERROR: {Type} {Message} {Stacktrace}", e.GetType().Name, e.Message, e.StackTrace);
             
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 

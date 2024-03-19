@@ -180,7 +180,25 @@ public class UserService : IUserService
         }
     }
 
-    public Task<CreateResult<User>> CreateAsync(User value)
+	public async Task<GetAllResult<User>> FindAllByNameAsync(string name, int count = 10, int page = 0)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Users.AllByName + $"?name={name}&count={count}&page={page}");
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<List<User>>();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public Task<CreateResult<User>> CreateAsync(User value)
     {
         throw new NotImplementedException();
     }
@@ -203,14 +221,27 @@ public class UserService : IUserService
 		}
 	}
 
-    public Task<DeleteResult> DeleteByIdAsync(Guid id)
+    public async Task<DeleteResult> DeleteByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await Client
+                .DeleteAsync(ApiRoutes.Users.Route + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+                return new Success();
+
+            return new NotFound();
+        }
+        catch (Exception ex)
+        {
+            return new Failed(ex.Message);
+        }
     }
 
     public Task<DeleteResult> DeleteAsync(User value)
     {
-        throw new NotImplementedException();
+		return DeleteByIdAsync(value.Id);
     }
 
     public async Task<int> CountAsync()
@@ -230,4 +261,22 @@ public class UserService : IUserService
             return default;
         }
     }
+
+	public async Task<int> CountByNameAsync(string name)
+	{
+		try
+		{
+			var response = await Client
+				.GetAsync(ApiRoutes.Users.CountByName + $"?name={name}");
+
+			if (response.IsSuccessStatusCode)
+				return await response.Content.ReadFromJsonAsync<int>();
+
+			return default;
+		}
+		catch
+		{
+			return default;
+		}
+	}
 }

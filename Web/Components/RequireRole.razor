@@ -1,0 +1,20 @@
+﻿@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+	<Authorized>
+		@if (context.User.IsInRole(Role) is false)
+		{
+			NavigationManager.NavigateTo(WebRoutes.NotAuthorized + "?returnUrl=" + NavigationManager.GetCurrentRoute());
+		}
+	</Authorized>
+	<NotAuthorized>
+		@{
+			NavigationManager.NavigateTo(WebRoutes.Login + "?returnUrl=" + NavigationManager.GetCurrentRoute());
+		}
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+	[Parameter]
+	public string Role { get; set; } = string.Empty;
+}

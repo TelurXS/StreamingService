@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg dark-bg-on-mobile">
     <div class="container">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="@WebRoutes.Dashboard.Home">
             <img src="/img/dashboard-logo.png" />
         </a>
         <button class="navbar-toggler btn btn-outline-primary rounded-corners" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,11 +14,6 @@
         <div class="collapse navbar-collapse px-2" id="navbarSupportedContent">
             <ul class="navbar-nav m-auto">
             </ul>
-            <form class="d-flex" role="search">
-                <button class="btn" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav mb-2 mb-lg-0">

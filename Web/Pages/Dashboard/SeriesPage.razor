@@ -4,151 +4,156 @@
 @using Domain.Extensions
 
 @inject ISeriesService SeriesService
+@inject ITitleService TitleService
 @inject NavigationManager NavigationManager
 
-<table class="table table-dark table-hover table-striped">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Uri</th>
-            <th>Dubbing</th>
-            <th>Language</th>
-            <th>Index</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var series in Series)
-        {
-            <tr @onclick="() => UpdateWindow.Open(series.Id)">
-                <td>@series.Id</td>
-                <td>@series.Name</td>
-                <td>@series.Uri</td>
-                <td>@series.Dubbing</td>
-                <td>@series.Language</td>
-                <td>@series.Index</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<RequireRole Role="@Role.Admin" />
 
-<nav data-bs-theme="dark">
-    <ul class="pagination">
-        <li class="page-item">
-            <a class="page-link" @onclick="() => NavigateToPreviousAsync()">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
+<div style="min-height: 90vh">
 
-        @foreach (var i in Enumerable.Range(0, TotalPages + 1))
-        {
-            if (i == Page)
-            {
-                <li class="page-item active">
-                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
-                        @(i)
-                    </a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <a class="page-link" @onclick="() => NavigateToPageAsync(i)">
-                        @(i)
-                    </a>
-                </li>
-            }
-        }
+	<div class="row">
 
-        <li class="page-item">
-            <a class="page-link" @onclick="() => NavigateToNextAsync()">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+		<div class="col-md-8">
+			<div class="d-flex">
+				<InputText class="input-underline"
+						   placeholder="Search..."
+						   Value="@Search"
+						   ValueExpression="() => Search"
+						   ValueChanged="(value) => OnSearchChanged(value)" />
+
+				<button class="btn" type="reset" @onclick="() => OnSearchChanged(string.Empty)">
+					<i class="bi bi-x-lg"></i>
+				</button>
+			</div>
+		</div>
+
+		<div class="col-md-2 mt-3 mt-md-0">
+			<button class="button-glass" @onclick="() => CreateWindow.Open()">
+				<i class="bi bi-plus-lg"></i>
+				<span class=" mx-1">Create</span>
+			</button>
+		</div>
+
+		<div class="col-md-2 mt-3 mt-md-0">
+			<CountSelect />
+		</div>
+
+	</div>
+
+	<table class="mt-3 table table-dark table-hover table-striped">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Uri</th>
+				<th>Dubbing</th>
+				<th>Language</th>
+				<th>Index</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var series in Series)
+			{
+				<tr @onclick="() => UpdateWindow.Open(series.Id)">
+					<td>@series.Id</td>
+					<td>@series.Name</td>
+					<td>@series.Uri</td>
+					<td>@series.Dubbing</td>
+					<td>@series.Language</td>
+					<td>@series.Index</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<Pagination @ref="Pagination"
+				Url="@WebRoutes.Dashboard.Series"
+				RefreshCallback="Refresh"
+				DefaultCount="10"
+				DefaultPage="0"
+				Query='() => $"search={Search}"'
+				TotalPages="TotalPages"
+				TotalCount="TotalCount" />
+
+</div>
 
 <UpdateSeriesModalWindow @ref="UpdateWindow" OnChanged="OnUpdated" />
+<CreateSeriesModalWindow @ref="CreateWindow" OnChanged="OnUpdated" />
 
 @code {
 
-    [SupplyParameterFromQuery]
-    public int? Page { get; set; } = 0;
+	[SupplyParameterFromQuery]
+	private string Search { get; set; } = string.Empty;
 
-    [SupplyParameterFromQuery]
-    public int? Count { get; set; } = 10;
+	private List<Series> Series { get; set; } = new();
 
-    private List<Series> Series { get; set; } = new();
+	private int TotalCount { get; set; } = 0;
 
-    private int TotalCount { get; set; } = 0;
+	private int TotalPages { get; set; } = 0;
 
-    private int TotalPages { get; set; } = 0;
+	private UpdateSeriesModalWindow UpdateWindow { get; set; } = default!;
+	private CreateSeriesModalWindow CreateWindow { get; set; } = default!;
 
-    private string Url { get; set; } = WebRoutes.Dashboard.Titles;
+	private Pagination Pagination { get; set; } = default!;
 
-    private UpdateSeriesModalWindow UpdateWindow { get; set; } = default!;
+	private async Task Refresh(int page, int count)
+	{
+		if (string.IsNullOrEmpty(Search))
+		{
+			var seriesResult = await SeriesService.FindAllAsync(count, page);
 
-    private const int DEFAULT_COUNT = 10;
-    private const int DEFAULT_PAGE = 0;
+			if (seriesResult.IsFound)
+			{
+				Series = seriesResult.AsFound;
+			}
 
-    protected override async Task OnInitializedAsync()
-    {
-        Count ??= DEFAULT_COUNT;
-        Page ??= DEFAULT_PAGE;
+			TotalCount = await SeriesService.CountAsync();
+			TotalPages = Pagination.CalculatePageCount(TotalCount, count);
+		}
+		else
+		{
+			if (Guid.TryParse(Search, out Guid id) is false)
+			{
+				Series = [];
+				TotalCount = 0;
+				TotalPages = 0;
+				StateHasChanged();
+				return;
+			}
 
-        await Refresh();
-    }
+			var titleResult = await TitleService.FindByIdAsync(id);
 
-    private async Task Refresh()
-    {
-        var titlesResult = await SeriesService.FindAllAsync(Count ?? DEFAULT_COUNT, Page ?? DEFAULT_PAGE);
+			if (titleResult.IsFound)
+			{
+				Series = titleResult
+					.AsFound
+					.Series
+					.Skip(count * page)
+					.Take(count)
+					.ToList();
 
-        if (titlesResult.IsFound)
-        {
-            Series = titlesResult.AsFound;
-        }
+				TotalCount = titleResult
+					.AsFound
+					.Series
+					.Count;
 
-        TotalCount = await SeriesService.CountAsync();
+				TotalPages = Pagination.CalculatePageCount(TotalCount, count);
+			}
+		}
 
-        TotalPages = TotalCount / (Count ?? DEFAULT_COUNT);
-    }
+		StateHasChanged();
+	}
 
-    private async Task OnUpdated()
-    {
-        await Refresh();
-        StateHasChanged();
-    }
+	private async Task OnUpdated()
+	{
+		await Pagination.Refresh();
+		StateHasChanged();
+	}
 
-    private async Task NavigateToNextAsync()
-    {
-        if (Page >= TotalPages)
-            return;
-
-        Page += 1;
-
-        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
-
-        await Refresh();
-    }
-
-    private async Task NavigateToPageAsync(int page)
-    {
-        Page = page;
-
-        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
-
-        await Refresh();
-    }
-
-    private async Task NavigateToPreviousAsync()
-    {
-        if (Page <= 0)
-            return;
-
-        Page -= 1;
-
-        NavigationManager.NavigateTo($"{Url}?count={Count}&page={Page}");
-
-        await Refresh();
-    }
+	private async Task OnSearchChanged(string value)
+	{
+		Search = value;
+		await Pagination.ResetPage();
+		StateHasChanged();
+	}
 }

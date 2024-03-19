@@ -18,6 +18,11 @@
     border-bottom-right-radius: 0;
 }
 
+.footer-container {
+    position: relative;
+    z-index: 30 !important;
+}
+
 @media (min-width: 641px) {
 
     .sidebar {

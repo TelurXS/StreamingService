@@ -30,6 +30,11 @@
 	return;
 }
 
+@if (Title.RequiredSubscription is not null)
+{
+	<RequireSubscription Subscription="Title.RequiredSubscription" />
+}
+
 <Background Blur="15" Url="@Title.Image?.Uri" />
 
 <div class="d-flex align-items-center">
@@ -40,7 +45,6 @@
 
 <div class="row mt-3 mb-5">
 	<div class="col-md-4">
-		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
 		<div class="poster p-3" style="background-image: url('@Title.Image?.Uri')">
 			<AuthorizeView>
 				<Authorized>
@@ -54,7 +58,7 @@
 		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
 	</div>
 
-	<div class="col-md-8">
+	<div class="col-md-8 mt-5 mt-md-0 ">
 		<span class="font-lg font-gray">@Title.Type.ToString()</span>
 		<h1>@Title.Name</h1>
 
@@ -111,9 +115,12 @@
 	<div class="mb-3 d-flex justify-content-between">
 		<h4>Watch:</h4>
 		<div>
-			<button class="button button-fit" style="width: 30px; height: 30px" @onclick="() => CreateSessionWindow.Open()">
-				<img height="22" src="/img/peoples.svg" />
-			</button>
+			@if (CanStartSession(User))
+			{
+				<button class="button button-fit" style="width: 30px; height: 30px" @onclick="() => CreateSessionWindow.Open()">
+					<img height="22" src="/img/peoples.svg" />
+				</button>
+			}
 		</div>
 	</div>
 
@@ -210,11 +217,13 @@
 
 					@comment.Content
 
+					@*
 					<div class="d-flex justify-content-between">
 						<a class="font-sm font-gray" @onclick="() => Input.Parent = comment">
 							Reply <i class="bi bi-reply-fill"></i>
 						</a>
 					</div>
+					*@
 				</div>
 			</div>
 		}
@@ -236,6 +245,8 @@
 
 	public List<Title> Recomendations { get; set; } = new();
 
+	private User? User { get; set; } = default;
+
 	public Rate Rate { get; set; } = new Rate { Value = 0 };
 
 	private bool Loaded { get; set; } = false;
@@ -250,14 +261,18 @@
 
 	private CreateSessionModalWindow CreateSessionWindow { get; set; } = default!;
 
+	private readonly Subscription RequiredSubscriptionToStartSession = Subscription.Standart;
+
 	protected override async Task OnInitializedAsync()
 	{
-		var favouritesTask = IdentityService.GetFavouriteTitlesAsync();
-		var rateTask = RateService.GetRateByTitleAsync(Title);
+		var titleResult = await TitleService.FindBySlugAsync(Slug);
 
-		var result = await TitleService.FindBySlugAsync(Slug);
-
-		if (result.IsFound is false)
+		if (titleResult.IsFound)
+		{
+			Title = titleResult.AsFound;
+			Loaded = true;
+		}
+		else
 		{
 			Loaded = true;
 			NotFound = true;
@@ -265,30 +280,32 @@
 			return;
 		}
 
-		Title = result.AsFound;
-		Loaded = true;
-
-		var favouriteResult = await IdentityService.GetFavouriteTitlesAsync();
-
-		if (favouriteResult.IsFound)
-		{
-			InFavourite = favouriteResult.AsFound.Any(x => x.Id == Title?.Id);
-		}
-
-		var rateResult = await RateService.GetRateByTitleAsync(Title);
-
-		if (rateResult.IsFound)
-		{
-			Rate = rateResult.AsFound;
-		}
-
+		var userTask = IdentityService.GetProfileAsync();
+		var favouritesTask = IdentityService.GetFavouriteTitlesAsync();
+		var rateTask = RateService.GetRateByTitleAsync(Title);
 		var genres = Title.Genres.Select(x => x.Name).ToList();
+		var recomedationsTask = TitleService.FindAllByGenresAsync(genres);
 
-		var recomedationsResult = await TitleService.FindAllByGenresAsync(genres);
+		await Task.WhenAll(userTask, favouritesTask, rateTask, recomedationsTask);
 
-		if (recomedationsResult.IsFound)
+		if (userTask.Result.IsFound)
 		{
-			Recomendations = recomedationsResult.AsFound;
+			User = userTask.Result.AsFound;
+		}
+
+		if (favouritesTask.Result.IsFound)
+		{
+			InFavourite = favouritesTask.Result.AsFound.Any(x => x.Id == Title?.Id);
+		}
+
+		if (rateTask.Result.IsFound)
+		{
+			Rate = rateTask.Result.AsFound;
+		}
+
+		if (recomedationsTask.Result.IsFound)
+		{
+			Recomendations = recomedationsTask.Result.AsFound;
 		}
 
 		StateHasChanged();
@@ -337,7 +354,6 @@
 			return;
 		}
 
-
 		Input.Content = string.Empty;
 		Title.Comments.Add(result.AsCreated);
 	}
@@ -358,6 +374,26 @@
 			if (result.IsUpdated)
 				InFavourite = true;
 		}
+	}
+
+	private bool CanStartSession(User? user)
+	{
+		if (user is null)
+			return false;
+
+		if (user.Subscription is null)
+			return false;
+
+		if (user.SubscriptionExpiresIn is null)
+			return false;
+
+		if (user.Subscription.Level < RequiredSubscriptionToStartSession.Level)
+			return false;
+
+		if (user.SubscriptionExpiresIn < DateTime.Now)
+			return false;
+
+		return true;
 	}
 
 	private class InputModel

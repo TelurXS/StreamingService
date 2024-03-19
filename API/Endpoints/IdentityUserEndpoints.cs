@@ -1,4 +1,5 @@
 ﻿using API.Extensions;
+using Application.Features.Notifications;
 using Application.Features.Subscriptions;
 using Application.Features.TitleLists;
 using Application.Features.TitlesLists;
@@ -11,6 +12,7 @@ using Domain.Models.Responses;
 using Domain.Models.Results;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -75,6 +77,12 @@ public class IdentityUserEndpoints : ICarterModule
 
 		app.MapPost(ApiRoutes.IdentityUsers.ApplyTrial, ApplyTrialAsync)
 			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.IdentityUsers.Notifications, GetNotificationsFromUserAsync)
+			.RequireAuthorization();
+
+		app.MapPost(ApiRoutes.IdentityUsers.SnoozeNotifications, SnoozeNotificationsFromUserAsync)
+			.RequireAuthorization();
 	}
 
 	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
@@ -129,11 +137,18 @@ public class IdentityUserEndpoints : ICarterModule
 	private static async Task<IResult> UpdateUserProfileAsync(
 		[FromBody] UpdateUserProfile.Request request,
 		[FromServices] IMediator mediator,
+		[FromServices] UserManager<User> userManager,
+		[FromServices] SignInManager<User> signInManager,
 		ClaimsPrincipal claims)
 	{
 		request.Id = claims.GetIdentifier();
 
 		var result = await mediator.Send(request);
+
+		var user = await userManager.GetUserAsync(claims);
+
+		if (user is not null)
+			await signInManager.RefreshSignInAsync(user);
 
 		return result.Match(
 			success => Results.Ok(),
@@ -493,6 +508,52 @@ public class IdentityUserEndpoints : ICarterModule
 
 		return result.Match(
 			success => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<List<NotificationResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> GetNotificationsFromUserAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		ClaimsPrincipal claims)
+	{
+		var request = new GetAllNotificationsFromUser.Request
+		{
+			Id = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			notifications => Results.Ok(notifications.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> SnoozeNotificationsFromUserAsync(
+		[FromServices] IMediator mediator,
+		ClaimsPrincipal claims)
+	{
+		var request = new SnoozeAllUserNotification.Request
+		{
+			UserId = claims.GetIdentifier(),
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			notifications => Results.Ok(),
 			notFound => Results.NotFound(),
 			invalid => Results.BadRequest(),
 			failed => Results.BadRequest()

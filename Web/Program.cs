@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using NetcodeHub.Packages.Extensions.Clipboard;
 using Web;
 using Web.Interfaces;
 using Web.Services;
@@ -26,6 +27,9 @@ builder.Services.AddTransient<IRateService, RateService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ISeriesService, SeriesService>();
 builder.Services.AddTransient<IGenreService, GenreService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+
+builder.Services.AddTransient<ClipboardService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
