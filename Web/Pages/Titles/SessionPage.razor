@@ -340,6 +340,9 @@
 	private async Task OnPlayerLeaveSeries(Series series, float progress)
 	{
 		if (progress <= 0 || progress > 1)
+			progress = await Player.GetProgress();
+		
+		if (progress <= 0 || progress > 1)
 			return;
 
 		var request = new RegisterViewRecordToUser.Request

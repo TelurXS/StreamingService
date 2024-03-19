@@ -124,7 +124,7 @@
 		</div>
 	</div>
 
-	<VideoPlayer Series="Title.Series.ToList()" OnLeaveSeries="OnLeaveSeries" />
+	<VideoPlayer @ref="Player" Series="Title.Series.ToList()" OnLeaveSeries="OnLeaveSeries" />
 </div>
 
 <div class="mt-3 row align-items-center">
@@ -260,6 +260,7 @@
 	private TitlesListModalWindow TitlesListWindow { get; set; } = default!;
 
 	private CreateSessionModalWindow CreateSessionWindow { get; set; } = default!;
+	private VideoPlayer Player { get; set; } = default!;
 
 	private readonly Subscription RequiredSubscriptionToStartSession = Subscription.Standart;
 
@@ -328,6 +329,9 @@
 
 	private async Task OnLeaveSeries(Series series, float progress)
 	{
+		if (progress <= 0 || progress > 1)
+			progress = await Player.GetProgress();
+
 		if (progress <= 0 || progress > 1)
 			return;
 
