@@ -5,6 +5,8 @@ using Domain.Models;
 using Domain.Models.PayPal;
 using Domain.Models.Results;
 using Domain.Models.Results.Unions;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -229,7 +231,9 @@ public sealed class TitleService : ITitleService
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<Title>();
 
-			return new Failed();
+			return new ValidationFailed(
+				await response.Content.ReadFromJsonAsync<List<ValidationFailure>>()
+				);
 		}
 		catch (Exception ex)
 		{
@@ -247,22 +251,35 @@ public sealed class TitleService : ITitleService
 			if (response.IsSuccessStatusCode)
 				return await response.Content.ReadFromJsonAsync<Title>();
 
-			return new NotFound();
-		}
+			return await response.Content.ReadFromJsonAsync<ValidationFailed>();
+        }
 		catch (Exception ex)
 		{
 			return new Failed(ex.Message);
 		}
 	}
 
-	public Task<DeleteResult> DeleteByIdAsync(Guid id)
+	public async Task<DeleteResult> DeleteByIdAsync(Guid id)
 	{
-		throw new NotImplementedException();
-	}
+        try
+        {
+            var response = await Client
+                .DeleteAsync(ApiRoutes.Titles.Route + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+                return new Success();
+
+            return new NotFound();
+        }
+        catch (Exception ex)
+        {
+            return new Failed(ex.Message);
+        }
+    }
 
 	public Task<DeleteResult> DeleteAsync(Title value)
 	{
-		throw new NotImplementedException();
+		return DeleteByIdAsync(value.Id);
 	}
 
 	public async Task<int> CountAsync()
@@ -404,6 +421,54 @@ public sealed class TitleService : ITitleService
 		catch
 		{
 			return default;
+		}
+	}
+
+	public async Task<UpdateResult<Success>> UploadImageAsync(Guid id, IBrowserFile file)
+	{
+		try
+		{
+			var data = new MultipartFormDataContent
+			{
+				{ new StreamContent(file.OpenReadStream(5120000)), "image", file.Name }
+			};
+
+			var response = await Client
+				.PostAsync(ApiRoutes.Titles.ByIdImage.Replace("{id:guid}", id.ToString()), data);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
+		}
+	}
+
+	public async Task<UpdateResult<Success>> UploadScreenshotAsync(Guid id, List<IBrowserFile> files)
+	{
+		try
+		{
+			var data = new MultipartFormDataContent();
+
+			foreach (var file in files)
+			{
+				data.Add(new StreamContent(file.OpenReadStream(5120000)), "screenshots", file.Name);
+			}
+
+			var response = await Client
+				.PostAsync(ApiRoutes.Titles.ByIdScreenshots.Replace("{id:guid}", id.ToString()), data);
+
+			if (response.IsSuccessStatusCode)
+				return new Success();
+
+			return new Failed();
+		}
+		catch (Exception ex)
+		{
+			return new Failed(ex.Message);
 		}
 	}
 }

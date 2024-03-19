@@ -1,11 +1,11 @@
 {
-    "name": "XFlick",
-    "short_name": "XFlick",
+    "name": "Xflick",
+    "short_name": "Xflick",
     "id": "./",
     "start_url": "./",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#03173d",
+    "background_color": "#080808",
+    "theme_color": "#0044E9",
     "prefer_related_applications": false,
     "icons": [
         {

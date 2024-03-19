@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Domain.Models.Results;
+using Application.Features.Titles;
 
 namespace API.Endpoints;
 
@@ -39,12 +40,21 @@ public class UserEndpoint : ICarterModule
         app.MapGet(ApiRoutes.Users.All, GetAllUsersAsync)
             .RequireAuthorization();
 
-        app.MapGet(ApiRoutes.Users.CountAll, GetAllUsersCountAsync)
+		app.MapGet(ApiRoutes.Users.AllByName, GetUsersByNameAsync)
+			.RequireAuthorization();
+
+		app.MapGet(ApiRoutes.Users.CountAll, GetAllUsersCountAsync)
             .RequireAuthorization();
+
+		app.MapGet(ApiRoutes.Users.CountByName, GetUsersCountByNameAsync)
+			.RequireAuthorization();
 
 		app.MapPut(ApiRoutes.Users.Profile, UpdateUserAsync)
 			.RequireAuthorization();
-	}
+
+        app.MapDelete(ApiRoutes.Users.ById, DeleteUserByIdAsync)
+            .RequireAuthorization();
+    }
 
 	[ProducesResponseType<List<TitlesListResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -230,7 +240,34 @@ public class UserEndpoint : ICarterModule
             );
     }
 
-    [ProducesResponseType<int>(StatusCodes.Status200OK)]
+	[ProducesResponseType<List<UserResponse>>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private async Task<IResult> GetUsersByNameAsync(
+		[FromServices] IMediator mediator,
+		[FromServices] IResponseMapper mapper,
+		[FromQuery] string name,
+		[FromQuery] int count = 10,
+		[FromQuery] int page = 0)
+	{
+		var request = new GetUsersByName.Request
+		{
+			Name = name,
+			Count = count,
+			Page = page
+		};
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			users => Results.Ok(users.Select(x => mapper.ToResponse(x))),
+			notFound => Results.NotFound(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType<int>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -240,6 +277,25 @@ public class UserEndpoint : ICarterModule
     {
         var request = new GetAllUsersCount.Request
         {
+        };
+
+        var result = await mediator.Send(request);
+
+		return result;
+    }
+	
+	[ProducesResponseType<int>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private async Task<int> GetUsersCountByNameAsync(
+        [FromServices] IMediator mediator,
+		[FromQuery] string name
+		)
+    {
+        var request = new GetUsersCountByName.Request
+        {
+			Name = name
         };
 
         var result = await mediator.Send(request);
@@ -270,4 +326,22 @@ public class UserEndpoint : ICarterModule
 			failed => Results.BadRequest()
 			);
 	}
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> DeleteUserByIdAsync(
+        [FromRoute] Guid id,
+        [FromServices] IMediator mediator)
+    {
+        var request = new DeleteUserById.Request { Id = id };
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            title => Results.Ok(),
+            notFound => Results.NotFound(),
+            failed => Results.BadRequest());
+    }
 }

@@ -56,9 +56,10 @@
                         {
                             <div class="col mb-2" @onclick="() => Unselect(reader)">
                                 <div class="d-flex flex-column justify-content-center align-items-center">
+
                                     @if (string.IsNullOrEmpty(reader.ProfileImage))
                                     {
-                                        <div>
+                                        <div style="position: relative">
                                             <img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
                                             <div class="user-selected"></div>
                                         </div>
@@ -80,9 +81,10 @@
                         {
                             <div class="col mb-2" @onclick="() => Select(reader)">
                                 <div class="d-flex flex-column justify-content-center align-items-center">
+
                                     @if (string.IsNullOrEmpty(reader.ProfileImage))
                                     {
-                                        <div>
+                                        <div style="position: relative">
                                             <img class="profile-picture" src="/img/defaults/blank-profile-picture.webp" />
                                             <div class="user-unselected"></div>
                                         </div>

@@ -38,8 +38,13 @@ public static class SetImageToTitle
 				return new NotFound();
 			
 			var title = titleResult.AsFound;
-			
-			var url = FileService.UploadTitleImage(request.File);
+
+            var currentImage = title.Image?.Uri.Split("/").LastOrDefault();
+
+            if (currentImage is not null)
+                FileService.DeleteTitleImage(currentImage);
+
+            var url = FileService.UploadTitleImage(request.File);
 			
 			if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var _) is false)
 				return new Failed();

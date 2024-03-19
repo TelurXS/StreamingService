@@ -1,6 +1,6 @@
 ﻿@inject NavigationManager NavigationManager
 
-@if (TotalPages <= 1)
+@if (TotalPages <= 0)
 {
 	return;
 }
@@ -57,7 +57,7 @@
 	public string Url { get; set; } = string.Empty;
 
 	[Parameter]
-	public Func<int, int, Task> Refresh { get; set; } = default!;
+	public Func<int, int, Task> RefreshCallback { get; set; } = default!;
 
 	[Parameter]
 	public int TotalCount { get; set; } = 0;
@@ -79,7 +79,7 @@
 		Count ??= DefaultCount;
 		Page ??= DefaultPage;
 
-		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+		await Refresh();
 		StateHasChanged();
 	}
 
@@ -92,7 +92,7 @@
 
 		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
 
-		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+		await Refresh();
 	}
 
 	private async Task NavigateToPageAsync(int page)
@@ -101,7 +101,7 @@
 
 		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
 
-		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+		await Refresh();
 	}
 
 	private async Task NavigateToPreviousAsync()
@@ -113,6 +113,24 @@
 
 		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
 
-		await Refresh(Page ?? DefaultPage, Count ?? DefaultCount);
+		await Refresh();
+	}
+
+	public int CalculatePageCount(int total, int count)
+	{
+		return (int)Math.Ceiling((float)total / (float)count) - 1;
+	}
+
+	public async Task Refresh()
+	{
+		await RefreshCallback(Page ?? DefaultPage, Count ?? DefaultCount);
+	}
+
+	public async Task ResetPage()
+	{
+		Page = 0;
+		NavigationManager.NavigateTo($"{Url}?count={Count ?? DefaultCount}&page={Page ?? DefaultPage}&{Query?.Invoke()}");
+		await RefreshCallback(Page ?? DefaultPage, Count ?? DefaultCount);
+		StateHasChanged();
 	}
 }

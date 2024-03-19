@@ -6,6 +6,8 @@ namespace Domain.Interfaces.Services;
 
 public interface IUserService : IEntityService<User>
 {
+	GetAllResult<User> FindAllByName(string name, int count = 10, int page = 0);
+
 	UpdateResult<Success> SetSubscription(Guid id, Subscription subscription, DateTime expiresIn);
 
 	UpdateResult<Success> SetFavouriteGenres(Guid id, IEnumerable<Genre> genres);
@@ -27,4 +29,6 @@ public interface IUserService : IEntityService<User>
 	GetAllResult<User> FindReadersFromUser(Guid id);
 
 	GetAllResult<Notification> FindNotificationsFromUser(Guid id);
+
+	int CountByName(string name);
 }

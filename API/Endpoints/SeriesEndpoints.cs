@@ -1,4 +1,5 @@
 ﻿using Application.Features.Serieses;
+using Application.Features.Titles;
 using Carter;
 using Domain.Interfaces.Mappings;
 using Domain.Models;
@@ -25,9 +26,19 @@ public class SeriesEndpoints : ICarterModule
 		app.MapPost(ApiRoutes.Series.Route, CreateSeriesAsync)
 			.RequireAuthorization();
 
+		//app.MapPost(ApiRoutes.Series.ByIdAndTitleId, AddSeriesToTitleAsync)
+		//	.RequireAuthorization();
+
 		app.MapPut(ApiRoutes.Series.ById, UpdateSeriesAsync)
 			.RequireAuthorization();
-	}
+
+		app.MapPut(ApiRoutes.Series.ByIdFile, UploadSeriesFileAsync)
+			.DisableAntiforgery()
+			.RequireAuthorization();
+
+		app.MapDelete(ApiRoutes.Series.ById, DeleteSeriesByIdAsync)
+            .RequireAuthorization();
+    }
 
 	[ProducesResponseType<List<SeriesResponse>>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -59,11 +70,15 @@ public class SeriesEndpoints : ICarterModule
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	private static async Task<IResult> GetAllSeriesAsync(
 		[FromServices] IMediator mediator,
-		[FromServices] IResponseMapper mapper
+		[FromServices] IResponseMapper mapper,
+		[FromQuery] int count = 10,
+		[FromQuery] int page = 0
 		)
 	{
 		var request = new GetAllSeries.Request 
 		{
+			Count = count,
+			Page = page
 		};
 
 		var result = await mediator.Send(request);
@@ -112,6 +127,28 @@ public class SeriesEndpoints : ICarterModule
 			);
 	}
 
+	[ProducesResponseType<SeriesResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> AddSeriesToTitleAsync(
+		[FromRoute] Guid id,
+		[FromRoute] Guid titleId,
+		[FromServices] IMediator mediator
+		)
+	{
+		var request = new AddSeriesToTitle.Request { SeriesId = id, TitleId = titleId };
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			series => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
 	[Consumes(MediaTypeNames.Application.Json)]
 	[ProducesResponseType<SeriesResponse>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -135,4 +172,44 @@ public class SeriesEndpoints : ICarterModule
 			failed => Results.BadRequest()
 			);
 	}
+
+	[ProducesResponseType<SeriesResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	private static async Task<IResult> UploadSeriesFileAsync(
+		[FromRoute] Guid id,
+		[FromForm] IFormFile file,
+		[FromServices] IMediator mediator
+		)
+	{
+		var request = new SetSeriesUriFromFile.Request { Id = id, File = file };
+
+		var result = await mediator.Send(request);
+
+		return result.Match(
+			series => Results.Ok(),
+			notFound => Results.NotFound(),
+			invalid => Results.BadRequest(),
+			failed => Results.BadRequest()
+			);
+	}
+
+	[ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    private static async Task<IResult> DeleteSeriesByIdAsync(
+        [FromRoute] Guid id,
+        [FromServices] IMediator mediator)
+    {
+        var request = new DeleteSeriesById.Request { Id = id };
+
+        var result = await mediator.Send(request);
+
+        return result.Match(
+            title => Results.Ok(),
+            notFound => Results.NotFound(),
+            failed => Results.BadRequest());
+    }
 }

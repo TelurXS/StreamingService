@@ -71,6 +71,9 @@ window.initializePlayer = (dotnet) => {
     }
 
     const play = (notifyChanged = true) => {
+
+        console.log(`play incoked with parameters video.paused = ${video.paused}`)
+
         if (video.paused == false)
             return;
 
@@ -278,6 +281,7 @@ window.initializePlayer = (dotnet) => {
     }
 
     window.play = (notifyChanged = true) => {
+        console.log("Play invoked in js")
         play(notifyChanged);
     }
 

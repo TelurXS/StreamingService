@@ -81,8 +81,9 @@
 </div>
 
 <div class="mt-3">
-	<Pagination Url="@WebRoutes.Series"
-				Refresh="Refresh"
+	<Pagination @ref="Pagination"
+				Url="@WebRoutes.Series"
+				RefreshCallback="Refresh"
 				TotalCount="TotalCount"
 				TotalPages="TotalPages"
 				DefaultCount="40" />
@@ -125,12 +126,13 @@
 
 	private GenresSelectWindow GenresWindow { get; set; } = default!;
 
+	private Pagination Pagination { get; set; } = default!;
+
+
 	private async Task Refresh(int page, int count)
 	{
 		Loaded = false;
 		NotFound = false;
-
-		Console.WriteLine("Refreshing with genres " + string.Join(", ", Genres));
 
 		var recomendationsResult = await TitleService.FilterAllAsync(Genres, TitleType.Series, sorting: Sorting, count: count, page: page);
 
@@ -147,8 +149,7 @@
 
 
 		TotalCount = await TitleService.CountByFilter(Genres, TitleType.Series);
-
-		TotalPages = TotalCount / (count);
+		TotalPages = Pagination.CalculatePageCount(TotalCount, count);
 
 		Loaded = true;
 		StateHasChanged();

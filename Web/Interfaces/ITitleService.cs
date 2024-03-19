@@ -1,7 +1,9 @@
 ﻿using Application.Features.Titles;
 using Domain.Entities;
 using Domain.Models;
+using Domain.Models.Results;
 using Domain.Models.Results.Unions;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Web.Interfaces;
 
@@ -34,4 +36,9 @@ public interface ITitleService : IWebService<Title, CreateTitle.Request, UpdateT
 	Task<int> CountByGenresAsync(List<string> genres);
 
 	Task<int> CountByFilter(List<string> genres, TitleType? type = null, string? name = null, TitleSorting sorting = TitleSorting.None);
+
+	Task<UpdateResult<Success>> UploadImageAsync(Guid id, IBrowserFile file);
+
+	Task<UpdateResult<Success>> UploadScreenshotAsync(Guid id, List<IBrowserFile> files);
+
 }

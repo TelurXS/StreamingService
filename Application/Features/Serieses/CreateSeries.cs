@@ -6,7 +6,9 @@ using Domain.Models.Results;
 using Domain.Models.Results.Unions;
 using FluentValidation;
 using Infrastructure.Configurations;
+using Infrastructure.Services;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Serieses;
 
@@ -14,6 +16,8 @@ public static class CreateSeries
 {
     public class Request : IRequest<CreateResult<Series>>
     {
+		public Guid TitleId { get; set; } = default;
+
         public string Name { get; set; } = string.Empty;
 
         public string Uri { get; set; } = string.Empty;
@@ -34,7 +38,7 @@ public static class CreateSeries
                 .MaximumLength(SeriesConfiguration.NAME_MAX_LENGTH);
 
 			RuleFor(x => x.Uri)
-				.NotEmpty()
+				.NotNull()
 				.MaximumLength(SeriesConfiguration.URI_MAX_LENGTH);
 
 			RuleFor(x => x.Dubbing)
@@ -54,27 +58,38 @@ public static class CreateSeries
 	{
 		public Handler(
 			ISeriesService seriesService, 
+			ITitleService titleService, 
 			IValidator<Request> validator,
 			ISeriesMapper seriesMapper
 			)
 		{
 			SeriesService = seriesService;
+			TitleService = titleService;
 			Validator = validator;
 			SeriesMapper = seriesMapper;
 		}
 
 		private ISeriesService SeriesService { get; }
+		private ITitleService TitleService { get; }
 		private IValidator<Request> Validator { get; }
 		private ISeriesMapper SeriesMapper { get; }
 
 		protected override CreateResult<Series> Handle(Request request)
 		{
-			var validationResult = Validator.Validate(request);
+			var titleResult = TitleService.FindByIdWithTracking(request.TitleId);
+
+			if (titleResult.IsFound is false)
+				return new Failed();
+
+			var title = titleResult.AsFound;
+
+            var validationResult = Validator.Validate(request);
 
 			if (validationResult.IsValid is false)
 				return new ValidationFailed(validationResult.Errors);
 
 			var series = SeriesMapper.FromRequest(request);
+			series.Title = title;
 
 			return SeriesService.Create(series);
 		}

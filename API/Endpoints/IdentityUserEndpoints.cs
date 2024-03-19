@@ -12,6 +12,7 @@ using Domain.Models.Responses;
 using Domain.Models.Results;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -136,11 +137,18 @@ public class IdentityUserEndpoints : ICarterModule
 	private static async Task<IResult> UpdateUserProfileAsync(
 		[FromBody] UpdateUserProfile.Request request,
 		[FromServices] IMediator mediator,
+		[FromServices] UserManager<User> userManager,
+		[FromServices] SignInManager<User> signInManager,
 		ClaimsPrincipal claims)
 	{
 		request.Id = claims.GetIdentifier();
 
 		var result = await mediator.Send(request);
+
+		var user = await userManager.GetUserAsync(claims);
+
+		if (user is not null)
+			await signInManager.RefreshSignInAsync(user);
 
 		return result.Match(
 			success => Results.Ok(),

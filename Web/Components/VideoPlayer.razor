@@ -11,10 +11,24 @@
 	return;
 }
 
+<div class="d-flex mb-2">
+	@foreach (var dubbing in Series.GroupBy(x => x.Dubbing))
+	{
+		if (SelectedDubbing.Equals(dubbing.Key))
+		{
+			<span @onclick="() => SelectedDubbing = dubbing.Key" class="mx-3 user-select-none selected-dubbing">@dubbing.Key</span>
+		}
+		else
+		{
+			<span @onclick="() => SelectedDubbing = dubbing.Key" class="mx-3 user-select-none">@dubbing.Key</span>
+		}
+	}
+</div>
+
 <div id="container" class="video-player-container">
 	<div class="series-select-panel">
 		<div class="series-list">
-			@foreach (var series in Series.OrderBy(x => x.Index))
+			@foreach (var series in ActiveSeries.OrderBy(x => x.Index))
 			{
 				<button @onclick='() => SelectSeriesAsync(series)' class="button-glass series-select-button">@series.Name</button>
 			}
@@ -69,6 +83,8 @@
 
 	public Series Selected { get; private set; } = default!;
 
+	public string SelectedDubbing { get; private set; } = string.Empty;
+
 	[SupplyParameterFromQuery]
 	public Guid SeriesId { get; set; } = default;
 
@@ -77,6 +93,9 @@
 
 	[Parameter]
 	public List<Series> Series { get; set; } = new();
+
+	[Parameter]
+	public IEnumerable<Series> ActiveSeries { get; set; } = Enumerable.Empty<Series>();
 
 	[Parameter]
 	public Func<Series, float, Task> OnLeaveSeries { get; set; } = default!;
@@ -96,7 +115,7 @@
 	[Parameter]
 	public Func<Task> BeforeUnload { get; set; } = default!;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		var series = Series.FirstOrDefault(x => x.Id == SeriesId);
 
@@ -104,6 +123,7 @@
 			series = Series.OrderBy(x => x.Index).FirstOrDefault();
 
 		Selected = series;
+		SelectDubbingFromSeries(Selected);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,22 +149,41 @@
 
 	private async Task RaiseOnLeaveSeries()
 	{
+		if (Selected is null)
+			return;
+
 		OnLeaveSeries?.Invoke(Selected, Progress);
 	}
 
 	private async Task SelectSeriesAsync(Series value, bool notifyChanged = true)
 	{
+		if (value == Selected)
+			return;
+
 		await RaiseOnLeaveSeries();
 		Selected = value;
+		SelectDubbingFromSeries(Selected);
 
 		if (notifyChanged)
 			OnSeriesChanged?.Invoke(Selected);
 
 		await SaveProgress(0);
-
 		await ChangePlayerSource(Selected.Uri);
 
 		StateHasChanged();
+	}
+
+	private void SelectDubbingFromSeries(Series? series)
+	{
+		if (series is null)
+		{
+			SelectedDubbing = string.Empty;
+			ActiveSeries = Enumerable.Empty<Series>();
+			return;
+		}
+
+		SelectedDubbing = series.Dubbing;
+		ActiveSeries = Series.Where(x => x.Dubbing.Equals(SelectedDubbing));
 	}
 
 	public async Task InitializePlayer()
@@ -174,6 +213,7 @@
 
 	public async Task Play(bool notifyChanged = true)
 	{
+		Console.WriteLine("Invoking play from dotnet");
 		await JS.InvokeVoidAsync("play", notifyChanged);
 	}
 

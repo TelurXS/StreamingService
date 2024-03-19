@@ -81,8 +81,9 @@
 </div>
 
 <div class="mt-3">
-	<Pagination Url="@WebRoutes.Films"
-				Refresh="Refresh"
+	<Pagination @ref="Pagination"
+				Url="@WebRoutes.Films"
+				RefreshCallback="Refresh"
 				TotalCount="TotalCount"
 				TotalPages="TotalPages"
 				DefaultCount="40" />
@@ -125,6 +126,9 @@
 
 	private GenresSelectWindow GenresWindow { get; set; } = default!;
 
+	private Pagination Pagination { get; set; } = default!;
+
+
 	private async Task Refresh(int page, int count)
 	{
 		Loaded = false;
@@ -145,8 +149,7 @@
 
 
 		TotalCount = await TitleService.CountByFilter(Genres, TitleType.Film);
-
-		TotalPages = TotalCount / (count);
+		TotalPages = Pagination.CalculatePageCount(TotalCount, count);
 
 		Loaded = true;
 		StateHasChanged();

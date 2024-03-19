@@ -45,6 +45,11 @@ public sealed class UserService : IUserService
 		return Repository.FindAllWithTracking(count, page);
 	}
 
+	public GetAllResult<User> FindAllByName(string name, int count = 10, int page = 0)
+	{
+		return Repository.FindAllByName(name, count, page);
+	}
+
 	public GetAllResult<Title> FindFavouriteTitlesById(Guid id)
 	{
 		return Repository.FindFavouriteTitlesById(id);
@@ -197,5 +202,10 @@ public sealed class UserService : IUserService
 	public int Count()
 	{
 		return Repository.Count();
+	}
+
+	public int CountByName(string name)
+	{
+		return Repository.CountByName(name);
 	}
 }

@@ -55,7 +55,7 @@ builder.Services
     })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        options.ExpireTimeSpan = TimeSpan.FromHours(3);
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
         options.Cookie.IsEssential = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.None;
@@ -63,6 +63,8 @@ builder.Services
     })
     .AddBearerToken(IdentityConstants.BearerScheme, options =>
     {
+        options.BearerTokenExpiration = TimeSpan.FromDays(1);
+        options.RefreshTokenExpiration = TimeSpan.FromDays(3);
     })
     .AddCookie(IdentityConstants.ExternalScheme)
     .AddGoogle(x =>
@@ -102,7 +104,6 @@ app.UseCors();
 app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandler>();
 
-app.UseDeveloperExceptionPage();
 app.MapCarter();
 
 app.UseBlazorFrameworkFiles();

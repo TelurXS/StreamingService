@@ -70,6 +70,24 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 			.ToList();
 	}
 
+	public List<User> FindAllByName(string name, int count = 10, int page = 0)
+	{
+		return Entities
+			.AsNoTracking()
+			.Include(x => x.Subscription)
+			.Include(x => x.Rates)
+			.Include(x => x.Comments)
+			.Include(x => x.FavouriteGenres)
+			.Include(x => x.FavouriteTitles)
+			.Include(x => x.ViewRecords)
+			.Include(x => x.Lists)
+			.Where(x => x.Name.Contains(name) || x.FirstName.Contains(name) || x.SecondName.Contains(name))
+			.Skip(page * count)
+			.Take(count)
+			.ToList();
+	}
+
+
 	public List<Title> FindFavouriteTitlesById(Guid id)
 	{
 		var user = Entities
@@ -263,15 +281,19 @@ public class UserRepository : EntityRepository<User>, IUserRepository
 
 	public bool Delete(User value)
 	{
-		var result = Entities
-			.Where(x => x.Id == value.Id)
-			.ExecuteDelete();
-
-		return result > 0;
+		Entities.Remove(value);
+		return Context.SaveChanges() > 0;
 	}
 
 	public int Count()
 	{
 		return Entities.Count();
+	}
+
+	public int CountByName(string name)
+	{
+		return Entities
+			.Where(x => x.Name.Contains(name) || x.FirstName.Contains(name) || x.SecondName.Contains(name))
+			.Count();
 	}
 }

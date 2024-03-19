@@ -5,6 +5,8 @@ namespace Domain.Interfaces.Repositories;
 
 public interface IUserRepository : IRepository<User>
 {
+	List<User> FindAllByName(string name, int count = 10, int page = 0);
+
 	bool SetSubscription(Guid id, Subscription subscription, DateTime expiresIn);
 
 	bool SetFavouriteGenres(Guid id, IEnumerable<Genre> genres);
@@ -26,4 +28,6 @@ public interface IUserRepository : IRepository<User>
 	List<User> FindReadersFromUser(Guid id);
 
 	List<Notification> FindNotificationsFromUser(Guid id);
+
+	int CountByName(string name);
 }

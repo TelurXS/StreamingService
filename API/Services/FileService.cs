@@ -12,12 +12,13 @@ public sealed class FileService : IFileService
 {
 	private const string SECTION_NAME = "Ftp";
 
-	private const string USERS_IMAGES_DIRECTORY = "/users/images";
-	private const string TITLES_IMAGES_DIRECTORY = "/titles/images";
-	private const string TITLES_SCREENSHOTS_DIRECTORY = "/titles/screenshots";
-	private const string SERIES_DIRECTORY = "/series";
+	private const string USERS_IMAGES_DIRECTORY = "/files/users/images";
+	private const string TITLES_IMAGES_DIRECTORY = "/files/titles/images";
+	private const string TITLES_SCREENSHOTS_DIRECTORY = "/files/titles/screenshots";
+	private const string SERIES_DIRECTORY = "/xflick/wwwroot/series";
 
 	private const string SEPARATOR = "/";
+	private const string SERIES_ROUTE = "/series";
 
 	public FileService(IConfiguration configuration)
 	{
@@ -89,7 +90,7 @@ public sealed class FileService : IFileService
 	public string UploadSeries(IFormFile file)
 	{
 		var name = Upload(SERIES_DIRECTORY, file);
-		return ToServerUrl(ApiRoutes.Files.Series, name);
+		return ToServerSeriesUrl(SERIES_ROUTE, name);
 	}
 
 	public string UploadTitleImage(IFormFile file)
@@ -115,11 +116,6 @@ public sealed class FileService : IFileService
 		return Download(USERS_IMAGES_DIRECTORY + SEPARATOR + name);
 	}
 
-	public bool DeleteUserImage(string name)
-	{
-		return Delete(USERS_IMAGES_DIRECTORY + SEPARATOR + name);
-	}
-
 	public byte[]? DownloadTitleImage(string name)
 	{
 		return Download(TITLES_IMAGES_DIRECTORY + SEPARATOR + name);
@@ -133,9 +129,34 @@ public sealed class FileService : IFileService
 	public byte[]? DownloadSeries(string name)
 	{
 		return Download(SERIES_DIRECTORY + SEPARATOR + name);
-	}
+    }
 
-	private string ToServerUrl(string serverRoute, string fileName)
+    public bool DeleteUserImage(string name)
+    {
+        return Delete(USERS_IMAGES_DIRECTORY + SEPARATOR + name);
+    }
+
+    public bool DeleteTitleImage(string name)
+    {
+        return Delete(TITLES_IMAGES_DIRECTORY + SEPARATOR + name);
+    }
+
+    public bool DeleteTitleScreenshot(string name)
+    {
+        return Delete(TITLES_SCREENSHOTS_DIRECTORY + SEPARATOR + name);
+    }
+
+    public bool DeleteSeries(string name)
+    {
+        return Delete(SERIES_DIRECTORY + SEPARATOR + name);
+    }
+
+    private string ToServerUrl(string serverRoute, string fileName)
+    {
+        return $"{serverRoute}{SEPARATOR}{fileName}";
+    }
+
+	private string ToServerSeriesUrl(string serverRoute, string fileName)
 	{
 		return $"{serverRoute}{SEPARATOR}{fileName}";
 	}

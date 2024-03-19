@@ -7,6 +7,7 @@
 @using Infrastructure.Configurations
 
 @inject ISeriesService SeriesService
+@inject ITitleService TitleService
 
 <ModalWindow @ref="Window">
 	<div class="gradient-panel dashboard-form p-4" @onclick:stopPropagation="true">
@@ -15,6 +16,29 @@
 		<EditForm Model="Input">
 			<DataAnnotationsValidator />
 			<ValidationSummary />
+
+			@if (Errors.Count > 0)
+			{
+				<ul>
+					@foreach (var error in Errors)
+					{
+						<li class="text-danger">@error</li>
+					}
+				</ul>
+			}
+
+			<div class="row mt-3">
+				<div class="col-md-3">
+					<span class="font-md">Title Id</span>
+				</div>
+				<div class="col-md-9">
+					<InputText @bind-Value="Input.TitleId" class="input font-md font-gray" />
+				</div>
+
+				<div class="col-md-12 mt-2">
+					<ValidationMessage For="() => Input.TitleId" />
+				</div>
+			</div>
 
 			<div class="row mt-3">
 				<div class="col-md-3">
@@ -31,14 +55,14 @@
 
 			<div class="row mt-3">
 				<div class="col-md-3">
-					<span class="font-md">Uri</span>
+					<span class="font-md">File</span>
 				</div>
 				<div class="col-md-9">
-					<InputText @bind-Value="Input.Uri" class="input font-md font-gray" />
+					<InputFile OnChange="(args) => Input.File = args.File" class="input font-md font-gray" />
 				</div>
 
 				<div class="col-md-12 mt-2">
-					<ValidationMessage For="() => Input.Uri" />
+					<ValidationMessage For="() => Input.File" />
 				</div>
 			</div>
 
@@ -84,7 +108,6 @@
 			<div class="mt-3 d-flex">
 				<button @onclick="() => Save()" class="mx-1 button button-fit p-2">Save</button>
 				<button @onclick="() => Close()" class="mx-1 button-glass button-fit p-2">Cancel</button>
-				<button @onclick="() => Delete()" class="mx-1 button-glass button-fit p-2">Delete</button>
 			</div>
 		</EditForm>
 	</div>
@@ -98,64 +121,56 @@
 	[SupplyParameterFromForm]
 	private InputModel Input { get; set; } = new();
 
+	private List<string> Errors { get; set; } = [];
+
 	public Guid Id { get; set; } = default;
 
 	private ModalWindow Window { get; set; } = default!;
 
-
-	public async void Open(Guid id)
-	{
-		var seriesResult = await SeriesService.FindByIdAsync(id);
-		
-		if (seriesResult.IsFound)
-		{
-			var series = seriesResult.AsFound;
-		
-			Id = series.Id;
-		
-			Input = new InputModel
-				{
-					Id = series.Id,
-					Name = series.Name,
-					Uri = series.Uri,
-					Dubbing = series.Dubbing,
-					Language = series.Language,
-					Index = series.Index,
-				};
-		}
-		
-		Window.Open();
-	}
+	public void Open() => Window.Open();
 
 	public void Close() => Window.Close();
 
 	private async Task Save()
 	{
-		var request = new UpdateSeries.Request
-			{
-				Id = Input.Id,
-				Name = Input.Name,
-				Uri = Input.Uri,
-				Dubbing = Input.Dubbing,
-				Language = Input.Language,
-				Index = Input.Index,
-			};
-		
-		var result = await SeriesService.UpdateAsync(Id, request);
-		
-		if (result.IsUpdated)
+		if (Guid.TryParse(Input.TitleId, out Guid titleId) is false)
 		{
-			OnChanged?.Invoke();
-			Close();
+			Errors = ["Enter correct title id"];
+			return;
 		}
-	}
 
-	private async Task Delete()
-	{
-		var result = await SeriesService.DeleteByIdAsync(Id);
+		var titleResult = await TitleService.FindByIdAsync(titleId);
 
-		if (result.IsSuccess)
+		if (titleResult.IsFound is false)
 		{
+			Errors = ["Title not found"];
+			return;
+		}
+
+		var request = new CreateSeries.Request
+		{
+			TitleId = titleId,
+			Name = Input.Name,
+			Uri = string.Empty,
+			Dubbing = Input.Dubbing,
+			Language = Input.Language,
+			Index = Input.Index,
+		};
+
+		var result = await SeriesService.CreateAsync(request);
+
+		if (result.IsCreated)
+		{
+			var series = result.AsCreated;
+
+			var fileResult = await SeriesService.UploadFileAsync(series.Id, Input.File);
+
+			if (fileResult.IsFailed)
+			{
+				Errors = fileResult.AsFailed.Errors.ToList();
+				return;
+			}
+
 			OnChanged?.Invoke();
 			Close();
 		}
@@ -163,11 +178,11 @@
 
 	private class InputModel
 	{
-		public Guid Id { get; set; } = default;
+		public string TitleId { get; set; } = string.Empty;
 
 		public string Name { get; set; } = string.Empty;
 
-		public string Uri { get; set; } = string.Empty;
+		public IBrowserFile File { get; set; } = default!;
 
 		public string Dubbing { get; set; } = string.Empty;
 

@@ -6,7 +6,11 @@
 @inject IIdentityService IdentityService
 @inject ITitleService TitleService
 
-<RequireSubscription Subscription="Subscription.Trial" />
+<AuthorizeView>
+	<Authorized>
+		<span>@context.User.Identity.Name</span>
+	</Authorized>
+</AuthorizeView>
 
 @code {
 	private User User { get; set; } = default!;
