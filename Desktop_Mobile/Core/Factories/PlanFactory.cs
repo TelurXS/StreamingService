@@ -54,7 +54,7 @@ public class PlanFactory
         {
             FontSize = 22,
             TextColor = Colors.White,
-            Text = plan.Name
+            Text = plan.Name + "Plan"
         };
         layout.Add(title, 0, 0);
 
@@ -62,7 +62,7 @@ public class PlanFactory
         {
             FontSize = 18,
             TextColor = Color.FromArgb("#0044E9"),
-            Text = plan.Price.ToString()
+            Text = plan.Price.ToString() + "$ / month"
         };
         layout.Add(price, 0, 1);
 

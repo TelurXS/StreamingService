@@ -135,14 +135,14 @@ public class BannerDetailsFactory
         reusltGrid.Add(commentTextLabel, 1, 1);
         reusltGrid.SetColumnSpan(commentTextLabel, 2);
 
-        Label dateTextLabel = new Label()
-        {
-            FontSize = 16,
-            TextColor = Color.FromArgb("#838383"),
-            Text = comment.ReleaseDate.ToShortDateString(),
-            HorizontalOptions = LayoutOptions.End
-        };
-        reusltGrid.Add(dateTextLabel, 2, 0);
+        // Label dateTextLabel = new Label()
+        // {
+        //     FontSize = 16,
+        //     TextColor = Color.FromArgb("#838383"),
+        //     Text = comment.ReleaseDate.ToShortDateString(),
+        //     HorizontalOptions = LayoutOptions.End
+        // };
+        // reusltGrid.Add(dateTextLabel, 2, 0);
 
         return reusltGrid;
     }

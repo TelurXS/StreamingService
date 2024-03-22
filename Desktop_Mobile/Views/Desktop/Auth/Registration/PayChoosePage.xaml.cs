@@ -18,13 +18,8 @@ public partial class PayChoosePage : ContentPage
 
     async void PayByCreditCard(object sender, EventArgs e)
     {
+        RegisterService.AccountModel.Paymentmethod = "card";
         await Shell.Current.GoToAsync($"/{nameof(AddCardPage)}");
-    }
-
-    async void PayByApplePay(object sender, EventArgs e)
-    {
-        RegisterService.AccountModel.Paymentmethod = "applepay";
-        await Browser.Default.OpenAsync(new Uri("https://support.apple.com/uk-ua/108398"), BrowserLaunchMode.SystemPreferred);
     }
 
     async void PayByPayPal(object sender, EventArgs e)

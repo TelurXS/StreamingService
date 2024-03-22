@@ -75,10 +75,6 @@ public class RegisterService
         });
         APIExecutor.ExecutePost(Config.API_LINK + "/manage/profile", detailsJsonData);
     }
-    public static void EndPaymentRegister()
-    {
-        APIExecutor.ExecutePost(Config.API_LINK + "/manage/genres", JsonConvert.SerializeObject(AccountModel.Genres));
-    }
 }
 
 public class UserCredentials

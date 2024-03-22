@@ -103,36 +103,6 @@
                                    WidthRequest="17" Margin="0,28,15,28" />
                         </Grid>
                     </Border>
-                    <Border Stroke="#0044E9"
-                            StrokeShape="RoundRectangle 20,20,20,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            StrokeThickness="2"
-                            Padding="0"
-                            Margin="0,5"
-                            WidthRequest="355"
-                            HeightRequest="89">
-                        <Grid WidthRequest="355"
-                              HeightRequest="89" Padding="10">
-                            <Button BorderWidth="0" BackgroundColor="Transparent" Text="" TextColor="Transparent" FontSize="0"
-                                    Grid.RowSpan="4" Grid.ColumnSpan="4" Margin="0" Padding="0"
-                                    Clicked="PayByApplePay" />
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.7*"></ColumnDefinition>
-                                <ColumnDefinition Width="0.3*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Label Text="Apple Pay" FontSize="22" FontAttributes="Bold"></Label>
-                            <HorizontalStackLayout Margin="5" Grid.Row="1" Grid.Column="0">
-                                <Image Source="applepay.png" HeightRequest="15"></Image>
-                            </HorizontalStackLayout>
-                            <Image Grid.Column="1" Grid.RowSpan="2" Source="payment_arrow.png" HeightRequest="34"
-                                   WidthRequest="17" Margin="0,28,15,28" />
-                        </Grid>
-                    </Border>
                     <Label Text="Вам доступна безкоштовна версія на 7 днів, а потім буде списання коштів" TextColor="White" WidthRequest="315" FontSize="14"></Label>
 
                 </VerticalStackLayout>

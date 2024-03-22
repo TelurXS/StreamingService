@@ -118,11 +118,21 @@
                     <Label FontSize="34">Create Session</Label>
                     <Label Margin="0,10,0,20">The link for your session will be below. Join the session and share the link for your friends</Label>
                     <Label>Link:</Label>
+                    <Border
+                        Width="600"
+                        StrokeShape="RoundRectangle 20,20,20,20"
+                        HorizontalOptions="Center"
+                        StrokeThickness="2"
+                        Padding="0"
+                        Margin="0">
+                        <Entry Width="600" x:Name="LinkEntry" Placeholder="Input link"/>
+                    </Border>
                     <Button x:Name="CopySessionLink" Clicked="CopySessionLink_OnClicked" BorderColor="Transparent"
                             BackgroundColor="Transparent" TextColor="#0044E9" />
-                    <Button WidthRequest="300" x:Name="CreateSessionLink" Clicked="CreateSessionLink_OnClicked" Text="Створити" />          
-                    <Button WidthRequest="300" Clicked="CloseSessionDialog_OnClicked" 
-                           Text="Скасувати"/>
+                    <Button WidthRequest="300" x:Name="CreateSessionLink" Clicked="CreateSessionLink_OnClicked"
+                            Text="Створити" />
+                    <Button WidthRequest="300" Clicked="CloseSessionDialog_OnClicked"
+                            Text="Скасувати" />
                 </VerticalStackLayout>
             </Border>
             <ScrollView Margin="0" Padding="0">
@@ -258,7 +268,9 @@
                             <Label Text="В озвучці від:" FontSize="22" FontAttributes="Bold" Margin="140,64,0,35"></Label>
                             <HorizontalStackLayout x:Name="VozContainerLayout" Margin="140, 0" />
                         </VerticalStackLayout>
-                        <ImageButton VerticalOptions="End" HorizontalOptions="End" BackgroundColor="Transparent" WidthRequest="50" HeightRequest="50" Source="create_session_button.png" Clicked="ImageButton_OnClicked"/>
+                        <ImageButton VerticalOptions="End" HorizontalOptions="End" BackgroundColor="Transparent"
+                                     WidthRequest="50" HeightRequest="50" Source="create_session_button.png"
+                                     Clicked="ImageButton_OnClicked" />
                     </HorizontalStackLayout>
 
                     <HorizontalStackLayout Margin="20,20,0,0" ZIndex="9999" VerticalOptions="Start"

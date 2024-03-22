@@ -471,6 +471,10 @@ public partial class BannerDetailsPage : ContentPage
 
     private async void CreateSessionLink_OnClicked(object? sender, EventArgs e)
     {
+        if (!LinkEntry.Text.IsNullOrEmpty())
+        {
+            ConnectedSessionPage.ConnectToSessionString = LinkEntry.Text;
+        }
         await Shell.Current.GoToAsync($"/{nameof(ConnectedSessionPage)}");
     }
 

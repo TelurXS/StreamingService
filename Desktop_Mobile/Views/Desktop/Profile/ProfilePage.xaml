@@ -193,7 +193,6 @@
                                                 Margin="0"
                                                 Aspect="AspectFill"
                                                 x:Name="CurrentFilmImage"
-                                                Source="test_bg_2.png"
                                                 HeightRequest="107"
                                                 WidthRequest="74"
                                                 VerticalOptions="Center"

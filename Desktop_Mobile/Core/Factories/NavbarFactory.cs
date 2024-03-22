@@ -21,7 +21,7 @@ public class NavbarFactory
         { "Телесеріали", nameof(SeriesPage) },
         { "Фільми", nameof(FilmsPage) },
         { "Новинки й популярне", nameof(NewAndPopularPage) },
-        { "Перегляд за мовами", nameof(WatchViaLanguagesPage) },
+        // { "Перегляд за мовами", nameof(WatchViaLanguagesPage) },
     };
 
     private static Border detailsBorder;

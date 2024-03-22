@@ -28,7 +28,7 @@ public partial class ChoosePlanPage : ContentPage
     {
         RegisterService.AccountModel.Plan = PlanFactory.SelectedPlan;
         RegisterService.EndProfileRegister();
-
+        APIExecutor.ExecutePost(Config.API_LINK + $"/manage/payment/{PlanFactory.SelectedPlan.Name}");
         await Shell.Current.GoToAsync($"/{nameof(PayChoosePage)}");
     }
 }
