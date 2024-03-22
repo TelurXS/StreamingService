@@ -44,7 +44,15 @@
 		<!--<img class="poster img-fluid rounded-corners" src="@Title.Image.Uri" />-->
 		<div class="poster p-3" style="background-image: url('@Title.Image?.Uri')">
 		</div>
-		<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+
+		@if (string.IsNullOrEmpty(Title.Trailer))
+		{
+			<button disabled class="button font-btn mt-2">Watch Trailer</button>
+		}
+		else
+		{
+			<a href="@Title.Trailer" target="_blank" class="button font-btn mt-2">Watch Trailer</a>
+		}
 	</div>
 
 	<div class="col-md-8">
@@ -339,6 +347,9 @@
 
 	private async Task OnPlayerLeaveSeries(Series series, float progress)
 	{
+		if (progress <= 0 || progress > 1)
+			progress = await Player.GetProgress();
+		
 		if (progress <= 0 || progress > 1)
 			return;
 

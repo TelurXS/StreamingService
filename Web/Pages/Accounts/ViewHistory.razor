@@ -16,7 +16,7 @@
 		var title = ViewRecords.Select(x => x.Title).First(x => x.Id == group.Key);
 		var record = group.OrderBy(x => x.Time).Last();
 
-		<a href="@WebRoutes.Titles.Base/@record.Title.Slug?seriesId=@record.Series.Id&progress=@(record.PercentProgress)">
+		<a @onclick='() => NavigationManager.NavigateTo($"{WebRoutes.Titles.Base}/{record.Title.Slug}?seriesId={record.Series.Id}&progress={record.PercentProgress}", true)'>
 			<div class="col d-flex flex-column justify-content-center align-items-center mt-2">
 				<div class="w-100" style="pointer-events: none;">
 					<ResponsiveTitleCard Title="title" />
