@@ -16,7 +16,7 @@
             HorizontalOptions="Center" />
         <Border 
                 HeightRequest="597"
-                WidthRequest="415"
+                WidthRequest="435"
                 StrokeShape="RoundRectangle 20,20,20,20"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"

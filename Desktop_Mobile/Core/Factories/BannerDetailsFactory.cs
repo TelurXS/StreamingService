@@ -25,6 +25,7 @@ public class BannerDetailsFactory
 {
     public static string SelectedVoz = "Default";
     private static Rectangle ActiveRec;
+    public static List<DBProfileModel> SelectedUsers = new List<DBProfileModel>();
 
     public static VerticalStackLayout CreateVoz(VozModel voz)
     {
@@ -84,6 +85,7 @@ public class BannerDetailsFactory
         {
             ActiveRec.Opacity = 0;
         }
+
         ActiveRec = rec;
         SelectedVoz = button.Text;
     }
@@ -107,14 +109,30 @@ public class BannerDetailsFactory
             new RowDefinition()
         };
 
+        Button trigger = new Button()
+        {
+            WidthRequest = 70,
+            HeightRequest = 70,
+            BackgroundColor = Colors.Transparent,
+            Text = "",
+            BorderWidth = 0,
+            CornerRadius = 50,
+        };
         Image avatarImage = new Image
         {
             Source = Config.IMAGE_LINK + comment.Author.ProfileImage,
-            Aspect = Aspect.AspectFill,
+            Aspect = Aspect.AspectFit,
             WidthRequest = 70,
             HeightRequest = 70,
             Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, 70, 70)),
         };
+        trigger.Clicked += async (sender, args) =>
+        {
+            AnotherUserProfilePage.UserId = comment.Author.Id;
+
+            await Shell.Current.GoToAsync($"/{nameof(AnotherUserProfilePage)}");
+        };
+        reusltGrid.Add(trigger, 0, 0);
         reusltGrid.Add(avatarImage, 0, 0);
         reusltGrid.SetRowSpan(avatarImage, 2);
 
@@ -169,5 +187,76 @@ public class BannerDetailsFactory
             Margin = new Thickness(0, 0, 15, 0),
             Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, 261, 151))
         };
+    }
+
+    public static IView CreateUser(DBProfileModel user)
+    {
+        if (user.ProfileImage == "") return null;
+        VerticalStackLayout res = new VerticalStackLayout()
+        {
+            WidthRequest = 100,
+            HeightRequest = 143,
+            Margin = 5
+        };
+
+        Grid avatar = new Grid();
+        Button trigger = new Button()
+        {
+            WidthRequest = 70,
+            HeightRequest = 70,
+            BackgroundColor = Colors.Transparent,
+            Text = "",
+            BorderWidth = 0,
+            CornerRadius = 50,
+        };
+        Image button = new Image()
+        {
+            WidthRequest = 70,
+            HeightRequest = 70,
+            Aspect = Aspect.Fill,
+            Source = Config.IMAGE_LINK + user.ProfileImage,
+            Clip = new RoundRectangleGeometry(new CornerRadius(50), new Rect(0, 0, 70, 70))
+        };
+        Image indicatior = new Image()
+        {
+            WidthRequest = 25,
+            HeightRequest = 25,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Start,
+            Source = "unmarked.png",
+            Clip = new RoundRectangleGeometry(new CornerRadius(20), new Rect(0, 0, 25, 25))
+        };
+
+        trigger.Clicked += (sender, args) =>
+        {
+            if (!SelectedUsers.Contains(user))
+            {
+                indicatior.Source = "marked.png";
+                SelectedUsers.Add(user);
+            }
+            else
+            {
+                indicatior.Source = "unmarked.png";
+                SelectedUsers.Remove(user);
+            }
+        };
+        avatar.Add(button);
+        avatar.Add(indicatior);
+        avatar.Add(trigger);
+
+        res.Add(avatar);
+        res.Add(new Label()
+        {
+            Text = user.Name,
+            FontSize = 18,
+            Margin = new Thickness(0, 10, 0, 0)
+        });
+        res.Add(new Label()
+        {
+            Text = user.FirstName + " " + user.SecondName,
+            FontSize = 16,
+            Opacity = 0.5
+        });
+        return res;
     }
 }

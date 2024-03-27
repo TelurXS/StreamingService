@@ -2,6 +2,7 @@
 using Metflix.Core;
 using Metflix.Core.Models;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Maui.Layouts;
 using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
@@ -64,6 +65,17 @@ public partial class BannerDetailsPage : ContentPage
                         BannerDetailsFactory.CreateVoz(new VozModel(currentTitleSeries.Dubbing, false)));
                 }
         }
+
+        List<DBProfileModel> users =
+            JsonConvert.DeserializeObject<List<DBProfileModel>>(APIExecutor.ExecuteGet(Config.API_LINK + "/users"));
+        foreach (var user in users)
+        {
+            IView res = BannerDetailsFactory.CreateUser(user);
+            if (res == null) continue;
+            UsersScroll.Add(res);
+        }
+
+        // UsersScroll.Content = usersFlexLayout;
 
         if (currentTitle.Genres.Count > 0)
         {
@@ -173,18 +185,6 @@ public partial class BannerDetailsPage : ContentPage
         {
             mediaElement.Source = (Config.IMAGE_LINK + currentTitle.Series[CurrentEpisode].Uri);
         }
-    }
-
-    private void OnEpisodesButtonClicked(object sender, EventArgs e)
-    {
-    }
-
-    private void OnSubtitleButtonClicked(object sender, EventArgs e)
-    {
-    }
-
-    private void OnPlaySpeedButtonClicked(object sender, EventArgs e)
-    {
     }
 
     private void OnFullScreenButtonClicked(object sender, EventArgs e)
@@ -333,7 +333,7 @@ public partial class BannerDetailsPage : ContentPage
         AddToFolder.Opacity = 1;
         AddToFolder.HeightRequest = 623;
         AddToFolder.WidthRequest = 540;
-        
+
         string data = APIExecutor.ExecuteGet(Config.API_LINK + "/lists");
         List<DBBanner> model = JsonConvert.DeserializeObject<List<DBBanner>>(data);
         VerticalStackLayout verticalStackLayout = new VerticalStackLayout();
@@ -346,8 +346,6 @@ public partial class BannerDetailsPage : ContentPage
         }
 
         MainBookmarksContentScrollView.Content = verticalStackLayout;
-        
-
     }
 
     private void ShowCreateNewFolderNotification()
@@ -396,8 +394,6 @@ public partial class BannerDetailsPage : ContentPage
             HideAddToFolderNotification();
             return;
         }
-
-
 
 
         ShowAddToFolderNotification();
@@ -471,18 +467,18 @@ public partial class BannerDetailsPage : ContentPage
 
     private async void CreateSessionLink_OnClicked(object? sender, EventArgs e)
     {
-        if (!LinkEntry.Text.IsNullOrEmpty())
-        {
-            ConnectedSessionPage.ConnectToSessionString = LinkEntry.Text;
-        }
+       
+       ConnectedSessionPage.ConnectToSessionString = LinkEntry.Text;
+
+
         await Shell.Current.GoToAsync($"/{nameof(ConnectedSessionPage)}");
     }
 
     private void ShowCreateSessionDialog()
     {
         AddToConfirence.Opacity = 1;
-        AddToConfirence.HeightRequest = 623;
-        AddToConfirence.WidthRequest = 540;
+        AddToConfirence.HeightRequest = 708;
+        AddToConfirence.WidthRequest = 730;
     }
 
     private void HideCreateSessionDialog()
@@ -497,7 +493,7 @@ public partial class BannerDetailsPage : ContentPage
         ConnectedSessionPage.SessionId = Guid.NewGuid().ToString();
         ConnectedSessionPage.ConnectToSessionString =
             Config.CREATE_SESSION_LINK + currentTitle.Slug + "/" + ConnectedSessionPage.SessionId;
-        CopySessionLink.Text = ConnectedSessionPage.ConnectToSessionString;
+        LinkEntry.Text = ConnectedSessionPage.ConnectToSessionString;
         ShowCreateSessionDialog();
     }
 

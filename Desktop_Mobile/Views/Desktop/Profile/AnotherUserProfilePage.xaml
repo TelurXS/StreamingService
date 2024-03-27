@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VideoDemos.Views.AnotherUserProfilePage"
+             Loaded="ProfilePage_OnLoaded"
+             BackgroundColor="#080808"
+             Appearing="ProfilePage_OnAppearing">
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Always">
+            <Grid>
+                <Border x:Name="MainNotfication" Opacity="0"
+                        HeightRequest="0"
+                        WidthRequest="0"
+                        StrokeShape="RoundRectangle 20,20,20,20"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        BackgroundColor="#080808"
+                        ZIndex="999"
+                        StrokeThickness="2"
+                        Padding="0"
+                        Margin="0">
+                    <Border.Stroke>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                            <GradientStop Color="#0044E9" Offset="0.1"></GradientStop>
+                            <GradientStop Color="Black" Offset="1.0"></GradientStop>
+                        </LinearGradientBrush>
+                    </Border.Stroke>
+                    <VerticalStackLayout>
+                        <Label x:Name="NotificationLabel" FontSize="28" HorizontalOptions="Center" Text="Readers"
+                               Margin="0,0,0,20" />
+                        <Rectangle Margin="0,0,0,15"
+                                   WidthRequest="542"
+                                   HeightRequest="3">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#0044E900" Offset="0" />
+                                    <GradientStop Color="#0044E9" Offset="0.5" />
+                                    <GradientStop Color="#0044E900" Offset="1" />
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <ScrollView x:Name="MainContentScrollView" HeightRequest="300" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout>
+                    <VerticalStackLayout Padding="180,153,0,0">
+                        <Grid ColumnDefinitions="0.5*, 0.5*">
+                            <VerticalStackLayout Grid.Column="0">
+                                <HorizontalStackLayout Margin="0,30,0,0">
+                                    <Grid>
+                                        <Border Stroke="#FFF"
+                                                HeightRequest="140"
+                                                WidthRequest="140"
+                                                StrokeShape="RoundRectangle 100,100,100,100"
+                                                HorizontalOptions="Center"
+                                                StrokeThickness="3"
+                                                Padding="0"
+                                                Margin="0">
+                                            <Image x:Name="ProfileImage"
+                                                   Margin="0"
+                                                   Aspect="AspectFill"
+                                                   Source="profile_test.jpg"
+                                                   HeightRequest="140"
+                                                   WidthRequest="140"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Center" />
+                                        </Border>
+
+                                    </Grid>
+
+                                    <VerticalStackLayout Margin="20,0">
+                                        <VerticalStackLayout>
+                                            <HorizontalStackLayout>
+                                                <Label FontSize="28" Margin="6, 0, 0, 0" FontFamily="Inter"
+                                                       x:Name="NicknameLabel"
+                                                       Text="Natalia">
+                                                </Label>
+ 
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout>
+                                                <Label FontSize="18" Margin="6, 10, 0, 15" FontFamily="Inter"
+                                                       x:Name="NameLabel"
+                                                       Text="Ліза Пушкаренко">
+                                                </Label>
+                                            </HorizontalStackLayout>
+
+                                        </VerticalStackLayout>
+
+                                        <Label FontSize="18" FontFamily="Inter" FontAttributes="Bold" TextColor="White"
+                                               Opacity="0.5"
+                                               Text="Улюблені жанри" Margin="6" />
+                                        <HorizontalStackLayout>
+                                            <FlexLayout Wrap="Wrap" x:Name="GenreLayout" WidthRequest="400" Padding="0" Margin="0" />
+                                        </HorizontalStackLayout>
+
+                                    </VerticalStackLayout>
+
+
+                                </HorizontalStackLayout>
+
+
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1">
+                                <HorizontalStackLayout Margin="0,0,0,38">
+                                    <Border StrokeShape="RoundRectangle 20,20,20,20"
+                                            Stroke="#0b0b0b"
+                                            HorizontalOptions="Center"
+                                            Padding="0"
+                                            StrokeThickness="5"
+                                            Margin="0,0,20, 0"
+                                            HeightRequest="79"
+                                            WidthRequest="138"
+                                            BackgroundColor="Black">
+                                        <Grid RowDefinitions="0.5*,0.5*" HeightRequest="79">
+                                            <Label Grid.Row="0" HorizontalOptions="Center" VerticalOptions="End"
+                                                   FontSize="28" x:Name="ReadersAmountLabel" Text="0" />
+                                            <Label Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start"
+                                                   Opacity="0.5" FontSize="18" Text="Читачі" />
+
+                                        </Grid>
+                                    </Border>
+                                    <Border StrokeShape="RoundRectangle 20,20,20,20"
+                                            Stroke="#0b0b0b"
+                                            HorizontalOptions="Center"
+                                            Padding="0"
+                                            StrokeThickness="5"
+                                            Margin="0,0,20, 0"
+                                            HeightRequest="79"
+                                            WidthRequest="138"
+                                            BackgroundColor="Black">
+                                        <Grid RowDefinitions="0.5*,0.5*" HeightRequest="79">
+                                            <Label Grid.Row="0" HorizontalOptions="Center" VerticalOptions="End"
+                                                   FontSize="28" x:Name="FollowersAmountLabel" Text="0" />
+                                            <Label Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start"
+                                                   Opacity="0.5" FontSize="18" Text="Стежить" />
+
+                                        </Grid>
+                                    </Border>
+                                    <Border StrokeShape="RoundRectangle 20,20,20,20"
+                                            Stroke="#0b0b0b"
+                                            HorizontalOptions="Center"
+                                            Padding="0"
+                                            StrokeThickness="5"
+                                            Margin="0,0,20, 0"
+                                            HeightRequest="79"
+                                            WidthRequest="138"
+                                            BackgroundColor="Black">
+                                        <Grid RowDefinitions="0.5*,0.5*" HeightRequest="79">
+                                            <Label Grid.Row="0" HorizontalOptions="Center" VerticalOptions="End"
+                                                   FontSize="28" Text="0" x:Name="FavLabel" />
+                                            <Label Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start"
+                                                   Opacity="0.5" FontSize="18" Text="В обраному" />
+                                            <Button CornerRadius="20" WidthRequest="138" HeightRequest="79"
+                                                    BackgroundColor="Transparent" BorderWidth="0" FontSize="0"
+                                                    Clicked="Fav_Clicked" />
+                                        </Grid>
+                                    </Border>
+                                    <ImageButton WidthRequest="36" HeightRequest="36" Source="follow.png"
+                                                 CornerRadius="100"
+                                                 BackgroundColor="#0044E9"
+                                                 BorderWidth="0"
+                                                 Padding="6" Clicked="FollowClicked" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <HorizontalStackLayout x:Name="RecentMoviesLayout" WidthRequest="295"
+                                                           Margin="22,0,0,0">
+                                    </HorizontalStackLayout>
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" Padding="0">
+                                        <Border StrokeShape="RoundRectangle 10,10,10,10" Grid.RowSpan="3"
+                                                HorizontalOptions="Center"
+                                                Padding="0"
+                                                Margin="20, 0"
+                                                HeightRequest="107"
+                                                WidthRequest="74">
+                                            <Image
+                                                Margin="0"
+                                                Aspect="AspectFill"
+                                                x:Name="CurrentFilmImage"
+                                                HeightRequest="107"
+                                                WidthRequest="74"
+                                                VerticalOptions="Center"
+                                                HorizontalOptions="Center" />
+                                        </Border>
+                                        <Label Grid.Column="1" Grid.Row="0" FontSize="18" Opacity="0.5"
+                                               Text="Зараз переглядає:" />
+                                        <Label Grid.Column="1" Grid.Row="1" FontSize="18" FontAttributes="Bold"
+                                               x:Name="CurrentFilmLabel" />
+                                        <Grid Grid.Column="1" Grid.Row="2" x:Name="ProgressGrid" />
+                                    </Grid>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Rectangle Margin="0,25,0,25"
+                                   WidthRequest="1577"
+                                   HeightRequest="3">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#0044E900" Offset="0" />
+                                    <GradientStop Color="#0044E9" Offset="0.2" />
+                                    <GradientStop Color="#0044E900" Offset="1" />
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <FlexLayout x:Name="FavBannersLayout" AlignItems="Start" Wrap="Wrap">
+
+                        </FlexLayout>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

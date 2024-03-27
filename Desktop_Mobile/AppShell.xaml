@@ -68,12 +68,19 @@
                           Route="BookmarksPage" />
         </Tab>
     </FlyoutItem>
+    <FlyoutItem Icon="mail_navbar.png" Title="Notifications">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate notifications:NotificationsPage}"
+                          Route="NotificationsPage" />
+        </Tab>
+    </FlyoutItem>
     <FlyoutItem Icon="history.png" Title="History">
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate views:HistoryPage}"
                           Route="HistoryPage" />
         </Tab>
-    </FlyoutItem>
+    </FlyoutItem> 
+
 
     <ShellContent Title="Exit"
                   Icon="door_exit.png" 

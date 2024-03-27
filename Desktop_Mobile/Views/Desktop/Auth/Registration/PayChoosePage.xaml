@@ -15,7 +15,7 @@
                 HorizontalOptions="Center" />
             <Border
                     HeightRequest="597"
-                    WidthRequest="415"
+                    WidthRequest="445"
                     StrokeShape="RoundRectangle 20,20,20,20"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
@@ -49,8 +49,8 @@
                             StrokeThickness="2"
                             Padding="0"
                             Margin="0,5"
-                            WidthRequest="355"
-                            HeightRequest="89">
+                            WidthRequest="365"
+                            HeightRequest="99">
                         <Grid WidthRequest="355"
                               HeightRequest="89" Padding="10">
                             <Button BorderWidth="0" BackgroundColor="Transparent" Text="0" TextColor="Transparent"  FontSize="0"
@@ -80,8 +80,8 @@
                             StrokeThickness="2"
                             Padding="0"
                             Margin="0,5"
-                            WidthRequest="355"
-                            HeightRequest="89">
+                            WidthRequest="365"
+                            HeightRequest="99">
                         <Grid WidthRequest="355"
                               HeightRequest="89" Padding="10">
                             <Button BorderWidth="0" BackgroundColor="Transparent" Text="0" TextColor="Transparent" FontSize="0"

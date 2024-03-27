@@ -96,17 +96,15 @@
                 </VerticalStackLayout>
             </Border>
             <Border x:Name="AddToConfirence" Opacity="0"
-                    HeightRequest="0"
-                    WidthRequest="0"
                     StrokeShape="RoundRectangle 20,20,20,20"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    BackgroundColor="#080808"
+                    BackgroundColor="#08080"
                     ZIndex="999"
-                    Width="700"
-                    Height="700"
+                    WidthRequest="0"
+                    HeightRequest="0"
                     StrokeThickness="2"
-                    Padding="115"
+                    Padding="30"
                     Margin="0">
                 <Border.Stroke>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
@@ -125,14 +123,24 @@
                         StrokeThickness="2"
                         Padding="0"
                         Margin="0">
-                        <Entry Width="600" x:Name="LinkEntry" Placeholder="Input link"/>
+                        <Entry Width="600" x:Name="LinkEntry" Placeholder="Input link" WidthRequest="670" HeightRequest="42" />
                     </Border>
-                    <Button x:Name="CopySessionLink" Clicked="CopySessionLink_OnClicked" BorderColor="Transparent"
+                    <Button x:Name="CopySessionLink" Clicked="CopySessionLink_OnClicked" BorderColor="Transparent" Text="Copy"
                             BackgroundColor="Transparent" TextColor="#0044E9" />
-                    <Button WidthRequest="300" x:Name="CreateSessionLink" Clicked="CreateSessionLink_OnClicked"
-                            Text="Створити" />
-                    <Button WidthRequest="300" Clicked="CloseSessionDialog_OnClicked"
-                            Text="Скасувати" />
+                    <Label FontSize="22" HorizontalOptions="Center">Відстежуються</Label>
+                    <HorizontalStackLayout>
+                        <Entry WidthRequest="630" Margin="0,15,0,0" Placeholder="Пошук"/>
+                        <Button x:Name="SearchButton" ImageSource="search.png" WidthRequest="20" HeightRequest="20" Margin="20,0,0,0"></Button>
+                    </HorizontalStackLayout>
+                    <FlexLayout Wrap="Wrap" HeightRequest="250" x:Name="UsersScroll">
+                    </FlexLayout>
+                    <HorizontalStackLayout>
+
+                        <Button WidthRequest="300" x:Name="CreateSessionLink" Clicked="CreateSessionLink_OnClicked"
+                                Text="Створити" Margin="0,0,15,0" />
+                        <Button WidthRequest="300" Clicked="CloseSessionDialog_OnClicked"
+                                Text="Скасувати" />
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Border>
             <ScrollView Margin="0" Padding="0">

@@ -75,5 +75,6 @@ public partial class AppShell : Shell
 
         //PROFILE 
         Routing.RegisterRoute(nameof(GenreChangePage), typeof(GenreChangePage));
+        Routing.RegisterRoute(nameof(AnotherUserProfilePage), typeof(AnotherUserProfilePage));
     }
 }

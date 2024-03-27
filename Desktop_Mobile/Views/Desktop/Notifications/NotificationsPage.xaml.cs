@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Metflix.Core;
 using Metflix.Core.Models;
 using Microsoft.Maui.Controls;
+using Newtonsoft.Json;
+using VideoDemos.Core.Backend;
+using Xflick.Core.Models.Notifications;
 
 namespace VideoDemos.Views.Notifications;
 
@@ -15,23 +18,11 @@ public partial class NotificationsPage : ContentPage
     {
         InitializeComponent();
 
-        NotificationModel model =
-            new NotificationModel("ava_test.png", "Починає стежити за вами", "Підписатись", DateTime.Now);
-        model.NotificationHeadline = "Kawazaki";
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-        NotificationContainer.Add(NotificationFactory.CreateNotification(model));
-    }
+        List<DB_Notification> notifications = JsonConvert.DeserializeObject<List<DB_Notification>>(APIExecutor.ExecuteGet(Config.API_LINK + "/notifications"));
+        foreach (DB_Notification notification in notifications)
+        {
+            NotificationContainer.Add(NotificationFactory.CreateNotification(notification));
+        }
 
-    private async void ChatsButtonClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync($"///{nameof(ChatPage)}");
     }
 }

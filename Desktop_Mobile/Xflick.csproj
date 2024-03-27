@@ -83,11 +83,18 @@
       <MauiXaml Update="Views\Desktop\Profile\GenreChangePage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="Views\Desktop\Profile\AnotherUserProfilePage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="Views\Desktop\Profile\GenreChangePage.xaml.cs">
         <DependentUpon>GenreChoosePage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Desktop\Profile\AnotherUserProfilePage.xaml.cs">
+        <DependentUpon>AnotherUserProfilePage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

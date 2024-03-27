@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using VideoDemos.Core.Auth;
 using VideoDemos.Core.Backend;
 using VideoDemos.Core.Steaming;
+using VideoDemos.Views;
 using Xe.AcrylicView;
 using Xe.AcrylicView.Controls;
 
@@ -212,13 +213,6 @@ public partial class ConnectedSessionPage : ContentPage
         SendSeekToToServer(mediaElement.Position, mediaElement.Duration);
     }
 
-    private void OnSubtitleButtonClicked(object sender, EventArgs e)
-    {
-    }
-
-    private void OnPlaySpeedButtonClicked(object sender, EventArgs e)
-    {
-    }
 
     private void OnFullScreenButtonClicked(object sender, EventArgs e)
     {
@@ -280,17 +274,19 @@ public partial class ConnectedSessionPage : ContentPage
         double procent = (pos.TotalSeconds / dur.TotalSeconds);
         await Connection!.SendAsync(SessionMessages.PROGRESS_CHANGED, SessionId, procent);
     }
-
-    private void OnNextEpisodeClicked(object? sender, EventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     private async void ConnectedSessionPage_OnLoaded(object? sender, EventArgs e)
     {
         await OnJoin(currentTitle);
         Messages.Clear();
         ChatListView.Children.Clear();
+        if (!BannerDetailsFactory.SelectedUsers.IsNullOrEmpty())
+        {
+            foreach (var model in BannerDetailsFactory.SelectedUsers)
+            {
+                APIExecutor.ExecutePost(Config.API_LINK + $"/api/notifications/invite/{model.Id}", "{link: \""+ConnectToSessionString+"\"}");
+            }
+        }
     }
 
 
